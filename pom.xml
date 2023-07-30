@@ -35,25 +35,26 @@
 				</configuration>
 			</plugin>
 			<!-- Copy project dependency -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.6.0</version>
-				<executions>
-					<execution>
-						<id>libs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<!-- exclude junit, we need runtime dependency only -->
-							<includeScope>runtime</includeScope>
-							<outputDirectory>${project.build.directory}/libs/</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--			Desligado já que o projeto não tem dependências para copiar além dos pacotes do RFW.Kernel-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-dependency-plugin</artifactId>-->
+<!--				<version>3.6.0</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>libs</id>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>copy</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							 exclude junit, we need runtime dependency only -->
+<!--							<includeScope>runtime</includeScope>-->
+<!--							<outputDirectory>${project.build.directory}/libs/</outputDirectory>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 

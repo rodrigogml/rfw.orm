@@ -22,4 +22,13 @@ public interface DAOResolver {
    */
   public String getSchema(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn) throws RFWException;
 
+  /**
+   * Este método deve retornar a tabela a ser utilizada pela entidade.
+   *
+   * @param entityType entidade/RFWVO que se deseja saber a tabela a ser utilizada.
+   * @param entityDAOAnn {@link RFWDAO} Annotation atual da entidade.
+   * @return String com o nome da tabela a ser utilizado no comando SQL.
+   */
+  public String getTable(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn);
+
 }

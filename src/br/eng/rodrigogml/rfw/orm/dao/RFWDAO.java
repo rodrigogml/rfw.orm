@@ -39,7 +39,9 @@ import br.eng.rodrigogml.rfw.kernel.utils.RUEncrypter;
 import br.eng.rodrigogml.rfw.kernel.utils.RUFile;
 import br.eng.rodrigogml.rfw.kernel.utils.RUReflex;
 import br.eng.rodrigogml.rfw.kernel.utils.RUString;
+import br.eng.rodrigogml.rfw.kernel.vo.RFWField;
 import br.eng.rodrigogml.rfw.kernel.vo.RFWMO;
+import br.eng.rodrigogml.rfw.kernel.vo.RFWOrderBy;
 import br.eng.rodrigogml.rfw.kernel.vo.RFWVO;
 import br.eng.rodrigogml.rfw.orm.dao.DAOMap.DAOMapField;
 import br.eng.rodrigogml.rfw.orm.dao.DAOMap.DAOMapTable;
@@ -48,8 +50,6 @@ import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOConverter;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.DAOResolver;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 import br.eng.rodrigogml.rfw.orm.utils.RUDAO;
-import br.eng.rodrigogml.rfw.orm.vo.RFWField;
-import br.eng.rodrigogml.rfw.orm.vo.RFWOrderBy;
 
 /**
  * Description: Classe de DAO principal do Framework.<br>
@@ -2122,7 +2122,7 @@ public final class RFWDAO<VO extends RFWVO> {
       if (path.equals("")) { // Deixado nessa ordem, ao invés do "".equals(path) para justamente dar nullpointer caso alguém passe null. Em caso de null o if retornria true e estragaria a lógica de qualquer forma. Como null não é esperado, conforme javadoc, é melhor que dê nullpointer logo aqui para que o real problema seja encontrado (que é de onde vem o null)
         entityType = root; // Se estamos no objeto raiz, a entidade é exatamente o objeto raiz
         entityDAOAnn = RUDAO.getRFWDAOAnnotation(entityType);
-        entityTable = entityDAOAnn.table();
+        entityTable = getTable(entityType, entityDAOAnn);
         entitySchema = getSchema(entityType, entityDAOAnn);
         mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, entityColumn, entityJoin, entityJoinColumn);
       } else {
@@ -2157,7 +2157,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
           entityDAOAnn = RUDAO.getRFWDAOAnnotation(entityType);
           entitySchema = getSchema(entityType, entityDAOAnn);
-          entityTable = entityDAOAnn.table();
+          entityTable = getTable(entityType, entityDAOAnn);
 
           switch (parentRelAnn.relationship()) {
             case MANY_TO_MANY:
@@ -2294,6 +2294,30 @@ public final class RFWDAO<VO extends RFWVO> {
       throw new RFWCriticalException("Não há um schema definido para a entidade '" + entityType.getCanonicalName() + "'.");
     }
     return schema;
+  }
+
+  /**
+   * Retorna a tabela conforme definição da annotation da entidade.
+   *
+   * @param entityType Entidate a descobrir o Schema
+   * @param entityDAOAnn
+   * @return
+   * @throws RFWException
+   */
+  private String getTable(Class<? extends RFWVO> entityType, final RFWDAOAnnotation entityDAOAnn) throws RFWException {
+    String table = null;
+    // Solicita no Resolver
+    if (this.resolver != null) {
+      table = this.resolver.getTable(entityType, entityDAOAnn);
+    }
+    // Verifica se temos na entidade
+    if (table == null) {
+      table = entityDAOAnn.table();
+    }
+    if (table == null) {
+      throw new RFWCriticalException("Não há uma tabela definida para a entidade '" + entityType.getCanonicalName() + "'.");
+    }
+    return table;
   }
 
   /**
