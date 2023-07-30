@@ -14,13 +14,25 @@ import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOAnnotation;
 public interface DAOResolver {
 
   /**
+   * Permite que o Resolver da aplicação substitua uma entidade durante o mapeamento. Este método é útil quando o RFW já oferece alguns VOs de soluções (como do Serviço de Location), e a aplicação tem objetod próprios descendentes dele. Este é um exemplo, á vários casos em que seja necessário a troca do objeto mapeado por outro descendente.
+   *
+   * @param entityType Entidade sendo mapeada pelo {@link RFWDAO}.
+   * @return Nova entidade a ser mapeada em seu lugar, ou a mesma caso não seja necessário realizar nenhuma troca.
+   */
+  public default Class<? extends RFWVO> getEntityType(Class<? extends RFWVO> entityType) {
+    return entityType;
+  }
+
+  /**
    * Este método deve retornar o schema do banco de dados que deve ser utilizado com o VO.
    *
    * @param entityType entidade/RFWVO que se deseja saber o schema a ser utilizado.
    * @param entityDAOAnn {@link RFWDAO} Annotation atual da entidade.
    * @return String com o nome do Schema a ser utilizado no comando SQL.
    */
-  public String getSchema(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn) throws RFWException;
+  public default String getSchema(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn) throws RFWException {
+    return null;
+  }
 
   /**
    * Este método deve retornar a tabela a ser utilizada pela entidade.
@@ -29,6 +41,8 @@ public interface DAOResolver {
    * @param entityDAOAnn {@link RFWDAO} Annotation atual da entidade.
    * @return String com o nome da tabela a ser utilizado no comando SQL.
    */
-  public String getTable(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn);
+  public default String getTable(Class<? extends RFWVO> entityType, RFWDAOAnnotation entityDAOAnn) {
+    return null;
+  }
 
 }

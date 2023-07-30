@@ -30,6 +30,7 @@ import br.eng.rodrigogml.rfw.kernel.RFW;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWValidationException;
+import br.eng.rodrigogml.rfw.kernel.preprocess.PreProcess;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaRelationshipField;
@@ -49,7 +50,6 @@ import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOAnnotation;
 import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOConverter;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.DAOResolver;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
-import br.eng.rodrigogml.rfw.orm.utils.RUDAO;
 
 /**
  * Description: Classe de DAO principal do Framework.<br>
@@ -2120,10 +2120,14 @@ public final class RFWDAO<VO extends RFWVO> {
       DAOMapTable mapTable = null;
 
       if (path.equals("")) { // Deixado nessa ordem, ao invés do "".equals(path) para justamente dar nullpointer caso alguém passe null. Em caso de null o if retornria true e estragaria a lógica de qualquer forma. Como null não é esperado, conforme javadoc, é melhor que dê nullpointer logo aqui para que o real problema seja encontrado (que é de onde vem o null)
-        entityType = root; // Se estamos no objeto raiz, a entidade é exatamente o objeto raiz
-        entityDAOAnn = RUDAO.getRFWDAOAnnotation(entityType);
+        entityType = getEntity(root); // Se estamos no objeto raiz, a entidade é exatamente o objeto raiz
+        entityDAOAnn = entityType.getAnnotation(RFWDAOAnnotation.class);
         entityTable = getTable(entityType, entityDAOAnn);
         entitySchema = getSchema(entityType, entityDAOAnn);
+
+        PreProcess.requiredNonNull(entitySchema, "O RFWDAO não conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+        PreProcess.requiredNonNull(entityTable, "O RFWDAO não conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+
         mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, entityColumn, entityJoin, entityJoinColumn);
       } else {
         String parentPath = RUReflex.getParentPath(path);
@@ -2155,9 +2159,13 @@ public final class RFWDAO<VO extends RFWVO> {
             throw new RFWCriticalException("Não foi possível detectar a classe de relacionamento do atributo '${0}'. Verifique se é um RFWVO ou se a classe está definida corretamente no 'targetRelatioship'.", new String[] { parentMapTable.type.getCanonicalName() + "." + parentField.getName() });
           }
 
-          entityDAOAnn = RUDAO.getRFWDAOAnnotation(entityType);
+          entityType = getEntity(entityType);
+          entityDAOAnn = entityType.getAnnotation(RFWDAOAnnotation.class);
           entitySchema = getSchema(entityType, entityDAOAnn);
           entityTable = getTable(entityType, entityDAOAnn);
+
+          PreProcess.requiredNonNull(entitySchema, "O RFWDAO não conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+          PreProcess.requiredNonNull(entityTable, "O RFWDAO não conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
 
           switch (parentRelAnn.relationship()) {
             case MANY_TO_MANY:
@@ -2244,7 +2252,11 @@ public final class RFWDAO<VO extends RFWVO> {
   private void loadEntityCollectionMap(Class<? extends RFWVO> root, DAOMap map, String attribute) throws RFWException {
     if (!"id".equals(attribute)) {
       if (attribute.endsWith("@") && attribute.length() > 0) attribute = attribute.substring(0, attribute.length() - 1);
-      Annotation ann = RUReflex.getRFWMetaAnnotation(root, attribute);
+
+      // Verifica se será substituído
+      Class<? extends RFWVO> entityType = getEntity(root);
+
+      Annotation ann = RUReflex.getRFWMetaAnnotation(entityType, attribute);
       if (ann instanceof RFWMetaCollectionField) {
         RFWMetaCollectionField colAnn = (RFWMetaCollectionField) ann;
         String parentPath = RUReflex.getParentPath(attribute); // Recuperamos o caminho pai para obter o mapeamento do pai. Já devemos ter todos pois o método loadEntityMap deve ser sempre chamado antes deste método
@@ -2266,6 +2278,27 @@ public final class RFWDAO<VO extends RFWVO> {
         }
       }
     }
+  }
+
+  /**
+   * Retorna a entitidade que deve ser utilizada para mapear o DAOMap.<br>
+   * Este método permite que o {@link DAOResolver} substitua um objeto por outro a ser mapeado em seu lugar.
+   *
+   * @param entityType Entidate a descobrir o Schema
+   * @param entityDAOAnn
+   * @return
+   * @throws RFWException
+   */
+  private Class<? extends RFWVO> getEntity(Class<? extends RFWVO> entityType) throws RFWException {
+    Class<? extends RFWVO> newEntity = null;
+    // Solicita no Resolver
+    if (this.resolver != null) {
+      newEntity = this.resolver.getEntityType(entityType);
+    }
+    if (newEntity == null) {
+      throw new RFWCriticalException("O DAOResolver retornou nulo ao resolver a entidade: '" + entityType.getCanonicalName() + "'.");
+    }
+    return newEntity;
   }
 
   /**
