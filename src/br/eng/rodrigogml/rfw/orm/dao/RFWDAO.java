@@ -1995,7 +1995,7 @@ public final class RFWDAO<VO extends RFWVO> {
   private void writeToVO(DAOMapField mField, VO vo, ResultSet rs) throws RFWException {
     try {
       final DAOMapTable mTable = mField.table;
-      final Field decField = mTable.type.getDeclaredField(mField.field);
+      final Field decField = RUReflex.getDeclaredFieldRecursively(mTable.type, mField.field);
 
       // Buscamos se o atributo tem algum converter definido
       final RFWDAOConverter convAnn = decField.getAnnotation(RFWDAOConverter.class);
@@ -2215,7 +2215,7 @@ public final class RFWDAO<VO extends RFWVO> {
       map.createMapField(path, "id", mapTable, "id"); // Este atributo segue o padrão que no banco de ser sempre "id" e no objeto herda sempre o atributo "id" da classe pai.
       // RFWDAO.dumpDAOMap(map)
       // Tendo o mapeamento da tabela feito, iteramos a classe para mapear todos os seus fields que tenham alguma anotação RFWMeta definida. Qualquer attributo sem uma annotation RFWMeta é ignorado.
-      for (Field field : entityType.getDeclaredFields()) {
+      for (Field field : RUReflex.getDeclaredFieldsRecursively(entityType)) {
         final Annotation metaAnn = RUReflex.getRFWMetaAnnotation(field);
         if (metaAnn != null) {
 
