@@ -1484,7 +1484,8 @@ public final class RFWDAO<VO extends RFWVO> {
 
                     // Verifica a existência de um Converter para a chave de acesso
                     if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
-                      Object ni = ann.keyConverterClass().newInstance();
+                      // Object ni = ann.keyConverterClass().newInstance();
+                      Object ni = createNewInstance(ann.keyConverterClass());
                       if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
                       keyValue = ((RFWDAOConverterInterface) ni).toVO(keyValue);
                     }
@@ -1526,7 +1527,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final String key = mTable.type.getCanonicalName() + "." + id;
               RFWVO vo = objCache.get(key);
               if (vo == null) {
-                vo = mTable.type.newInstance();
+                vo = (RFWVO) createNewInstance(mTable.type);
                 vo.setId(id);
                 objCache.put(key, vo);
 
@@ -2000,7 +2001,7 @@ public final class RFWDAO<VO extends RFWVO> {
       // Buscamos se o atributo tem algum converter definido
       final RFWDAOConverter convAnn = decField.getAnnotation(RFWDAOConverter.class);
       if (convAnn != null) {
-        final Object ni = convAnn.converterClass().newInstance();
+        final Object ni = createNewInstance(convAnn.converterClass());
         if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
         Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect);
         // final Object s = ((RFWDAOConverterInterface) ni).toVO(rs.getObject(mTable.alias + "." + mField.column));
@@ -2327,6 +2328,21 @@ public final class RFWDAO<VO extends RFWVO> {
       throw new RFWCriticalException("Não há um schema definido para a entidade '" + entityType.getCanonicalName() + "'.");
     }
     return schema;
+  }
+
+  private Object createNewInstance(Class<?> objClass) throws RFWException {
+    Object newInstance = null;
+    if (this.resolver != null) {
+      newInstance = this.resolver.createInstance(objClass);
+    }
+    if (newInstance == null) {
+      try {
+        newInstance = objClass.newInstance();
+      } catch (Throwable e) {
+        throw new RFWCriticalException("RFW_000021", new String[] { objClass.getCanonicalName() }, e);
+      }
+    }
+    return newInstance;
   }
 
   /**
