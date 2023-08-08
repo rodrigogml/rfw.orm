@@ -309,7 +309,7 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
-  private static <VO extends RFWVO> void persist(DataSource ds, DAOMap daoMap, boolean isNew, VO entityVO, VO entityVOOrig, String path, HashMap<String, VO> persistedCache, String sortColumn, int sortIndex, HashMap<RFWVO, List<RFWVOUpdatePending<RFWVO>>> updatePendings, SQLDialect dialect) throws RFWException {
+  private void persist(DataSource ds, DAOMap daoMap, boolean isNew, VO entityVO, VO entityVOOrig, String path, HashMap<String, VO> persistedCache, String sortColumn, int sortIndex, HashMap<RFWVO, List<RFWVOUpdatePending<RFWVO>>> updatePendings, SQLDialect dialect) throws RFWException {
     if (isNew && entityVO.getId() != null && !entityVO.isInsertWithID()) {
       throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. A entidade já veio com o ID definido para inserção.", new String[] { entityVO.getClass().getCanonicalName() });
     }
@@ -352,7 +352,7 @@ public final class RFWDAO<VO extends RFWVO> {
             }
             case INNER_ASSOCIATION: {
               // VALIDAÇÃO: No caso de INNER_ASSOCIATION, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(ann.columnMapped()) && "".equals(ann.column())) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
               // DELETE: quando o ID está neste objeto, sendo ele excluído ou a associação desfeita o ID tudo se resolve ao excluir ou atualizar este objeto. No caso de estar na tabela da contraparte, vamos atualizar ela depois que excluírmos esse objeto.
               // PERSISTÊNCIA: na persistência, por ser um objeto que está sendo persistido agora, pode ser que já tenhamos o ID, pode ser que não. Se já tiver o ID, deixa seguir, se não tiver, vamos limpar a associação para que se possa inserir o objeto sem a associação. e colocar o objeto na lista de pendências para atualizar a associação depois que tudo tiver sido persistido.
@@ -516,7 +516,7 @@ public final class RFWDAO<VO extends RFWVO> {
                       for (Object item : listOrig) {
                         String destPath = RUReflex.addPath(path, field.getName());
                         // Se não tivermos o caminho temos de completar dianimicamente no DAOMap
-                        if (daoMap.getMapTableByPath(destPath) == null) daoMap.createMapTableForCompositionTree(path, destPath, "id", ann.columnMapped());
+                        if (daoMap.getMapTableByPath(destPath) == null) daoMap.createMapTableForCompositionTree(path, destPath, "id", getMetaRelationColumnMapped(field, ann));
                         delete(ds, daoMap, (VO) item, destPath, dialect);
                       }
                     } else if ((listOrig != null && listOrig.size() >= 0) && (list != null && list.size() >= 0)) {
@@ -572,7 +572,7 @@ public final class RFWDAO<VO extends RFWVO> {
               break;
             case ASSOCIATION: {
               // VALIDAÇÃO: No caso de associação, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(ann.columnMapped()) && "".equals(ann.column())) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
               // DELETE: nos casos de associação, quando o ID está na nossa tabela, ele será definido como null ao atualizar o objeto e não devemos apagar a contra-parte. No caso do ID estar na tabela da contra-parte, vamos defini-lo como nulo depois do persistir o objeto atualizado
               // PERSISTÊNCIA: Nos casos de associação é esperado que o objeto associado já tenha um ID definido, já que é um objeto a parte
@@ -672,7 +672,7 @@ public final class RFWDAO<VO extends RFWVO> {
               break;
             case ASSOCIATION:
               // No caso de associação e a FK estar na tabela do outro objeto, temos atualizar a coluna do outro objeto. (Se estiver na tabela do objeto sendo editado o valor já foi definido)
-              if (!"".equals(ann.columnMapped())) {
+              if (!"".equals(getMetaRelationColumnMapped(field, ann))) {
                 // Verificamos se houve alteração entre a associação atual e a associação existente no banco de dados para saber se precisamos atualizar a tabels
                 final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
                 if (fieldValue != null) { // Atualmente temos um relacionamento
@@ -847,7 +847,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     String destPath = RUReflex.addPath(path, field.getName());
                     // System.out.println(dumpDAOMap(daoMap));
                     // Se não tivermos o caminho temos de completar dianimicamente no DAOMap
-                    daoMap.createMapTableForCompositionTree(path, destPath, "id", ann.columnMapped());
+                    daoMap.createMapTableForCompositionTree(path, destPath, "id", getMetaRelationColumnMapped(field, ann));
                     // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
                     persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, destPath, persistedCache, sColumn, countIndex, updatePendings, dialect);
 
@@ -984,6 +984,63 @@ public final class RFWDAO<VO extends RFWVO> {
       }
     }
 
+  }
+
+  /**
+   * Recupera a definição do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna a ser utilizada no mapeamento.
+   * @throws RFWException
+   */
+  private String getMetaRelationJoinTable(Field field, final RFWMetaRelationshipField ann) throws RFWException {
+    String joinTable = null;
+    if (this.resolver != null) {
+      joinTable = this.resolver.getMetaRelationJoinTable(field, ann);
+    }
+    if (joinTable == null) {
+      joinTable = ann.joinTable();
+    }
+    return joinTable;
+  }
+
+  /**
+   * Recupera a definição do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna a ser utilizada no mapeamento.
+   * @throws RFWException
+   */
+  private String getMetaRelationColumn(Field field, final RFWMetaRelationshipField ann) throws RFWException {
+    String column = null;
+    if (this.resolver != null) {
+      column = this.resolver.getMetaRelationColumn(field, ann);
+    }
+    if (column == null) {
+      column = ann.column();
+    }
+    return column;
+  }
+
+  /**
+   * Recupera a definição do atributo "columnMapped" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna a ser utilizada no mapeamento.
+   * @throws RFWException
+   */
+  private String getMetaRelationColumnMapped(Field field, final RFWMetaRelationshipField ann) throws RFWException {
+    String column = null;
+    if (this.resolver != null) {
+      column = this.resolver.getMetaRelationColumnMapped(field, ann);
+    }
+    if (column == null) {
+      column = ann.columnMapped();
+    }
+    return column;
   }
 
   /**
@@ -2172,41 +2229,41 @@ public final class RFWDAO<VO extends RFWVO> {
             case MANY_TO_MANY:
               // Se o relacionamento entre um objeto e outro é N:N temos de criar um mapeamento de tabela de "joinAlias", se ainda não existir
               DAOMapTable joinMapTable = map.getMapTableByPath("." + path); // Tabelas de Join tem o mesmo caminho da tabela da entidade relacionada, precedidas de um '.'
-              if (joinMapTable == null) joinMapTable = map.createMapTable(null, "." + path, parentMapTable.schema, parentRelAnn.joinTable(), parentRelAnn.column(), parentMapTable.alias, "id");
+              if (joinMapTable == null) joinMapTable = map.createMapTable(null, "." + path, parentMapTable.schema, getMetaRelationJoinTable(parentField, parentRelAnn), getMetaRelationColumn(parentField, parentRelAnn), parentMapTable.alias, "id");
               // Usamos as informações do mapeamento de joinAlias criado para criar o mapeamento desta entidade agora
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", joinMapTable.alias, parentRelAnn.columnMapped());
+              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", joinMapTable.alias, getMetaRelationColumnMapped(parentField, parentRelAnn));
               break;
             case PARENT_ASSOCIATION:
-              if ("".equals(parentRelAnn.column())) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como PARENT_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, parentRelAnn.column());
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como PARENT_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
             case WEAK_ASSOCIATION:
               // No mapeamento, este tipo de relacionamento se comporta igualzinho o ASSOCIATION, por isso deixamos seguir para o ASSOCIATION e realizar o mesmo tipo de mapeamento/regras.
             case ASSOCIATION:
-              if (!"".equals(parentRelAnn.column())) {
+              if (!"".equals(getMetaRelationColumn(parentField, parentRelAnn))) {
                 // Se a coluna mapeada está na tabela pai
-                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, parentRelAnn.column());
-              } else if (!"".equals(parentRelAnn.columnMapped())) {
+                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
+              } else if (!"".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) {
                 // Se a coluna mapeada está na nossa tabela
-                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, parentRelAnn.columnMapped(), parentMapTable.alias, "id");
+                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               } else {
                 throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como ASSOCIATION, mas não tem o atributo 'column' nem 'columMapper' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               }
               break;
             case COMPOSITION:
               // Se é composição, criamos o mapeamento considerando que a coluna de joinAlias está na tabela que estamos mapeando agora
-              if ("".equals(parentRelAnn.columnMapped())) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, parentRelAnn.columnMapped(), parentMapTable.alias, "id");
+              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               break;
             case COMPOSITION_TREE:
               // Se é composição de hierarquia, criamos o mapeamento só do primeiro objeto mas não vamos dar sequência recursivamente. A sequência recursiva deverá ser tratada dinamicamente no objeto posteriormente
-              if ("".equals(parentRelAnn.columnMapped())) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION_TREE, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, parentRelAnn.columnMapped(), parentMapTable.alias, "id");
+              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION_TREE, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               break;
             case INNER_ASSOCIATION:
               // Uma associação interna é similar a uma PARENT ASSOCIATION, mesmo que o RFWDAO vá reutilizar o objeto caso ele já exista, em casos de consultas específicas precisamos fazer o Join da tabela de qualquer forma.
-              if ("".equals(parentRelAnn.column())) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como INNER_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, parentRelAnn.column());
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como INNER_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
           }
         }
@@ -2232,9 +2289,9 @@ public final class RFWDAO<VO extends RFWVO> {
 
           if (metaAnn instanceof RFWMetaRelationshipField) {
             RFWMetaRelationshipField relAnn = (RFWMetaRelationshipField) metaAnn;
-            if (relAnn.relationship() != RelationshipTypes.MANY_TO_MANY && !"".equals(relAnn.column())) {
+            if (relAnn.relationship() != RelationshipTypes.MANY_TO_MANY && !"".equals(getMetaRelationColumn(field, relAnn))) {
               // Se a coluna com a FK fica na tabela deste objeto (ou seja o column foi definido e não é um relacionamento N:N)
-              map.createMapField(path, field.getName(), mapTable, relAnn.column());
+              map.createMapField(path, field.getName(), mapTable, getMetaRelationColumn(field, relAnn));
             } else {
               // Relacionamentos que não tenham a FK dentro da tabela do objeto em questão, não precisam ser mapeadas. Isso pq ou não serão recuperados de qualquer forma, ou serão mapeados depois no mapa da entidade associada.
             }

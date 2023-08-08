@@ -1,6 +1,9 @@
 package br.eng.rodrigogml.rfw.orm.dao.interfaces;
 
+import java.lang.reflect.Field;
+
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
+import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaRelationshipField;
 import br.eng.rodrigogml.rfw.kernel.vo.RFWVO;
 import br.eng.rodrigogml.rfw.orm.dao.RFWDAO;
 import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOAnnotation;
@@ -54,6 +57,42 @@ public interface DAOResolver {
    * @return Deve retornar a instância que possa ser auferida pela classe passada. Retornar nulo fará com que o RFWDAO siga sua implementação padrão.
    */
   public default Object createInstance(Class<?> objClass) throws RFWException {
+    return null;
+  }
+
+  /**
+   * Permite interferir com o atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna a ser utilizada no mapeamento, ou nulo para continuar com a implementação padrão do RFWDAO.
+   * @throws RFWException Lançado em caso de falha.
+   */
+  public default String getMetaRelationColumn(Field field, final RFWMetaRelationshipField ann) throws RFWException {
+    return null;
+  }
+
+  /**
+   * Permite interferir com o atributo "columnMapped" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna a ser utilizada no mapeamento, ou nulo para continuar com a implementação padrão do RFWDAO.
+   * @throws RFWException Lançado em caso de falha.
+   */
+  public default String getMetaRelationColumnMapped(Field field, RFWMetaRelationshipField ann) throws RFWException {
+    return null;
+  }
+
+  /**
+   * Permite interferir com o atributo "joinTable" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   *
+   * @param field Field do objeto que estamos tratando, e procurando o valor da joinTable para terminar o mapeamento.
+   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @return Retorna o nome da coluna de join nos casos de ManyToMany que será utilizada no mapeamento.
+   * @throws RFWException Lançado em caso de falha.
+   */
+  public default String getMetaRelationJoinTable(Field field, RFWMetaRelationshipField ann) throws RFWException {
     return null;
   }
 
