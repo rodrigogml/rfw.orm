@@ -739,6 +739,13 @@ class DAOMap {
       case COUNT:
         buff.append("count(*)");
         break;
+      case DISTINCT:
+        if (field.getField() != null) {
+          buff.append("DISTINCT(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
+        } else {
+          buff.append("DISTINCT(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
+        }
+        break;
       case COALESCE:
         buff.append("coalesce(");
         for (RFWField param : field.getFunctionParam()) {
@@ -1696,6 +1703,16 @@ class DAOMap {
           stmt.setString(i, ((Enum<?>) o).name());
         } else if (o instanceof BigDecimal) {
           stmt.setBigDecimal(i, (BigDecimal) o);
+        } else if (o instanceof Double) {
+          stmt.setDouble(i, (Double) o);
+        } else if (o instanceof Float) {
+          stmt.setFloat(i, (Float) o);
+        } else if (o instanceof Short) {
+          stmt.setShort(i, (Short) o);
+        } else if (o instanceof Character) {
+          stmt.setString(i, String.valueOf(o));
+        } else if (o instanceof Byte) {
+          stmt.setByte(i, (Byte) o);
         } else if (o instanceof byte[]) {
           byte[] b = (byte[]) o;
           try (ByteArrayInputStream is = new ByteArrayInputStream(b)) {

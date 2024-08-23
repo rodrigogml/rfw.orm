@@ -1228,6 +1228,46 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
+   * Busca a quantidade de itens que uma busca por filtro {@link RFWMO} retornará.<br>
+   * Esta busca faz uma query do tipo 'SELECT COUNT(*)...' trazendo do banco apenas o total, sem carregar qualquer outro tipo de objeto, o que melhora a performance quando o desejado é apenas o total de itens.
+   *
+   * @param mo Match Object para realizar o filtro no banco de dados.
+   * @return Long com a quantidade de itens encontrados. Zero se a query retornou vazia.
+   * @throws RFWException Lanaçado em caso de erro.
+   */
+  public Long count(RFWMO mo) throws RFWException {
+    RFWField[] fields = new RFWField[1];
+    fields[0] = RFWField.count();
+
+    List<Object[]> list = findListEspecial(fields, mo, null, null, null, null);
+    return (Long) list.get(0)[0];
+  }
+
+  /**
+   * Busca os valores distintos de uma determinada coluna do banco de dados, com a possibilidade de filtrar os registros com o {@link RFWMO}.<Br>
+   * Esta consulta usa diretamente o DISTINCT no banco de dados na coluna desejada.
+   *
+   * @param attribute nome do atributo (ou caminho) para realizar a consulta de valores distintos no banco de dados.
+   * @param mo Match Object para realizar o filtro no banco de dados.
+   * @return Lista com os valores distintos da coluna/propriedade solicitada. Os objetos tendem a ser equivalente ao tipo de dado no banco de dados. Pois são criados a partir do método .getObject() do ResultSet, e sem intervenção do RFWDAO.
+   * @throws RFWException
+   */
+  public List<Object> findDistinct(String attribute, RFWMO mo) throws RFWException {
+    RFWField[] fields = new RFWField[1];
+    fields[0] = RFWField.distinct(attribute);
+
+    List<Object[]> list = findListEspecial(fields, mo, null, null, null, null);
+
+    List<Object> resultList = new ArrayList<>();
+    for (Object[] array : list) {
+      if (array != null && array.length > 0) {
+        resultList.add(array[0]);
+      }
+    }
+    return resultList;
+  }
+
+  /**
    * Busca uma lista de VOs baseado em um critério de "search".
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
@@ -2083,7 +2123,7 @@ public final class RFWDAO<VO extends RFWVO> {
         } else if (Date.class.isAssignableFrom(dataType)) {
           // Timestamp d = rs.getTimestamp(mField.table.alias + "." + mField.column);
           // if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(d.getTime()), false);
-          throw new RFWCriticalException("Por definição o RFWDeprec não deve mais utilizar o java.util.Date, verifique a implementação e substitua corretamente por LocalDate, LocalTime ou LocalDateTime. '${0}'", new String[] { mField.table.type.getCanonicalName() + "#" + mField.field });
+          throw new RFWCriticalException("Por definição o RFW não deve mais utilizar o java.util.Date, verifique a implementação e substitua corretamente por LocalDate, LocalTime ou LocalDateTime. '${0}'", new String[] { mField.table.type.getCanonicalName() + "#" + mField.field });
         } else if (LocalDate.class.isAssignableFrom(dataType)) {
           Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getObject(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) {
