@@ -30,6 +30,7 @@ import br.eng.rodrigogml.rfw.kernel.RFW;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWValidationException;
+import br.eng.rodrigogml.rfw.kernel.exceptions.RFWWarningException;
 import br.eng.rodrigogml.rfw.kernel.preprocess.PreProcess;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
@@ -306,6 +307,39 @@ public final class RFWDAO<VO extends RFWVO> {
     }
     vo.setInsertWithID(false); // Garante que o objeto não vai retornar com a flag em true. Um objeto que tenha ID mas que tenha essa flag em true é considerado pelo sistema como um objeto que não está no banco de dados.
     return vo;
+  }
+
+  /**
+   * Este método permite que apenas os atributos passados sejam atualizados no banco de dados.<br>
+   * O método produt o objeto no banco de acordo com sua classe e 'id' definidos, e copia os valores dos atributos definidos em 'attributes' do VO recebido para o objeto obtido do banco de dados, garantindo assim que apenas os valores selecionados serão atualizados.<Br>
+   * <bR>
+   * <B>Observação de Usos:</b> Propriedades aninhadas podem ser utilizadas, mas apenas em casos bem específicos:
+   * <ul>
+   * <li>Cuidado ao definir propriedades aninhadas, este método não inicaliza os objetos se eles vierem nulos do banco de dados, pois nesses casos é necessário enviar o objeto completo e validado.
+   * <li>Apenas o objeto principal será persistido no banco de dados, assim, definir propriedades aninhadas em objetos com relacionamento de associação ou parent_association, por exemplo, não fará com que o valor seja atualizado.
+   * </ul>
+   *
+   * @param vo Objeto com o id de identificação e os valores que devem ser atualizados.
+   * @param attributes Array com os atributos que devem ser copiados para o objeto original antes de ser persistido.
+   * @return
+   * @throws RFWException
+   * @Deprecated Este método foi criado para retrocompatibilidade com o BIS2 e deve ser apagado em breve. A alternativa desse método é utilizar o {@link #massUpdate(Map, RFWMO)} com um filtro pelo ID.<br>
+   *             Ou podemos criar um novo método chamado algo como 'simpleUpdate' ou 'uniqueUpdate', que ao invés do MO receba o ID direto do objeto (e internamente direciona o para o massUpdate.
+   */
+  @Deprecated
+  public VO persist(VO vo, String[] attributes) throws RFWException {
+    PreProcess.requiredNonNull(vo);
+    PreProcess.requiredNonNull(vo.getId());
+    PreProcess.requiredNonEmptyCritical(attributes);
+
+    VO dbVO = findForUpdate(vo.getId(), attributes);
+
+    for (String att : attributes) {
+      Object value = RUReflex.getPropertyValue(vo, att);
+      RUReflex.setPropertyValue(dbVO, att, value, false);
+    }
+
+    return persist(dbVO);
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes", "deprecation" })
@@ -1646,73 +1680,15 @@ public final class RFWDAO<VO extends RFWVO> {
         }
 
         // Com todos os objetos criados, só precisamos defini-los para montar a hierarquia
-        for (DAOMapTable mTable : map.getMapTable()) {
-          if (mTable.joinAlias != null && !mTable.path.startsWith(".")) { // joinAlias != null -> ignora a tabela raiz, Todos os objetos raíz não precisem ser colocados dentro de outro objeto, mas colocamos no array de objetos que vamos retornar | !mTable.path.startsWith(".") -> ignora as tabelas de N:N que não tem um objeto
-            RFWVO vo = aliasCache.get(mTable.alias);
-            // VO pode ser nulo caso a associação não exista
-            if (vo != null) {
-              RFWVO join = aliasCache.get(mTable.joinAlias);
-              if (join == null) {
-                // Join é nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
-                final DAOMapTable tmp = map.getMapTableByAlias(mTable.joinAlias);
-                // Se for mesmo a tabela de Join, ela tem o caminho começando com ".". Se não for uma tabela de join não utilizamos o objeto pois pode ser só um caso de 2 Joins de objetos diferentes e estamos pulando 1
-                if (tmp.path.startsWith(".")) join = aliasCache.get(tmp.joinAlias);
-              }
-              final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
-              final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
-              if (RFWVO.class.isAssignableFrom(rt)) {
-                RUReflex.setPropertyValue(join, relativePath, vo, false);
-              } else if (List.class.isAssignableFrom(rt)) {
-                List list = (List) RUReflex.getPropertyValue(join, relativePath);
-                if (list == null) {
-                  list = new ArrayList<>();
-                }
-                if (!list.contains(vo)) { // Só adiciona se ainda não tiver este objeto
-                  // Se é uma lista, verificamos se no atributo do VO temos a definição da coluna de 'sortColumn', para montar a lista na ordem correta.
-                  final RFWMetaRelationshipField ann = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class);
-                  Integer sortIndex = null;
-                  if (ann != null && !"".equals(ann.sortColumn())) {
-                    sortIndex = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, ann.sortColumn(), dialect); // rs.getInt(mTable.alias + "." + ann.sortColumn());
-                  }
-                  // Verificamos se é um caso de composição de árvore
-                  if (ann.relationship() == RelationshipTypes.COMPOSITION_TREE) {
-                    // Nos casos de composição de árvore vamos recber o primeiro objeto, mas não os objetos filhos da árvore completa. Isso pq não teriamos como fazer infinitos JOINS no SQL para garantir que todos os objetos seriam retornados.
-                    // Nestes casos vamos resolicitar ao DAO este objeto de forma completa, incluindo seu próximo filho. Isso será feito de forma recursiva até que todos sejam recuperados.
-                    // Para aproveitar o mesmo cache de objetos, chamamos um método específico para isso, que criará um SQL baseado no DAOMap que já temos deste objeto e passando o cache de objetos
-                    vo = fullFillCompositoinTreeObject(map, map.getMapTableByAlias(mTable.joinAlias), vo, objCache);
-                  }
-                  if (sortIndex == null) {
-                    // Se não temos sortIndex, simplesmente adicionamos à lista a medida que vamos recuperando
-                    list.add(vo);
-                  } else {
-                    if (list.size() == 0) cleanLists.add(list); // Se é nova, e temos indexação, incluímos a lista para limpeza depois.
-                    // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posição a ser ocupada, incluímos alguns "Dummy" Objects para crescer a lista e já deixar o objeto na posição correta
-                    while (list.size() <= sortIndex + 3)
-                      list.add(map); // incluimos um objeto que já existe para evitar instanciar novos objetos na memória. E Adicionar NULL não funciona na Linked List
-                    // Incluímos inclusive um objeto no lugar onde nosso objeto será colocado propositalmente, assim não precisamos ter duas lógicas abaixo
-                    list.add(sortIndex, vo); // Ao incluir o objeto no índex determinado, empurramos todos os outros para frente, por isso temos de remover o próximo objeto (que antes ocupava o lugar deste)
-                    list.remove(sortIndex + 1);
-                  }
-                  RUReflex.setPropertyValue(join, relativePath, list, false);
-                }
-              } else if (Map.class.isAssignableFrom(rt)) {
-                Map hash = (Map) RUReflex.getPropertyValue(join, relativePath);
-                if (hash == null) {
-                  hash = new LinkedHashMap<>();
-                }
-                // Recupera o atributo do objeto que é usado como chave da hash
-                final String keyMapAttributeName = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class).keyMap();
-                final Object key = RUReflex.getPropertyValue(vo, keyMapAttributeName);
-                if (!hash.containsKey(key)) {
-                  hash.put(key, vo); // Só adiciona se ainda não tiver este objeto
-                  RUReflex.setPropertyValue(join, relativePath, hash, false);
-                }
-              } else {
-                throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
-              }
-            } else {
-              // Se o objeto da tabela não foi montado, verifica se a chave consta na Hash. Isso não há objeto para associar, mas que o objeto foi procurado. Nesse caso não temos objeto para adicionar, mas devemos criar a Lista/Hash Vazia se ela ainda não existir
-              if (aliasCache.containsKey(mTable.alias)) {
+        for (int iterationControl = 0; iterationControl < 2; iterationControl++) {
+          // O Loop do iteration control foi criado para garantir que as hashs só serão montadas em uma segunda iteração, depois que os demais objetos já foram montados. Isso porquê a chave da hash possa ter propriedades aninhadas em seus subobjetos, e garantir que eles já foram montados:
+          // - Iteração 0: monta todos os objetos e os "relaciona" nas propriedades diretas e Listas
+          // - Iteração 1: monta as Hashs para que suas propriedaes aninhadas não estejam nulas.
+          for (DAOMapTable mTable : map.getMapTable()) {
+            if (mTable.joinAlias != null && !mTable.path.startsWith(".")) { // joinAlias != null -> ignora a tabela raiz, Todos os objetos raíz não precisem ser colocados dentro de outro objeto, mas colocamos no array de objetos que vamos retornar | !mTable.path.startsWith(".") -> ignora as tabelas de N:N que não tem um objeto
+              RFWVO vo = aliasCache.get(mTable.alias);
+              // VO pode ser nulo caso a associação não exista
+              if (vo != null) {
                 RFWVO join = aliasCache.get(mTable.joinAlias);
                 if (join == null) {
                   // Join é nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
@@ -1720,26 +1696,95 @@ public final class RFWDAO<VO extends RFWVO> {
                   // Se for mesmo a tabela de Join, ela tem o caminho começando com ".". Se não for uma tabela de join não utilizamos o objeto pois pode ser só um caso de 2 Joins de objetos diferentes e estamos pulando 1
                   if (tmp.path.startsWith(".")) join = aliasCache.get(tmp.joinAlias);
                 }
-                if (join != null) {
-                  // Se joinAlias continuar nulo, é pq mesmo o objeto pai não foi montado. Isso pode acontecer am casos de múltiplos LEFT JOIN e o relacionamento anterior também retornou nulo. Como ele é nulo não precisamos criar a lista vazia
-                  final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
-                  final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
-                  if (RFWVO.class.isAssignableFrom(rt)) {
-                    // Não faz nada, só não deixa cair no else
-                  } else if (List.class.isAssignableFrom(rt)) {
+                final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
+                final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
+                if (RFWVO.class.isAssignableFrom(rt)) {
+                  if (iterationControl == 0) {
+                    RUReflex.setPropertyValue(join, relativePath, vo, false);
+                  }
+                } else if (List.class.isAssignableFrom(rt)) {
+                  if (iterationControl == 0) {
                     List list = (List) RUReflex.getPropertyValue(join, relativePath);
                     if (list == null) {
                       list = new ArrayList<>();
+                    }
+                    if (!list.contains(vo)) { // Só adiciona se ainda não tiver este objeto
+                      // Se é uma lista, verificamos se no atributo do VO temos a definição da coluna de 'sortColumn', para montar a lista na ordem correta.
+                      final RFWMetaRelationshipField ann = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class);
+                      Integer sortIndex = null;
+                      if (ann != null && !"".equals(ann.sortColumn())) {
+                        sortIndex = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, ann.sortColumn(), dialect); // rs.getInt(mTable.alias + "." + ann.sortColumn());
+                      }
+                      // Verificamos se é um caso de composição de árvore
+                      if (ann.relationship() == RelationshipTypes.COMPOSITION_TREE) {
+                        // Nos casos de composição de árvore vamos recber o primeiro objeto, mas não os objetos filhos da árvore completa. Isso pq não teriamos como fazer infinitos JOINS no SQL para garantir que todos os objetos seriam retornados.
+                        // Nestes casos vamos resolicitar ao DAO este objeto de forma completa, incluindo seu próximo filho. Isso será feito de forma recursiva até que todos sejam recuperados.
+                        // Para aproveitar o mesmo cache de objetos, chamamos um método específico para isso, que criará um SQL baseado no DAOMap que já temos deste objeto e passando o cache de objetos
+                        vo = fullFillCompositoinTreeObject(map, map.getMapTableByAlias(mTable.joinAlias), vo, objCache);
+                      }
+                      if (sortIndex == null) {
+                        // Se não temos sortIndex, simplesmente adicionamos à lista a medida que vamos recuperando
+                        list.add(vo);
+                      } else {
+                        if (list.size() == 0) cleanLists.add(list); // Se é nova, e temos indexação, incluímos a lista para limpeza depois.
+                        // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posição a ser ocupada, incluímos alguns "Dummy" Objects para crescer a lista e já deixar o objeto na posição correta
+                        while (list.size() <= sortIndex + 3)
+                          list.add(map); // incluimos um objeto que já existe para evitar instanciar novos objetos na memória. E Adicionar NULL não funciona na Linked List
+                        // Incluímos inclusive um objeto no lugar onde nosso objeto será colocado propositalmente, assim não precisamos ter duas lógicas abaixo
+                        list.add(sortIndex, vo); // Ao incluir o objeto no índex determinado, empurramos todos os outros para frente, por isso temos de remover o próximo objeto (que antes ocupava o lugar deste)
+                        list.remove(sortIndex + 1);
+                      }
                       RUReflex.setPropertyValue(join, relativePath, list, false);
                     }
-                  } else if (Map.class.isAssignableFrom(rt)) {
+                  }
+                } else if (Map.class.isAssignableFrom(rt)) {
+                  if (iterationControl == 1) {
                     Map hash = (Map) RUReflex.getPropertyValue(join, relativePath);
                     if (hash == null) {
                       hash = new LinkedHashMap<>();
+                    }
+                    // Recupera o atributo do objeto que é usado como chave da hash
+                    final String keyMapAttributeName = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class).keyMap();
+                    final Object key = RUReflex.getPropertyValue(vo, keyMapAttributeName);
+                    if (!hash.containsKey(key)) {
+                      hash.put(key, vo); // Só adiciona se ainda não tiver este objeto
                       RUReflex.setPropertyValue(join, relativePath, hash, false);
                     }
-                  } else {
-                    throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
+                  }
+                } else {
+                  throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
+                }
+              } else {
+                // Se o objeto da tabela não foi montado, verifica se a chave consta na Hash. Isso não há objeto para associar, mas que o objeto foi procurado. Nesse caso não temos objeto para adicionar, mas devemos criar a Lista/Hash Vazia se ela ainda não existir
+                if (aliasCache.containsKey(mTable.alias)) {
+                  RFWVO join = aliasCache.get(mTable.joinAlias);
+                  if (join == null) {
+                    // Join é nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
+                    final DAOMapTable tmp = map.getMapTableByAlias(mTable.joinAlias);
+                    // Se for mesmo a tabela de Join, ela tem o caminho começando com ".". Se não for uma tabela de join não utilizamos o objeto pois pode ser só um caso de 2 Joins de objetos diferentes e estamos pulando 1
+                    if (tmp.path.startsWith(".")) join = aliasCache.get(tmp.joinAlias);
+                  }
+                  if (join != null) {
+                    // Se joinAlias continuar nulo, é pq mesmo o objeto pai não foi montado. Isso pode acontecer am casos de múltiplos LEFT JOIN e o relacionamento anterior também retornou nulo. Como ele é nulo não precisamos criar a lista vazia
+                    final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
+                    final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
+                    if (RFWVO.class.isAssignableFrom(rt)) {
+                      // Não faz nada, só não deixa cair no else
+                    } else if (List.class.isAssignableFrom(rt)) {
+                      List list = (List) RUReflex.getPropertyValue(join, relativePath);
+                      if (list == null) {
+                        list = new ArrayList<>();
+                        RUReflex.setPropertyValue(join, relativePath, list, false);
+                      }
+                    } else if (Map.class.isAssignableFrom(rt)) {
+                      Map hash = (Map) RUReflex.getPropertyValue(join, relativePath);
+                      if (hash == null) {
+                        hash = new LinkedHashMap<>();
+                        RUReflex.setPropertyValue(join, relativePath, hash, false);
+                      }
+                    } else {
+                      throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
+                    }
                   }
                 }
               }
@@ -2029,6 +2074,39 @@ public final class RFWDAO<VO extends RFWVO> {
     return l;
   }
 
+  private Float getRSFloat(ResultSet rs, String schema, String tableName, String tableAlias, String column, SQLDialect dialect) throws RFWException {
+    Float l = null;
+    switch (dialect) {
+      case MySQL:
+        try {
+          l = rs.getFloat(tableAlias + "." + column);
+          if (rs.wasNull()) l = null;
+          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+        } catch (SQLException e) {
+          throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
+        }
+        break;
+      case DerbyDB:
+        try {
+          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          String col = (schema + "." + tableName + "." + column).toUpperCase();
+          ResultSetMetaData md = rs.getMetaData();
+          for (int i = 1; i <= md.getColumnCount(); i++) {
+            if (col.equals(md.getSchemaName(i) + "." + md.getTableName(i) + "." + md.getColumnName(i))) {
+              l = rs.getFloat(i);
+              if (rs.wasNull()) l = null;
+              break;
+            }
+          }
+        } catch (SQLException e) {
+          throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
+        }
+        break;
+    }
+    return l;
+  }
+
   private String getRSString(ResultSet rs, String schema, String tableName, String tableAlias, String column, SQLDialect dialect) throws RFWException {
     String s = null;
     switch (dialect) {
@@ -2121,9 +2199,12 @@ public final class RFWDAO<VO extends RFWVO> {
             RUReflex.setPropertyValue(vo, mField.field, s, false);
           }
         } else if (Date.class.isAssignableFrom(dataType)) {
-          // Timestamp d = rs.getTimestamp(mField.table.alias + "." + mField.column);
-          // if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(d.getTime()), false);
-          throw new RFWCriticalException("Por definição o RFW não deve mais utilizar o java.util.Date, verifique a implementação e substitua corretamente por LocalDate, LocalTime ou LocalDateTime. '${0}'", new String[] { mField.table.type.getCanonicalName() + "#" + mField.field });
+          if (!RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
+            // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
+            new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
+          }
+          java.sql.Date dbDate = rs.getObject(mField.table.alias + "." + mField.column, java.sql.Date.class);
+          if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(dbDate.getTime()), false);
         } else if (LocalDate.class.isAssignableFrom(dataType)) {
           Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getObject(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) {
@@ -2144,6 +2225,9 @@ public final class RFWDAO<VO extends RFWVO> {
         } else if (Integer.class.isAssignableFrom(dataType)) {
           Integer i = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getInt(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, i, false);
+        } else if (Float.class.isAssignableFrom(dataType)) {
+          Float i = getRSFloat(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getInt(mTable.alias + "." + mField.column);
+          if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, i, false);
         } else if (Boolean.class.isAssignableFrom(dataType)) {
           Boolean b = getRSBoolean(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getBoolean(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, b, false);
@@ -2153,9 +2237,13 @@ public final class RFWDAO<VO extends RFWVO> {
         } else if (Enum.class.isAssignableFrom(dataType)) {
           String b = getRSString(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getString(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            final Enum e = Enum.valueOf((Class<Enum>) dataType, b);
-            RUReflex.setPropertyValue(vo, mField.field, e, false);
+            try {
+              @SuppressWarnings({ "rawtypes", "unchecked" })
+              final Enum e = Enum.valueOf((Class<Enum>) dataType, b);
+              RUReflex.setPropertyValue(vo, mField.field, e, false);
+            } catch (IllegalArgumentException e) {
+              throw new RFWCriticalException("RFW_ERR_000013", new String[] { b, dataType.getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+            }
           }
         } else if (byte[].class.isAssignableFrom(dataType)) {
           Blob blob = getRSBlob(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getBlob(mTable.alias + "." + mField.column);
@@ -2242,9 +2330,9 @@ public final class RFWDAO<VO extends RFWVO> {
           // Se temos o pai, temos de verificar o relacionamento que entre o objeto pai e este e suas definições. Dependendo do tipo de relacionamento, posicionamento da FK e etc., o mapeamento será diferente
           Field parentField = null;
           try {
-            parentField = parentMapTable.type.getDeclaredField(RUReflex.getLastPath(path));
+            parentField = parentMapTable.type.getDeclaredField(RUReflex.getCleanPath(RUReflex.getLastPath(path)));
           } catch (Exception e) {
-            throw new RFWCriticalException("", new String[] { RUReflex.getLastPath(path), parentMapTable.type.getCanonicalName() }, e);
+            throw new RFWCriticalException("", new String[] { RUReflex.getCleanPath(RUReflex.getLastPath(path)), parentMapTable.type.getCanonicalName() }, e);
           }
           final RFWMetaRelationshipField parentRelAnn = parentField.getAnnotation(RFWMetaRelationshipField.class);
 
@@ -2474,7 +2562,7 @@ public final class RFWDAO<VO extends RFWVO> {
    * @throws RFWException
    */
   public static String dumpDAOMap(DAOMap map) throws RFWException {
-    // RFWDAO.dumpDAOMap(map)
+    // RUFile.writeFileContent("c:\\t\\dumpDAOMap.txt", RFWDAO.dumpDAOMap(map));
     // RFWDAO.dumpDAOMap(daoMap)
     StringBuilder buff = new StringBuilder();
     buff.append(System.lineSeparator()).append(System.lineSeparator());

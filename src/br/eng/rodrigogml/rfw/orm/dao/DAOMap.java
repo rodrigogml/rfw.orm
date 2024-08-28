@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import br.eng.rodrigogml.rfw.kernel.RFW;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
+import br.eng.rodrigogml.rfw.kernel.exceptions.RFWWarningException;
 import br.eng.rodrigogml.rfw.kernel.logger.RFWLogger;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
@@ -477,7 +478,7 @@ class DAOMap {
                   if (mField == null) {
                     // Um dos casos do mField ser nulo é pq o atributo solicitado no find não é um atributo "final" de um objeto, mas sim um atributo que aponta para outro objeto de relacionamento.
                     // No Find devemos sempre buscar os atributos diretos dos objetos, caso contrário eles não serão mapeados.
-                    throw new RFWCriticalException("O atributo '${0}' não foi maepado no DAO! Ao realizar consultas, sempre utilize o caminho desejado até um atributo do objeto, e não somente para um atributo que aponte o relacionamento. Em outras palavras, não termine o caminho desejado com \".path()\", solicite um atributo do objeto como \".id()\".", new String[] { fieldName });
+                    throw new RFWCriticalException("O atributo '${0}' não foi maepado no DAO! Ao realizar consultas, sempre utilize o caminho desejado até um atributo do objeto e não somente para um atributo que aponte o relacionamento (VO). Em outras palavras, não termine o caminho desejado do MO com \".path()\", solicite um atributo do objeto como \".id()\".", new String[] { fieldName });
                   }
                 }
                 final DAOMapTable mTable = mField.table;
@@ -583,7 +584,7 @@ class DAOMap {
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (map.getMapTable().size() > 15) {
-        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha dá problemas de performance.
+        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha é pior em questões de performance.
         RFWLogger.logDebug("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
         stmt.setFetchSize(Integer.MIN_VALUE);
       }
@@ -703,7 +704,7 @@ class DAOMap {
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (map.getMapTable().size() > 15) {
-        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha dá problemas de performance.
+        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha é pior em questões de performance.
         RFWLogger.logDebug("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
         stmt.setFetchSize(Integer.MIN_VALUE);
       }
@@ -736,14 +737,17 @@ class DAOMap {
           buff.append("sum(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
         }
         break;
+      case SUBTRACT:
+        buff.append("(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(" - ").append(evalRFWField(map, field.getFunctionParam().get(1), dialect)).append(")");
+        break;
       case COUNT:
         buff.append("count(*)");
         break;
       case DISTINCT:
         if (field.getField() != null) {
-          buff.append("DISTINCT(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
+          buff.append("distinct(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
         } else {
-          buff.append("DISTINCT(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
+          buff.append("distinct(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
         }
         break;
       case COALESCE:
@@ -801,8 +805,40 @@ class DAOMap {
       case DIVIDE:
         buff.append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append("/").append(evalRFWField(map, field.getFunctionParam().get(1), dialect));
         break;
+      case WEEKDAY: // Deve retornar valores de 0 a 6, começando na segunda-feira.
+        switch (dialect) {
+          case DerbyDB:
+            // Função dayofweek do Derby difere da weekday definida no RFWDAO (leia definição da função em RFWField), por isso o ajuste do valor retornado
+            if (field.getField() != null) {
+              buff.append("((dayofweek(").append(evalFieldToColumn(map, field.getField(), dialect)).append(") + 5) % 7)");
+            } else {
+              buff.append("((dayofweek(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(") + 5) % 7)");
+            }
+            break;
+          case MySQL:
+            if (field.getField() != null) {
+              buff.append("weekday(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
+            } else {
+              buff.append("weekday(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
+            }
+            break;
+        }
+        break;
+      case DAY:
+        if (field.getField() != null) {
+          buff.append("day(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
+        } else {
+          buff.append("day(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
+        }
+        break;
+      case HOUR:
+        if (field.getField() != null) {
+          buff.append("hour(").append(evalFieldToColumn(map, field.getField(), dialect)).append(")");
+        } else {
+          buff.append("hour(").append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append(")");
+        }
+        break;
     }
-
     return buff.toString();
 
   }
@@ -1684,8 +1720,11 @@ class DAOMap {
         } else if (o instanceof String) {
           stmt.setString(i, (String) o);
         } else if (o instanceof Date) {
-          // stmt.setTimestamp(i, new Timestamp(((Date) o).getTime()));
-          throw new RFWCriticalException("Por definição o RFWDeprec não deve mais utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.");
+          if (!RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
+            // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
+            new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
+          }
+          stmt.setTimestamp(i, new Timestamp(((Date) o).getTime()));
         } else if (o instanceof LocalDate) {
           // stmt.setObject(i, o, Types.DATE);
           stmt.setDate(i, java.sql.Date.valueOf((LocalDate) o));
