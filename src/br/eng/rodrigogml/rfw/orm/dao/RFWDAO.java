@@ -2203,8 +2203,8 @@ public final class RFWDAO<VO extends RFWVO> {
             // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
             new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
           }
-          java.sql.Date dbDate = rs.getObject(mField.table.alias + "." + mField.column, java.sql.Date.class);
-          if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(dbDate.getTime()), false);
+          Timestamp timestamp = rs.getTimestamp(mField.table.alias + "." + mField.column);
+          if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(timestamp.getTime()), false);
         } else if (LocalDate.class.isAssignableFrom(dataType)) {
           Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect); // rs.getObject(mTable.alias + "." + mField.column);
           if (!rs.wasNull()) {
@@ -2562,7 +2562,7 @@ public final class RFWDAO<VO extends RFWVO> {
    * @throws RFWException
    */
   public static String dumpDAOMap(DAOMap map) throws RFWException {
-    // RUFile.writeFileContent("c:\\t\\dumpDAOMap.txt", RFWDAO.dumpDAOMap(map));
+    // br.eng.rodrigogml.rfw.kernel.utils.RUFile.writeFileContent("c:\\t\\dumpDAOMap.txt", RFWDAO.dumpDAOMap(map));
     // RFWDAO.dumpDAOMap(daoMap)
     StringBuilder buff = new StringBuilder();
     buff.append(System.lineSeparator()).append(System.lineSeparator());
