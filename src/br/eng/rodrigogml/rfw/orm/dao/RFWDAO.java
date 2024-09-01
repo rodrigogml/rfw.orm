@@ -2199,7 +2199,7 @@ public final class RFWDAO<VO extends RFWVO> {
             RUReflex.setPropertyValue(vo, mField.field, s, false);
           }
         } else if (Date.class.isAssignableFrom(dataType)) {
-          if (!RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
+          if (RFW.isDevelopmentEnvironment() && !RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
             // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
             new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
           }
