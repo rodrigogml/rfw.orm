@@ -770,7 +770,7 @@ class DAOMap {
         buff.append("'").append(field.getConstantValue()).append("'");
         break;
       case CONSTANTE_NUMBER:
-        buff.append("'").append(field.getConstantValue()).append("'");
+        buff.append(field.getConstantValue());
         break;
       case CONSTANT_NULL:
         buff.append("NULL");
