@@ -31,7 +31,6 @@ import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWValidationException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWWarningException;
-import br.eng.rodrigogml.rfw.kernel.logger.RFWLogger;
 import br.eng.rodrigogml.rfw.kernel.preprocess.PreProcess;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
@@ -1152,7 +1151,6 @@ public final class RFWDAO<VO extends RFWVO> {
    */
   @SuppressWarnings("unchecked")
   public VO findById(Long id, String[] attributes) throws RFWException {
-    RFW.pDev("### Find By ID - Initing");
     if (id == null) throw new NullPointerException("ID can't be null!");
 
     final DAOMap map = createDAOMap(this.type, attributes);
@@ -1161,19 +1159,16 @@ public final class RFWDAO<VO extends RFWVO> {
     RFWMO mo = new RFWMO();
     mo.equal("id", id);
 
-    RFW.pDev("### Find By ID - Statement");
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, attributes, true, mo, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
       final List<RFWVO> list = mountVO(rs, map, null);
       if (list.size() > 1) {
         throw new RFWCriticalException("Encontrado mais de um objeto em uma busca por ID.", new String[] { "" + id, RUArray.concatArrayIntoString(attributes, ",") });
       } else if (list.size() == 1) {
-        RFW.pDev("### Find By ID - Returning");
         return (VO) list.get(0);
       }
     } catch (Throwable e) {
       throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
     }
-    RFW.pDev("### Find By ID - NULL");
     return null;
   }
 
