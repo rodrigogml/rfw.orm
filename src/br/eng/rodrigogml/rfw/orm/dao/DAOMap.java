@@ -585,7 +585,7 @@ class DAOMap {
       PreparedStatement stmt = conn.prepareStatement(s, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (map.getMapTable().size() > 15) {
         // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha é pior em questões de performance.
-        RFWLogger.logDebug("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
+        RFW.pDev("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
         stmt.setFetchSize(Integer.MIN_VALUE);
       }
       writeStatementParameters(stmt, statementParameters);
