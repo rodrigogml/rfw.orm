@@ -94,6 +94,18 @@ class DAOMap {
      * Nulo na tabela t0, que representa o começo do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas, contem a coluna da tabela descrita em {@link #joinAlias} que será usada para fazer o joinAlias com esta tabela.
      */
     String joinColumn = null;
+
+    /**
+     * Lista das tabelas que fazem join nesta tabela.<Br>
+     * De outro ponto de vista, todos os {@link DAOMapTable} cujo atributo {@link DAOMapTable#joinAlias} referencia o {@link DAOMapTable#alias} deste objeto.
+     */
+    final List<DAOMapTable> joinedTables = new LinkedList<DAOMapTable>();
+
+    /**
+     * Lista dos {@link DAOMapField} que foram mapeados desta tabela.<bR>
+     * Ou seja, todos os {@link DAOMapField} cujo atributo {@link DAOMapField#table} aponta para este objeto.
+     */
+    final List<DAOMapField> mappedFields = new LinkedList<DAOMapField>();
   }
 
   /**
@@ -123,8 +135,13 @@ class DAOMap {
   }
 
   /**
+   * Mantém referência para a tabela "raiz", a primeira tabela do SELECT, com alias t0.
+   */
+  private DAOMapTable rootTable = null;
+
+  /**
    * Hash com os mapas de tabela indexados pelo caminho.<BR>
-   * <b>ATENÇÃO: os mapeamentos de tabelas de N:N que não tem "path" são colocados na hash com uma chave gerada com o seguinte formato: { '.' + <alias> + '.' + <joinAlias> } Assim garantimos unicidade sem geração aleatória.</b>
+   * <b>ATENÇÃO: os mapeamentos de tabelas de N:N que não tem "path" são colocados na hash com uma chave gerada com o seguinte formato: { '.' + <alias> + '.' + <joinAlias> } para garantir a unicidade da chave.</b>
    */
   private final LinkedHashMap<String, DAOMapTable> mapTableByPath = new LinkedHashMap<>();
 
@@ -187,8 +204,12 @@ class DAOMap {
     t.joinColumn = joinColumn;
     t.path = path;
 
+    if (this.mapTableByAlias.size() == 0) this.rootTable = t;
     this.mapTableByPath.put(path, t);
     this.mapTableByAlias.put(t.alias, t);
+
+    if (t.joinAlias != null) this.mapTableByAlias.get(t.joinAlias).joinedTables.add(t);
+
     return t;
   }
 
@@ -269,6 +290,8 @@ class DAOMap {
 
     if (path.length() > 0 && !"@".equals(path)) path += ".";
     path += field;
+
+    table.mappedFields.add(t);
 
     this.mapFieldByPath.put(path, t);
     return t;
@@ -1890,6 +1913,10 @@ class DAOMap {
     }
 
     return newMap;
+  }
+
+  public DAOMapTable getRootTable() {
+    return rootTable;
   }
 
 }

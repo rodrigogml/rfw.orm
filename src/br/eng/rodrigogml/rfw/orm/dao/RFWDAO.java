@@ -1161,6 +1161,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, attributes, true, mo, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
       final List<RFWVO> list = mountVO(rs, map, null);
+
       if (list.size() > 1) {
         throw new RFWCriticalException("Encontrado mais de um objeto em uma busca por ID.", new String[] { "" + id, RUArray.concatArrayIntoString(attributes, ",") });
       } else if (list.size() == 1) {
@@ -1195,6 +1196,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, attributes, true, mo, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
       final List<RFWVO> list = mountVO(rs, map, null);
+
       if (list.size() > 1) {
         throw new RFWCriticalException("Encontrado mais de um objeto em uma busca por ID.", new String[] { "" + id, RUArray.concatArrayIntoString(attributes, ",") });
       } else if (list.size() == 1) {
@@ -1475,6 +1477,435 @@ public final class RFWDAO<VO extends RFWVO> {
     }
   }
 
+  // @SuppressWarnings("unchecked")
+  // private List<VO> rsToVO(ResultSet rs, DAOMap map, HashMap<String, Object> cache) throws RFWException {
+  // try {
+  // br.eng.rodrigogml.rfw.kernel.utils.RUFile.writeFileContent("c:\\t\\dumpDAOMap.txt", RFWDAO.dumpDAOMap(map));
+  //
+  // final List<VO> rootList = new LinkedList<VO>();
+  // while (rs.next()) {
+  // DAOMapTable rootTable = map.getRootTable();
+  // VO vo = (VO) loadVO(rs, map, rootTable, cache);
+  // if (!rootList.contains(vo)) rootList.add(vo);
+  // }
+  // return rootList;
+  // } catch (Exception e) {
+  // if (e instanceof RFWException) throw (RFWException) e;
+  // throw new RFWCriticalException("RFW_000043", e);
+  // }
+  // }
+
+  // @SuppressWarnings({ "unchecked", "rawtypes" })
+  // private RFWVO loadVO(ResultSet rs, DAOMap map, DAOMapTable mTable, HashMap<String, Object> cache) throws RFWException {
+  // RFWVO vo = null;
+  // try {
+  // if (mTable.path.startsWith(".")) { // Tabelas de N:N
+  // // Tabelas de Join não têm uma entidade, no momento de montar o objeto só é necessário "pular" a tabela do join e carregar a próxima tabela
+  // vo = loadVO(rs, map, mTable.joinedTables.get(0), cache);
+  // } else {
+  // Long id = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect);
+  // if (id == null) return null;
+  // final String objKey = mTable.type.getCanonicalName() + "." + id;
+  // vo = (RFWVO) cache.get(objKey);
+  //
+  // if (vo == null) {
+  // vo = (VO) createNewInstance(mTable.type);
+  // vo.setId(id);
+  // cache.put(objKey, vo);
+  //
+  // for (DAOMapField mField : mTable.mappedFields) {
+  // writeToVO(mField, vo, rs);
+  // }
+  // }
+  //
+  // for (DAOMapTable joinedTable : mTable.joinedTables) {
+  // if (joinedTable.path.startsWith("@")) { // Tabelas de Collection (RFWMetaCollection)
+  // loadMetaCollection(rs, map, vo, mTable, joinedTable, cache);
+  // } else {
+  // RFWVO joinedVO = loadVO(rs, map, joinedTable, cache);
+  //
+  // String attribute = RUReflex.getLastPath(joinedTable.path);
+  // Class<?> propertyType = RUReflex.getPropertyTypeByType(mTable.type, attribute);
+  // if (RFWVO.class.isAssignableFrom(propertyType)) {
+  // if (joinedVO != null) RUReflex.setPropertyValue(vo, attribute, joinedVO, false);
+  // } else if (List.class.isAssignableFrom(propertyType)) {
+  // List<RFWVO> list = (List<RFWVO>) RUReflex.getPropertyValue(vo, attribute);
+  // if (list == null) {
+  // list = new LinkedList<>();
+  // RUReflex.setPropertyValue(vo, attribute, list, false);
+  // if (joinedVO != null) list.add(joinedVO);
+  // } else {
+  // if (joinedVO != null && !list.contains(joinedVO)) list.add(joinedVO);
+  // }
+  // } else if (HashSet.class.isAssignableFrom(propertyType)) {
+  // HashSet<RFWVO> set = (HashSet<RFWVO>) RUReflex.getPropertyValue(vo, attribute);
+  // if (set == null) {
+  // set = new HashSet<>();
+  // RUReflex.setPropertyValue(vo, attribute, set, false);
+  // if (joinedVO != null) set.add(joinedVO);
+  // } else {
+  // if (joinedVO != null && !set.contains(joinedVO)) set.add(joinedVO);
+  // }
+  // } else if (Map.class.isAssignableFrom(propertyType)) {
+  // Map hashMap = (Map) RUReflex.getPropertyValue(vo, attribute);
+  //
+  // final String keyMapAttribute = mTable.type.getDeclaredField(attribute).getAnnotation(RFWMetaRelationshipField.class).keyMap();
+  // final Object keyMap = RUReflex.getPropertyValue(joinedVO, keyMapAttribute);
+  //
+  // if (hashMap == null) {
+  // hashMap = new LinkedHashMap();
+  // RUReflex.setPropertyValue(vo, attribute, hashMap, false);
+  // if (joinedVO != null) hashMap.put(keyMap, joinedVO);
+  // } else {
+  // if (joinedVO != null && !hashMap.containsKey(keyMap)) hashMap.put(keyMap, joinedVO);
+  // }
+  // }
+  // }
+  // }
+  //
+  // }
+  // } catch (NoSuchFieldException | SecurityException e) {
+  // throw new RFWCriticalException("RFW_000043", e);
+  // }
+  // return vo;
+  // }
+
+  // @SuppressWarnings({ "unchecked", "rawtypes" })
+  // private void loadMetaCollection(ResultSet rs, DAOMap map, RFWVO vo, DAOMapTable mTable, DAOMapTable joinedTable, HashMap<String, Object> cache) throws RFWException {
+  // Long id = getRSLong(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, joinedTable.column, dialect);
+  //
+  // final DAOMapField mField = map.getMapFieldByPath(joinedTable.path.substring(1) + "@");
+  // final RFWMetaCollectionField ann = (RFWMetaCollectionField) RUReflex.getRFWMetaAnnotation(mField.table.type, mField.field.substring(0, mField.field.length() - 1));
+  // if (ann.targetRelationship() == null) throw new RFWCriticalException("Não foi possível encontrar o TargetRelationship da MetaCollection em '" + vo.getClass().getCanonicalName() + "' do método '" + mField.field.substring(0, mField.field.length() - 1) + "'.");
+  //
+  // // Recupera o conteúdo a ser colocado na MetaCollection
+  // Object content = null;
+  // if (String.class.isAssignableFrom(ann.targetRelationship())) {
+  // content = getRSString(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, mField.column, dialect);
+  // } else if (BigDecimal.class.isAssignableFrom(ann.targetRelationship())) {
+  // content = getRSBigDecimal(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, mField.column, dialect);
+  // } else if (Enum.class.isAssignableFrom(ann.targetRelationship())) {
+  // content = getRSString(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, mField.column, dialect);
+  // if (content != null) content = Enum.valueOf((Class<Enum>) ann.targetRelationship(), (String) content);
+  // } else {
+  // throw new RFWCriticalException("RFWDAO não preparado para tratar Collections com target do tipo '" + ann.targetRelationship().getCanonicalName() + "'!");
+  // }
+  //
+  // if (content != null) {
+  // final Class<?> rt = RUReflex.getPropertyTypeByType(mTable.type, mField.field.substring(0, mField.field.length() - 1));
+  // if (List.class.isAssignableFrom(rt)) {
+  // // Se é um List procuramos a coluna de 'sort' para saber como organizar os itens
+  // DAOMapField sortField = map.getMapFieldByPath(joinedTable.path.substring(1) + "@sortColumn");
+  // Integer sortIndex = null; // A coluna de organização não é obrigatória para montar uma lista, só deixamos de garantir a ordem.
+  // if (sortField != null) {
+  // sortIndex = getRSInteger(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, sortField.column, dialect);
+  // }
+  //
+  // List list = (List) RUReflex.getPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1));
+  // if (list == null) {
+  // list = new ArrayList<>();
+  // RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), list, false);
+  // list.add(content);
+  // } else {
+  // if (!list.contains(content)) list.add(content);
+  // }
+  //
+  // if (sortIndex != null) {
+  // final String sortKey = joinedTable.type.getCanonicalName() + "|" + joinedTable.column + "|" + content.hashCode() + "|sortKey"; // Coloca o valor do sort no cache de objetos para ser utilizado no final para organizar as listas
+  // cache.put(sortKey, sortIndex);
+  // final String sortList = joinedTable.type.getCanonicalName() + "|" + joinedTable.column + "|sortList"; // Coloca a lista que precisa ser organizara no final no cache
+  // cache.put(sortList, list);
+  // }
+  // } else if (HashSet.class.isAssignableFrom(rt)) {
+  // HashSet set = (HashSet) RUReflex.getPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1));
+  // if (set == null) {
+  // set = new HashSet<>();
+  // RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), set, false);
+  // }
+  // set.add(content); // não testamos se já existe pq o SET não permite itens repetidos, ele substituirá automaticamente itens repetidos
+  // } else if (Map.class.isAssignableFrom(rt)) {
+  // // Se é um Map procuramos a coluna de 'key' para saber a chave que devemos incluir na Map
+  // DAOMapField keyField = map.getMapFieldByPath(mTable.path.substring(1) + "@keyColumn");
+  // Object keyValue = getRSString(rs, mTable.schema, mTable.table, mTable.alias, keyField.column, dialect); // rs.getString(mTable.alias + "." + keyField.column);
+  //
+  // // Verifica a existência de um Converter para a chave de acesso
+  // if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
+  // // Object ni = ann.keyConverterClass().newInstance();
+  // Object ni = createNewInstance(ann.keyConverterClass());
+  // if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+  // keyValue = ((RFWDAOConverterInterface) ni).toVO(keyValue);
+  // }
+  //
+  // Map hash = (Map) RUReflex.getPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1));
+  // if (hash == null) {
+  // hash = new LinkedHashMap<>();
+  // RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), hash, false);
+  // }
+  // hash.put(keyValue, content); // O próprio map substituirá e validará se a chave é repetida
+  // } else {
+  // throw new RFWCriticalException("O tipo ${0} não é suportado pela RFWMetaCollection! Atributo '${1}' da classe '${2}'.", new String[] { rt.getCanonicalName(), mField.field.substring(0, mField.field.length() - 1), mTable.type.getCanonicalName() });
+  // }
+  // }
+  // }
+
+  // /**
+  // * Este método itera o ResultSet recebido e monta todos os objetos {@link RFWVO} encontrados no {@link DAOMap} passado e no ResultSet. Ele não monta a hierarquia dos objetos, apenas monta todos os VOs encontrados dentro do ResultSet.
+  // *
+  // * @param rs ResultSet da consulta no banco de dados
+  // * @param map mapeamento da consulta.
+  // * @param cache Cache com os objetos já criados ou cach limpe. Se não tiver, passar um objeto novo instânciado. JAMAIS PASSAR OBJETO NULO!
+  // * @return HashSet com os VOs raiz já montados.
+  // * @throws RFWException
+  // */
+  // @SuppressWarnings({ "unchecked", "rawtypes" })
+  // private List<VO> cacheVOs(ResultSet rs, DAOMap map, HashMap<String, RFWVO> cache) throws RFWException {
+  // try {
+  // br.eng.rodrigogml.rfw.kernel.utils.RUFile.writeFileContent("c:\\t\\dumpDAOMap.txt", RFWDAO.dumpDAOMap(map));
+  // long time = System.currentTimeMillis();
+  //
+  // LinkedList<Object[]> mapRelList = new LinkedList<Object[]>();
+  // HashMap<String, Object[]> mapRelHash = new HashMap<String, Object[]>();
+  // // LinkedList<Object[]> mapCollectionRelList = new LinkedList<Object[]>();
+  // HashMap<String, Object[]> mapCollectionRelHash = new HashMap<String, Object[]>();
+  //
+  // while (rs.next()) { // rs.beforeFirst();
+  // for (DAOMapTable mTable : map.getMapTable()) {
+  // if (mTable.path.startsWith("@")) { // Tabelas de Collection (RFWMetaCollection)
+  // // Faz a busca pela coluna ID no resultSet, se encontrar indica que a tabela do objeto foi recuperada mesmo que o conteúdo venha vazio
+  // boolean retrived = false;
+  // Long id = null;
+  // try {
+  // id = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, mTable.column, dialect);
+  // retrived = true;
+  // } catch (RFWException e) {
+  // if (e.getCause() != null && e.getCause() instanceof SQLException) {
+  // // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+  // } else {
+  // throw e;
+  // }
+  // }
+  //
+  // if (retrived) {
+  // // Busca o objeto 'pai', que tem a collection, pelo ID definido na foreingKey
+  // DAOMapTable parentTable = map.getMapTableByAlias(mTable.joinAlias);
+  // Long parentId = getRSLong(rs, parentTable.schema, parentTable.table, parentTable.alias, "id", dialect);
+  //
+  // String k = "";
+  // k += parentTable != null ? parentTable.type.getCanonicalName() : "null";
+  // k += "." + (parentId != null ? parentId : "null");
+  // k += "|" + (mTable != null ? mTable.type.getCanonicalName() : "null");
+  // k += "." + (id != null ? id : "null");
+  // mapCollectionRelHash.put(k, new Object[] {
+  // parentTable,
+  // parentId,
+  // mTable,
+  // id,
+  // });
+  // }
+  // } else if (mTable.path.startsWith(".")) { // Tabelas de N:N (join Tables)
+  // // Não faz nenhuma operação, apenas no momento montar os mapeamentos que pularemos a tabela de "join"
+  // } else {
+  // boolean retrived = false;
+  // Long id = null;
+  // try {
+  // id = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect);
+  // retrived = true;
+  // } catch (RFWException e) {
+  // if (e.getCause() != null && e.getCause() instanceof SQLException) {
+  // // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+  // } else {
+  // throw e;
+  // }
+  // }
+  //
+  // if (retrived) {
+  // // Monta Um array com os dados para o relacionamento
+  // // Nota que se a tabela do objeto foi recuperado, mesmo que o ID seja nulo (não tenha o objeto), no passo de montar o objeto isso representará, nos atributos que são colleções, uma coleção vazia ao invés do valor nulo. Em outras palavras, de que não há relacionamentos e não que não foi recuperado no banco de dados.
+  // DAOMapTable parentTable = null;
+  // Long parentId = null;
+  // if (mTable.joinAlias != null) {
+  // parentTable = map.getMapTableByAlias(mTable.joinAlias);
+  // if (parentTable.path.startsWith(".")) { // Se o caminho começa com '.', significa que é uma tabela da N:N, nestes casos temos que abstrair "um join" e usar tabela "parent da parent" para obter os IDs e objetos corretos. Isso pq temos 3 tabelas, mas apenas 2 objetos.
+  // parentTable = map.getMapTableByAlias(parentTable.joinAlias);
+  // }
+  // parentId = getRSLong(rs, parentTable.schema, parentTable.table, parentTable.alias, "id", dialect);
+  // }
+  //
+  // if (parentId != null || id != null) { // Se não temos nem o ID do objeto pai, nem o id do objeto atual, não temos nada a fazer com a informação desse mapeamento. Já descartamos aqui para evitar loops desnecessários a frente
+  // // mapRelList.add(new Object[] {
+  // // parentTable,
+  // // parentId,
+  // // mTable,
+  // // id,
+  // // });
+  // String k = "";
+  // k += parentTable != null ? parentTable.type.getCanonicalName() : "null";
+  // k += "." + (parentId != null ? parentId : "null");
+  // k += "|" + (mTable != null ? mTable.type.getCanonicalName() : "null");
+  // k += "." + (id != null ? id : "null");
+  // Object[] mapObj = new Object[] {
+  // parentTable,
+  // parentId,
+  // mTable,
+  // id,
+  // };
+  // mapRelHash.put(k, mapObj);
+  // mapRelList.add(mapObj);
+  // }
+  //
+  // if (id != null) {
+  // final String key = mTable.type.getCanonicalName() + "." + id;
+  // if (!cache.containsKey(key)) {
+  // VO vo = (VO) createNewInstance(mTable.type);
+  // cache.put(key, vo);
+  // vo.setId(id);
+  // for (DAOMapField mField : map.getMapField()) {
+  // if (mField.table == mTable && !"id".equals(mField.field)) {
+  // writeToVO(mField, vo, rs);
+  // }
+  // }
+  //
+  // }
+  // }
+  // }
+  // }
+  // }
+  // }
+  //
+  // // Atenção: A lógica da montagem dos objetos abaixo mira em utilizar o menos de reflexão possível, por ser a parte mais "cara" par a performance, mesmo que para isso haja mais interações nos mesmos loops, fazemos o máximo possível para cada objeto que já foi carregado.
+  //
+  // List<VO> rootVOs = new LinkedList<VO>();
+  // LinkedList<Object[]> mapHashRelList = new LinkedList<Object[]>();
+  // int lastsize = -1;
+  // // for (Object[] mapRel : new ArrayList<Object[]>(mapRelations)) {
+  // while (mapRelHash.size() > 0) {// Iteramos até o esgotamento pois vamos remover vários objetos a cada iteração desse while
+  // if (mapRelHash.size() == lastsize) throw new RFWCriticalException("Infinity Loop Detected!");
+  // lastsize = mapRelHash.size();
+  //
+  // String hashK = mapRelHash.keySet().iterator().next();
+  // Object[] mapRel = mapRelHash.get(hashK);
+  //
+  // DAOMapTable parentTable = (DAOMapTable) mapRel[0];
+  // DAOMapTable mTable = (DAOMapTable) mapRel[2];
+  // Long id = (Long) mapRel[3];
+  //
+  // RFWVO vo = null;
+  // if (id != null) vo = cache.get(mTable.type.getCanonicalName() + "." + id);
+  //
+  // if (parentTable == null) { // Se não há tabela pai, é um VO "raiz", vai para a lista re objetos a serem retornados
+  // if (vo != null) rootVOs.add((VO) vo);
+  // mapRelHash.remove(hashK);
+  // } else {
+  // Long parentId = (Long) mapRel[1];
+  // RFWVO parentVO = cache.get(parentTable.type.getCanonicalName() + "." + parentId);
+  // String parentAttribute = RUReflex.getLastPath(mTable.path);
+  //
+  // Class<?> propertyType = RUReflex.getPropertyTypeByType(parentTable.type, parentAttribute);
+  // if (RFWVO.class.isAssignableFrom(propertyType)) {
+  // if (vo != null) RUReflex.setPropertyValue(parentVO, parentAttribute, vo, false);
+  // mapRelHash.remove(hashK);
+  // } else if (List.class.isAssignableFrom(propertyType)) {
+  // List list = (List) RUReflex.getPropertyValue(parentVO, parentAttribute);
+  // if (list == null) {
+  // list = new ArrayList<>();
+  // RUReflex.setPropertyValue(parentVO, parentAttribute, list, false);
+  // }
+  // if (vo != null) list.add(vo); // não é preciso testar por repetição pq cada mapeamento só é incluído uma vez e é removido a seguir
+  // mapRelHash.remove(hashK);
+  //
+  // // Itera por outros objetos que fazem parte desta lista
+  // for (Entry<String, Object[]> entrySet : new ArrayList<>(mapRelHash.entrySet())) {
+  // String hashK2 = entrySet.getKey();
+  // Object[] mapRel2 = entrySet.getValue();
+  //
+  // if (mapRel[0] == mapRel2[0] && mapRel[2] == mapRel2[2] && mapRel[1].equals(mapRel2[1])) {
+  // DAOMapTable mTable2 = (DAOMapTable) mapRel[2];
+  // Long id2 = (Long) mapRel2[3];
+  // if (id2 != null) {
+  // RFWVO vo2 = cache.get(mTable2.type.getCanonicalName() + "." + id2);
+  // list.add(vo2);
+  // }
+  // mapRelHash.remove(hashK2);
+  // // } else {
+  // // i++;
+  // }
+  // }
+  // } else if (HashSet.class.isAssignableFrom(propertyType)) {
+  // HashSet set = (HashSet) RUReflex.getPropertyValue(parentVO, parentAttribute);
+  // if (set == null) {
+  // set = new HashSet<>();
+  // RUReflex.setPropertyValue(parentVO, parentAttribute, set, false);
+  // }
+  // if (vo != null) set.add(vo); // não é preciso testar por repetição pq cada mapeamento só é incluído uma vez e é removido a seguir
+  // mapRelHash.remove(hashK);
+  //
+  // // Itera por outros objetos que fazem parte desta lista
+  // for (int i = 0; i < mapRelHash.size();) {
+  // String hashK2 = mapRelHash.keySet().iterator().next();
+  // Object[] mapRel2 = mapRelHash.get(hashK2);
+  // if (mapRel[0] == mapRel2[0] && mapRel[2] == mapRel2[2] && mapRel[1].equals(mapRel2[1])) {
+  // DAOMapTable mTable2 = (DAOMapTable) mapRel[2];
+  // Long id2 = (Long) mapRel2[3];
+  // if (id2 != null) {
+  // RFWVO vo2 = cache.get(mTable2.type.getCanonicalName() + "." + id2);
+  // set.add(vo2);
+  // }
+  // mapRelHash.remove(hashK2);
+  // } else {
+  // i++;
+  // }
+  // }
+  // } else if (Map.class.isAssignableFrom(propertyType)) {
+  // // Não montamos as Hash nesse ponto pois os objetos filhos podem ainda não estar montados e não vamos conseguir pegar a chave da hash, salvamos esse mapeamento para montar a hash na próxima fase
+  // mapHashRelList.add(mapRel);
+  // mapRelHash.remove(hashK);
+  // }
+  // }
+  // }
+  //
+  // // Itera e termina de montar as Hashs
+  // lastsize = -1;
+  // // for (Object[] mapRel : new ArrayList<Object[]>(mapRelations)) {
+  // while (mapHashRelList.size() > 0) {// Iteramos até o esgotamento pois vamos remover vários objetos a cada iteração desse while
+  // if (mapHashRelList.size() == lastsize) throw new RFWCriticalException("Infinity Loop Detected!");
+  // lastsize = mapHashRelList.size();
+  //
+  // Object[] mapRel = mapHashRelList.get(0);
+  //
+  // DAOMapTable parentTable = (DAOMapTable) mapRel[0];
+  // DAOMapTable mTable = (DAOMapTable) mapRel[2];
+  // Long id = (Long) mapRel[3];
+  // Long parentId = (Long) mapRel[1];
+  // RFWVO parentVO = cache.get(parentTable.type.getCanonicalName() + "." + parentId);
+  // String parentAttribute = RUReflex.getLastPath(mTable.path);
+  //
+  // RFWVO vo = null;
+  // if (id != null) {
+  // vo = cache.get(mTable.type.getCanonicalName() + "." + id);
+  // }
+  //
+  // // Todos os mapeamentos iterados aqui são hash, não é necessário testar, apenas montar a hash
+  //
+  // Map hash = (Map) RUReflex.getPropertyValue(parentVO, parentAttribute);
+  // if (hash == null) {
+  // hash = new LinkedHashMap<>();
+  // RUReflex.setPropertyValue(parentVO, parentAttribute, hash, false);
+  // }
+  //
+  // if (vo != null) {
+  // final String keyMapAttributeName = parentTable.type.getDeclaredField(parentAttribute).getAnnotation(RFWMetaRelationshipField.class).keyMap();
+  // final Object key = RUReflex.getPropertyValue(vo, keyMapAttributeName);
+  // hash.put(key, vo);
+  // }
+  // mapHashRelList.remove(mapRel);
+  // }
+  //
+  // return rootVOs;
+  // } catch (SQLException | NoSuchFieldException | SecurityException e) {
+  // throw new RFWCriticalException("RFW_000043", e);
+  // }
+  // }
+
   /**
    * Método utilizado ler os dados do result set e montar os objetos conforme forem retornados.
    *
@@ -1486,6 +1917,16 @@ public final class RFWDAO<VO extends RFWVO> {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private List<RFWVO> mountVO(ResultSet rs, DAOMap map, HashMap<String, RFWVO> cache) throws RFWException {
     try {
+      // HashMap<String, RFWVO> fullCache = new HashMap<String, RFWVO>();
+      // if (map.getMapTable().size() >= 0) {
+      // return (List<RFWVO>) cacheVOs(rs, map, fullCache);
+      // }
+
+      // HashMap<String, Object> fullCache = new HashMap<String, Object>();
+      // if (map.getMapTable().size() >= 0) {
+      // return (List<RFWVO>) rsToVO(rs, map, fullCache);
+      // }
+
       // ATENÇÃO: NÃO TRABALHAMOS COM LinkedList, apesar de ter menos overhead que o ArrayList pq o Glassfish ao tentar colocar o linkedlist na fachada acaba estourando a memória. É um BUG do Glassfish que não clona direito o objeto.
       // Ao usar o ArrayList o Glassfish funciona melhor. Ou seja, para passar pela fachada o Arraylist é mais rápido e evita stackoverflow de "copyObject"
       final ArrayList<RFWVO> vos = new ArrayList<>();
@@ -1665,7 +2106,7 @@ public final class RFWDAO<VO extends RFWVO> {
                 // Iteramos os campos em busca das informações deste VO
                 for (DAOMapField mField : map.getMapField()) {
                   // Ignora o field ID pq ele não está no objeto sendo escrito (é herdado do pai) e o método write não o encontra. Sem contar que já foi escrito diretamente acima sem a necessidade de reflexão
-                  if (mField.table == mTable && !"id".equals(mField.field)) writeToVO(mField, (VO) vo, rs);
+                  if (mField.table == mTable && !"id".equals(mField.field)) writeToVO(mField, vo, rs);
                 }
               }
               aliasCache.put(mTable.alias, vo);
@@ -2168,7 +2609,7 @@ public final class RFWDAO<VO extends RFWVO> {
    * @param rs ResultSet com o conteúdo do banco de dados.
    * @throws RFWException
    */
-  private void writeToVO(DAOMapField mField, VO vo, ResultSet rs) throws RFWException {
+  private void writeToVO(DAOMapField mField, RFWVO vo, ResultSet rs) throws RFWException {
     try {
       final DAOMapTable mTable = mField.table;
       final Field decField = RUReflex.getDeclaredFieldRecursively(mTable.type, mField.field);
@@ -2450,7 +2891,7 @@ public final class RFWDAO<VO extends RFWVO> {
         String[] paths = attribute.split("\\.");
         String fieldName = paths[paths.length - 1];
 
-        // Validamos se já não associamos essa tabela (isso pode acontecer se o usuário solicitar mais de uma vez o mesmo atributo de collection... estupido...)
+        // Validamos se já não associamos essa tabela (isso pode acontecer se o usuário solicitar mais de uma vez o mesmo atributo de collection... tsc tsc tsc...)
         if (map.getMapTableByPath("@" + RUReflex.addPath(parentPath, fieldName)) == null) {
           DAOMapTable daoMapTable = map.getMapTableByPath(parentPath);
 
