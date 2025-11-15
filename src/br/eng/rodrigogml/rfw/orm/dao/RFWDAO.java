@@ -351,7 +351,8 @@ public final class RFWDAO<VO extends RFWVO> {
       int parentCount = 0;
       boolean needParent = false; // Flag para indicar se encontramos algum PARENT_ASSOCIATION. Se o objeto tiver algum objeto com relacionamento do tipo Parent, torna-se obrigatório ter um parent deifnido
       // ===> TRATAMENTO DO RELACIONAMENTO ANTES DE INSERIR O OBJETO <===
-      for (Field field : entityVO.getClass().getDeclaredFields()) {
+      for (Field field : RUReflex.getDeclaredFieldsRecursively(entityVO.getClass())) {
+        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteração da linha acima sugerida pela revisão do Codex, para pré/pós processar os atributos da classe pai, assim como é iterado no momento da parsistência
         final RFWMetaRelationshipField ann = field.getAnnotation(RFWMetaRelationshipField.class);
         if (ann != null) {
           // Verificamos o tipo de relacionamento para validar e saber como proceder.
@@ -703,7 +704,8 @@ public final class RFWDAO<VO extends RFWVO> {
       }
 
       // ===> PROCESSAMENTO DOS RELACIONAMENTOS PÓS INSERÇÃO DO OBJETO
-      for (Field field : entityVO.getClass().getDeclaredFields()) {
+      for (Field field : RUReflex.getDeclaredFieldsRecursively(entityVO.getClass())) {
+        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteração da linha acima sugerida pela revisão do Codex, para pré/pós processar os atributos da classe pai, assim como é iterado no momento da parsistência
         final RFWMetaRelationshipField ann = field.getAnnotation(RFWMetaRelationshipField.class);
         if (ann != null) {
           // Verificamos o tipo de relacionamento para validar e saber como proceder.
