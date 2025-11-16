@@ -440,10 +440,21 @@ public final class RFWDAO<VO extends RFWVO> {
               }
             }
               break;
+
             case COMPOSITION: {
-              // PERSISTÊNCIA: Em caso de composição, não fazemos nada aqui no pré-processamento, pois os objetos compostos serão persistidos depois do objeto pai.
-              // DELETE: Relacionamento de Composição, precisamos verificar se ele existia antes e deixou de existir, ou em caso de 1:N verifica quais objetos deixaram de existir.
-              // ATENÇÃO: Não aceita as coleções nulas pq, por definição, objeto nulo indica que não foi recuperado, a ausência de objetos relacionados deve ser sempre simbolizada por uma lista vazia.
+              final String relationColumn = getMetaRelationColumn(field, ann);
+              final String relationColumnMapped = getMetaRelationColumnMapped(field, ann);
+              validateCompositionColumnConfiguration(field, ann, relationColumn, relationColumnMapped);
+              final boolean fkOnParent = !"".equals(relationColumn);
+              if (fkOnParent) {
+                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType()))
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.",
+                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              }
+
+              // PERSISTNCIA: Em caso de composio com FK na tabela pai precisamos persistir o objeto filho antes do pai. Nos demais casos o filho persistido depois do pai.
+              // DELETE: Relacionamento de Composio, precisamos verificar se ele existia antes e deixou de existir, ou em caso de 1:N verifica quais objetos deixaram de existir.
+              // ATENO: No aceita as colees nulas pq, por definio, objeto nulo indica que no foi recuperado, a ausncia de objetos relacionados deve ser sempre simbolizada por uma lista vazia.
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
@@ -532,6 +543,18 @@ public final class RFWDAO<VO extends RFWVO> {
                       }
                     }
                   }
+                }
+              }
+
+              if (fkOnParent && fieldValue != null) {
+                if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
+                  VO fieldValueVO = (VO) fieldValue;
+                  VO fieldValueVOOrig = null;
+                  if (entityVOOrig != null) fieldValueVOOrig = (VO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
+                  persist(ds, daoMap, (isNew || fieldValueVO.getId() == null), fieldValueVO, fieldValueVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
+                } else {
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com o atributo 'column' preenchido, esse recurso s pode ser utilizado em relacionamentos 1:1.",
+                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                 }
               }
             }
@@ -791,7 +814,7 @@ public final class RFWDAO<VO extends RFWVO> {
                   if (fieldValueOrig != null) {
                     if (RFWVO.class.isAssignableFrom(fieldValueOrig.getClass())) {
                       RFWVO fieldValueOrigVO = (RFWVO) fieldValueOrig;
-                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueOrigVO.getId(), null, dialect); // Exclui a associação na tabela do objeto anterior
+                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueOrigVO.getId(), null, dialect); // Exclui a associao na tabela do objeto anterior
                     } else if (List.class.isAssignableFrom(fieldValueOrig.getClass())) {
                       // Caso no objeto original tenha uma list lançamos erro. Pois o objeto sendo persistido não deve ter as collections nulas e sim vazias para indicar a ausência de associações. Uma collection nula provavelmente indica que o objeto não foi bem inicializado, ou mal recuperado do banco em caso de atualização.
                       throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.",
@@ -806,55 +829,63 @@ public final class RFWDAO<VO extends RFWVO> {
               }
               break;
             case COMPOSITION: {
-              // PERSISTÊNCIA: Em caso de composição, temos agora que persistir todos os objetos filhos
-              final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
-              if (fieldValue != null) {
-                if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
-                  VO fieldValueVOOrig = null;
-                  if (entityVOOrig != null) fieldValueVOOrig = (VO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
-                  // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
-                  persist(ds, daoMap, (isNew || ((VO) fieldValue).getId() == null), (VO) fieldValue, fieldValueVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
-                } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
-                  List list = (List) fieldValue;
-                  List listOriginal = null;
-                  if (entityVOOrig != null) listOriginal = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
+              final String relationColumn = getMetaRelationColumn(field, ann);
+              final String relationColumnMapped = getMetaRelationColumnMapped(field, ann);
+              validateCompositionColumnConfiguration(field, ann, relationColumn, relationColumnMapped);
+              final boolean fkOnParent = !"".equals(relationColumn);
+              if (fkOnParent) {
+                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType()))
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.",
+                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              }
+              if (!fkOnParent) {
+                // PERSISTNCIA: Em caso de composio, temos agora que persistir todos os objetos filhos
+                final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
+                if (fieldValue != null) {
+                  if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
+                    VO fieldValueVOOrig = null;
+                    if (entityVOOrig != null) fieldValueVOOrig = (VO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
+                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composio no podem ter ID definido antes do prprio pai, provavelmente isso um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composio novo (em insert).
+                    persist(ds, daoMap, (isNew || ((VO) fieldValue).getId() == null), (VO) fieldValue, fieldValueVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
+                  } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
+                    List list = (List) fieldValue;
+                    List listOriginal = null;
+                    if (entityVOOrig != null) listOriginal = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
+                    // Se uma lista, verificamos se tem o atributo "sortColumn" definido na Annotation. Nestes casos temos de criar esse atributo para ser salvo junto
+                    String sColumn = null;
+                    if (!"".equals(ann.sortColumn())) sColumn = ann.sortColumn();
 
-                  // Se é uma lista, verificamos se tem o atributo "sortColumn" definido na Annotation. Nestes casos temos de criar esse atributo para ser salvo junto
-                  String sColumn = null;
-                  if (!"".equals(ann.sortColumn())) sColumn = ann.sortColumn();
-
-                  int countIndex = 0; // Contador de indice. Usado para saber o índice do item na lista. Utilizado quando o sortColumn é definido para garantir a ordem da lista.
-                  for (Object item : list) {
-                    VO itemVO = (VO) item;
-                    VO itemVOOrig = null;
-                    if (listOriginal != null) {
-                      // Se temos uma lista do objeto original, vamos tentar encontrar o objeto para passar como objeto original para comparação
-                      for (Object itemOriginal : listOriginal) {
-                        if (((VO) itemOriginal).getId().equals(itemVO.getId())) { // ItemOriginal sempre tem um ID pois veio do banco de dados.
-                          itemVOOrig = (VO) itemOriginal;
-                          break;
+                    int countIndex = 0; // Contador de indice. Usado para saber o ndice do item na lista. Utilizado quando o sortColumn definido para garantir a ordem da lista.
+                    for (Object item : list) {
+                      VO itemVO = (VO) item;
+                      VO itemVOOrig = null;
+                      if (listOriginal != null) {
+                        // Se temos uma lista do objeto original, vamos tentar encontrar o objeto para passar como objeto original para comparao
+                        for (Object itemOriginal : listOriginal) {
+                          if (((VO) itemOriginal).getId().equals(itemVO.getId())) { // ItemOriginal sempre tem um ID pois veio do banco de dados.
+                            itemVOOrig = (VO) itemOriginal;
+                            break;
+                          }
                         }
                       }
+                      // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composio no podem ter ID definido antes do prprio pai, provavelmente isso um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composio novo (em insert).
+                      persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, sColumn, countIndex, updatePendings, dialect);
+                      countIndex++;
                     }
-
-                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
-                    persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, sColumn, countIndex, updatePendings, dialect);
-
-                    countIndex++;
+                  } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
+                    Map hash = (Map) fieldValue;
+                    Map hashOriginal = null;
+                    if (entityVOOrig != null) hashOriginal = (Map) RUReflex.getPropertyValue(entityVOOrig, field.getName());
+                    for (Object key : hash.keySet()) {
+                      VO itemVO = (VO) hash.get(key);
+                      VO itemVOOrig = null;
+                      if (hashOriginal != null) itemVOOrig = (VO) hashOriginal.get(key);
+                      // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composio no podem ter ID definido antes do prprio pai, provavelmente isso um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composio novo (em insert).
+                      persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
+                    }
+                  } else {
+                    throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No  possvel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                   }
-                } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
-                  Map hash = (Map) fieldValue;
-                  Map hashOriginal = null;
-                  if (entityVOOrig != null) hashOriginal = (Map) RUReflex.getPropertyValue(entityVOOrig, field.getName());
-                  for (Object key : hash.keySet()) {
-                    VO itemVO = (VO) hash.get(key);
-                    VO itemVOOrig = null;
-                    if (hashOriginal != null) itemVOOrig = (VO) hashOriginal.get(key);
-                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
-                    persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
-                  }
-                } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
@@ -1068,6 +1099,29 @@ public final class RFWDAO<VO extends RFWVO> {
       column = ann.column();
     }
     return column;
+  }
+
+  /**
+   * Valida se a configuracao de colunas de um relacionamento de composicao est correta.
+   *
+   * @param field Field do relacionamento.
+   * @param ann Annotation do relacionamento.
+   * @param column Nome da coluna definida na annotation {@link RFWMetaRelationshipField#column()}.
+   * @param columnMapped Nome da coluna definida na annotation {@link RFWMetaRelationshipField#columnMapped()}.
+   * @throws RFWException
+   */
+  private void validateCompositionColumnConfiguration(Field field, final RFWMetaRelationshipField ann, String column, String columnMapped) throws RFWException {
+    final boolean hasColumn = column != null && !"".equals(column);
+    final boolean hasColumnMapped = columnMapped != null && !"".equals(columnMapped);
+
+    if (hasColumn && hasColumnMapped) {
+      throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como ${2}, mas definiu simultaneamente os atributos 'column' e 'columnMapped'. Defina apenas um deles.", new String[] { field.getName(), field.getDeclaringClass().getCanonicalName(), ann.relationship().name() });
+    }
+
+    if (!hasColumn && !hasColumnMapped) {
+      throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como ${2}, mas no tem o atributo 'column' (FK na tabela pai) nem o 'columnMapped' (FK na tabela filha) definido corretamente.",
+          new String[] { field.getName(), field.getDeclaringClass().getCanonicalName(), ann.relationship().name() });
+    }
   }
 
   /**
@@ -2835,10 +2889,19 @@ public final class RFWDAO<VO extends RFWVO> {
               }
               break;
             case COMPOSITION:
-              // Se é composição, criamos o mapeamento considerando que a coluna de joinAlias está na tabela que estamos mapeando agora
-              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn)))
-                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
-              mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
+            // Se composio, criamos o mapeamento considerando a posio da FK
+            {
+              final String relationColumn = getMetaRelationColumn(parentField, parentRelAnn);
+              final String relationColumnMapped = getMetaRelationColumnMapped(parentField, parentRelAnn);
+              validateCompositionColumnConfiguration(parentField, parentRelAnn, relationColumn, relationColumnMapped);
+              if (!"".equals(relationColumn)) {
+                if (!RFWVO.class.isAssignableFrom(parentField.getType()))
+                  throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, relationColumn);
+              } else {
+                mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, relationColumnMapped, parentMapTable.alias, "id");
+              }
+            }
               break;
             case COMPOSITION_TREE:
               // Se é composição de hierarquia, criamos o mapeamento só do primeiro objeto mas não vamos dar sequência recursivamente. A sequência recursiva deverá ser tratada dinamicamente no objeto posteriormente
