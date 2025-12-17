@@ -387,9 +387,7 @@ public final class RFWDAO<VO extends RFWVO> {
             }
             case INNER_ASSOCIATION: {
               // VALIDAÇÃO: No caso de INNER_ASSOCIATION, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann)))
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.",
-                    new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
               // DELETE: quando o ID está neste objeto, sendo ele excluído ou a associação desfeita o ID tudo se resolve ao excluir ou atualizar este objeto. No caso de estar na tabela da contraparte, vamos atualizar ela depois que excluírmos esse objeto.
               // PERSISTÊNCIA: na persistência, por ser um objeto que está sendo persistido agora, pode ser que já tenhamos o ID, pode ser que não. Se já tiver o ID, deixa seguir, se não tiver, vamos limpar a associação para que se possa inserir o objeto sem a associação. e colocar o objeto na lista de pendências para atualizar a associação depois que tudo tiver sido persistido.
@@ -447,9 +445,7 @@ public final class RFWDAO<VO extends RFWVO> {
               validateCompositionColumnConfiguration(field, ann, relationColumn, relationColumnMapped);
               final boolean fkOnParent = !"".equals(relationColumn);
               if (fkOnParent) {
-                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType()))
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.",
-                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType())) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               }
 
               // PERSISTNCIA: Em caso de composio com FK na tabela pai precisamos persistir o objeto filho antes do pai. Nos demais casos o filho persistido depois do pai.
@@ -553,8 +549,7 @@ public final class RFWDAO<VO extends RFWVO> {
                   if (entityVOOrig != null) fieldValueVOOrig = (VO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                   persist(ds, daoMap, (isNew || fieldValueVO.getId() == null), fieldValueVO, fieldValueVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com o atributo 'column' preenchido, esse recurso s pode ser utilizado em relacionamentos 1:1.",
-                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com o atributo 'column' preenchido, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                 }
               }
             }
@@ -566,8 +561,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
-                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.",
-                      new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   if (entityVOOrig != null) {
                     List list = (List) fieldValue;
@@ -633,9 +627,7 @@ public final class RFWDAO<VO extends RFWVO> {
               break;
             case ASSOCIATION: {
               // VALIDAÇÃO: No caso de associação, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann)))
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.",
-                    new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
               // DELETE: nos casos de associação, quando o ID está na nossa tabela, ele será definido como null ao atualizar o objeto e não devemos apagar a contra-parte. No caso do ID estar na tabela da contra-parte, vamos defini-lo como nulo depois do persistir o objeto atualizado
               // PERSISTÊNCIA: Nos casos de associação é esperado que o objeto associado já tenha um ID definido, já que é um objeto a parte
@@ -667,8 +659,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue == null) {
                 // Por ser esperado sempre uma Lista nas associações ManyToMany, um objeto recebido nulo é um erro, já que nulo indica que não foi carregado enquanto que uma coleção vazia indica a ausência de associações.
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.",
-                    new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               } else {
                 if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
@@ -696,8 +687,7 @@ public final class RFWDAO<VO extends RFWVO> {
         }
       }
 
-      if (needParent && parentCount == 0)
-        throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Há relacionamentos do tipo 'PARENT_ASSOCIATION', o que indica que o objeto é dependente de outro, mas nenhum relacionamento desse tipo foi definido!", new String[] { entityVO.getClass().getCanonicalName() });
+      if (needParent && parentCount == 0) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Há relacionamentos do tipo 'PARENT_ASSOCIATION', o que indica que o objeto é dependente de outro, mas nenhum relacionamento desse tipo foi definido!", new String[] { entityVO.getClass().getCanonicalName() });
 
       // ===> INSERIMOS O OBJETO NO BANCO <===
       try (Connection conn = ds.getConnection()) {
@@ -817,12 +807,10 @@ public final class RFWDAO<VO extends RFWVO> {
                       updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueOrigVO.getId(), null, dialect); // Exclui a associao na tabela do objeto anterior
                     } else if (List.class.isAssignableFrom(fieldValueOrig.getClass())) {
                       // Caso no objeto original tenha uma list lançamos erro. Pois o objeto sendo persistido não deve ter as collections nulas e sim vazias para indicar a ausência de associações. Uma collection nula provavelmente indica que o objeto não foi bem inicializado, ou mal recuperado do banco em caso de atualização.
-                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.",
-                          new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                     } else if (Map.class.isAssignableFrom(fieldValueOrig.getClass())) {
                       // Caso no objeto original tenha uma hash lançamos erro. Pois o objeto sendo persistido não deve ter as collections nulas e sim vazias para indicar a ausência de associações. Uma collection nula provavelmente indica que o objeto não foi bem inicializado, ou mal recuperado do banco em caso de atualização.
-                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.",
-                          new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                     }
                   }
                 }
@@ -834,9 +822,7 @@ public final class RFWDAO<VO extends RFWVO> {
               validateCompositionColumnConfiguration(field, ann, relationColumn, relationColumnMapped);
               final boolean fkOnParent = !"".equals(relationColumn);
               if (fkOnParent) {
-                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType()))
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.",
-                      new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                if (List.class.isAssignableFrom(field.getType()) || Map.class.isAssignableFrom(field.getType())) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               }
               if (!fkOnParent) {
                 // PERSISTNCIA: Em caso de composio, temos agora que persistir todos os objetos filhos
@@ -895,8 +881,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
-                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.",
-                      new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
                   List listOriginal = null;
@@ -1119,8 +1104,7 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     if (!hasColumn && !hasColumnMapped) {
-      throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como ${2}, mas no tem o atributo 'column' (FK na tabela pai) nem o 'columnMapped' (FK na tabela filha) definido corretamente.",
-          new String[] { field.getName(), field.getDeclaringClass().getCanonicalName(), ann.relationship().name() });
+      throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como ${2}, mas no tem o atributo 'column' (FK na tabela pai) nem o 'columnMapped' (FK na tabela filha) definido corretamente.", new String[] { field.getName(), field.getDeclaringClass().getCanonicalName(), ann.relationship().name() });
     }
   }
 
@@ -2124,8 +2108,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
                       // Object ni = ann.keyConverterClass().newInstance();
                       Object ni = createNewInstance(ann.keyConverterClass());
-                      if (!(ni instanceof RFWDAOConverterInterface))
-                        throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+                      if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
                       keyValue = ((RFWDAOConverterInterface) ni).toVO(keyValue);
                     }
 
@@ -2685,8 +2668,7 @@ public final class RFWDAO<VO extends RFWVO> {
       final RFWDAOConverter convAnn = decField.getAnnotation(RFWDAOConverter.class);
       if (convAnn != null) {
         final Object ni = createNewInstance(convAnn.converterClass());
-        if (!(ni instanceof RFWDAOConverterInterface))
-          throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+        if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
         Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect);
         // final Object s = ((RFWDAOConverterInterface) ni).toVO(rs.getObject(mTable.alias + "." + mField.column));
         final Object s = ((RFWDAOConverterInterface) ni).toVO(obj);
@@ -2814,7 +2796,7 @@ public final class RFWDAO<VO extends RFWVO> {
       String entityJoinColumn = null;
       DAOMapTable mapTable = null;
 
-      if (path.equals("")) { // Deixado nessa ordem, ao invés do "".equals(path) para justamente dar nullpointer caso alguém passe null. Em caso de null o if retornria true e estragaria a lógica de qualquer forma. Como null não é esperado, conforme javadoc, é melhor que dê nullpointer logo aqui para que o real problema seja encontrado (que é de onde vem o null)
+      if (path.equals("")) { // Deixado nessa ordem, ao invés do "".equals(path) para forçar o nullpointer caso alguém passe null. Em caso de null o if retornria true e estragaria a lógica de qualquer forma. Como null não é esperado, conforme javadoc, é melhor que dê nullpointer logo aqui para que o real problema seja encontrado (que é de onde vem o null)
         entityType = getEntity(root); // Se estamos no objeto raiz, a entidade é exatamente o objeto raiz
         entityDAOAnn = entityType.getAnnotation(RFWDAOAnnotation.class);
         entityTable = getTable(entityType, entityDAOAnn);
@@ -2871,8 +2853,7 @@ public final class RFWDAO<VO extends RFWVO> {
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", joinMapTable.alias, getMetaRelationColumnMapped(parentField, parentRelAnn));
               break;
             case PARENT_ASSOCIATION:
-              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn)))
-                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como PARENT_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como PARENT_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
             case WEAK_ASSOCIATION:
@@ -2895,8 +2876,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final String relationColumnMapped = getMetaRelationColumnMapped(parentField, parentRelAnn);
               validateCompositionColumnConfiguration(parentField, parentRelAnn, relationColumn, relationColumnMapped);
               if (!"".equals(relationColumn)) {
-                if (!RFWVO.class.isAssignableFrom(parentField.getType()))
-                  throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+                if (!RFWVO.class.isAssignableFrom(parentField.getType())) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' est marcado como COMPOSITION com a coluna definida na tabela pai, esse recurso s pode ser utilizado em relacionamentos 1:1.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
                 mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, relationColumn);
               } else {
                 mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, relationColumnMapped, parentMapTable.alias, "id");
@@ -2905,14 +2885,12 @@ public final class RFWDAO<VO extends RFWVO> {
               break;
             case COMPOSITION_TREE:
               // Se é composição de hierarquia, criamos o mapeamento só do primeiro objeto mas não vamos dar sequência recursivamente. A sequência recursiva deverá ser tratada dinamicamente no objeto posteriormente
-              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn)))
-                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION_TREE, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION_TREE, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               break;
             case INNER_ASSOCIATION:
               // Uma associação interna é similar a uma PARENT ASSOCIATION, mesmo que o RFWDAO vá reutilizar o objeto caso ele já exista, em casos de consultas específicas precisamos fazer o Join da tabela de qualquer forma.
-              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn)))
-                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como INNER_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como INNER_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
           }
@@ -2998,15 +2976,15 @@ public final class RFWDAO<VO extends RFWVO> {
    * @throws RFWException
    */
   private Class<? extends RFWVO> getEntity(Class<? extends RFWVO> entityType) throws RFWException {
-    Class<? extends RFWVO> newEntity = null;
     // Solicita no Resolver
     if (this.resolver != null) {
-      newEntity = this.resolver.getEntityType(entityType);
+      Class<? extends RFWVO> newEntity = this.resolver.getEntityType(entityType);
+      if (newEntity == null) {
+        throw new RFWCriticalException("O DAOResolver retornou nulo ao resolver a entidade: '" + entityType.getCanonicalName() + "'.");
+      }
+      entityType = newEntity;
     }
-    if (newEntity == null) {
-      throw new RFWCriticalException("O DAOResolver retornou nulo ao resolver a entidade: '" + entityType.getCanonicalName() + "'.");
-    }
-    return newEntity;
+    return entityType;
   }
 
   /**
