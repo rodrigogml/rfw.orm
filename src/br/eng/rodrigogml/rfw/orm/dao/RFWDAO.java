@@ -659,7 +659,7 @@ public final class RFWDAO<VO extends RFWVO> {
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue == null) {
                 // Por ser esperado sempre uma Lista nas associações ManyToMany, um objeto recebido nulo é um erro, já que nulo indica que não foi carregado enquanto que uma coleção vazia indica a ausência de associações.
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção nula. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               } else {
                 if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
