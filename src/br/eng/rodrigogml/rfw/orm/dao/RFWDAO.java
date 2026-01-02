@@ -30,7 +30,6 @@ import br.eng.rodrigogml.rfw.kernel.RFW;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWValidationException;
-import br.eng.rodrigogml.rfw.kernel.exceptions.RFWWarningException;
 import br.eng.rodrigogml.rfw.kernel.preprocess.PreProcess;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
@@ -55,7 +54,7 @@ import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 /**
  * Description: Classe de DAO principal do Framework.<br>
  *
- * @author Rodrigo Leitão
+ * @author Rodrigo Leitï¿½o
  * @since 10.0.0 (11 de jul de 2018)
  */
 public final class RFWDAO<VO extends RFWVO> {
@@ -72,8 +71,8 @@ public final class RFWDAO<VO extends RFWVO> {
     private final String qM;
 
     /**
-     * Indica se ao criar o statement de insert não escrever ID atribuindo valor igual a null.<br>
-     * No Derby, quando temos uma coluna de IDs gerada automaticamente ela não pode aparecer no statement.
+     * Indica se ao criar o statement de insert nï¿½o escrever ID atribuindo valor igual a null.<br>
+     * No Derby, quando temos uma coluna de IDs gerada automaticamente ela nï¿½o pode aparecer no statement.
      */
     private final boolean skipInsertIDColumn;
 
@@ -92,10 +91,10 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     /**
-     * # indica se ao criar o statement de insert não escrever ID atribuindo valor igual a null.<br>
-     * No Derby, quando temos uma coluna de IDs gerada automaticamente ela não pode aparecer no statement.
+     * # indica se ao criar o statement de insert nï¿½o escrever ID atribuindo valor igual a null.<br>
+     * No Derby, quando temos uma coluna de IDs gerada automaticamente ela nï¿½o pode aparecer no statement.
      *
-     * @return the indica se ao criar o statement de insert não escrever ID atribuindo valor igual a null
+     * @return the indica se ao criar o statement de insert nï¿½o escrever ID atribuindo valor igual a null
      */
     public boolean getSkipInsertIDColumn() {
       return skipInsertIDColumn;
@@ -104,15 +103,15 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Objeto utilizado para registrar pendências de inserção de objetos cruzados.<br>
-   * Por exemplo, o Framework precisa inserir um objeto que tem uma associação com outro que ainda não foi inserido (ainda não tem um ID).<br>
-   * Nestes caso a lógica de persistência cria um objeto desses registrando que o objeto foi persistido, mas que é necessário atualizar a associação quando o outro objeto estiver persistido também.<br>
-   * Esta estrutura é utilizada principalmente em casos do {@link RelationshipTypes#INNER_ASSOCIATION}.
+   * Objeto utilizado para registrar pendï¿½ncias de inserï¿½ï¿½o de objetos cruzados.<br>
+   * Por exemplo, o Framework precisa inserir um objeto que tem uma associaï¿½ï¿½o com outro que ainda nï¿½o foi inserido (ainda nï¿½o tem um ID).<br>
+   * Nestes caso a lï¿½gica de persistï¿½ncia cria um objeto desses registrando que o objeto foi persistido, mas que ï¿½ necessï¿½rio atualizar a associaï¿½ï¿½o quando o outro objeto estiver persistido tambï¿½m.<br>
+   * Esta estrutura ï¿½ utilizada principalmente em casos do {@link RelationshipTypes#INNER_ASSOCIATION}.
    */
   private static class RFWVOUpdatePending<RFWVOO> {
 
     /**
-     * Caminho desde o VO base até a o {@link #entityVO}.
+     * Caminho desde o VO base atï¿½ a o {@link #entityVO}.
      */
     private final String path;
     /**
@@ -120,11 +119,11 @@ public final class RFWDAO<VO extends RFWVO> {
      */
     private final RFWVO entityVO;
     /**
-     * Propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido.
+     * Propriedade da referï¿½ncia que foi definida como NULL para que o objeto pudesse ser persistido.
      */
     private final String property;
     /**
-     * VO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência.
+     * VO que deve ganhar o ID atï¿½ o final da persistï¿½ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistï¿½ncia.
      */
     private final RFWVO fieldValueVO;
 
@@ -145,27 +144,27 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     /**
-     * # propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido.
+     * # propriedade da referï¿½ncia que foi definida como NULL para que o objeto pudesse ser persistido.
      *
-     * @return the propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido
+     * @return the propriedade da referï¿½ncia que foi definida como NULL para que o objeto pudesse ser persistido
      */
     public String getProperty() {
       return property;
     }
 
     /**
-     * # vO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência.
+     * # vO que deve ganhar o ID atï¿½ o final da persistï¿½ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistï¿½ncia.
      *
-     * @return the vO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência
+     * @return the vO que deve ganhar o ID atï¿½ o final da persistï¿½ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistï¿½ncia
      */
     public RFWVO getFieldValueVO() {
       return fieldValueVO;
     }
 
     /**
-     * # caminho desde o VO base até a o {@link #entityVO}.
+     * # caminho desde o VO base atï¿½ a o {@link #entityVO}.
      *
-     * @return the caminho desde o VO base até a o {@link #entityVO}
+     * @return the caminho desde o VO base atï¿½ a o {@link #entityVO}
      */
     public String getPath() {
       return path;
@@ -173,8 +172,8 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Dialeto utilizado na criação dos SQLs.<br>
-   * Valor Padrão MySQL.
+   * Dialeto utilizado na criaï¿½ï¿½o dos SQLs.<br>
+   * Valor Padrï¿½o MySQL.
    */
   private final SQLDialect dialect;
 
@@ -189,30 +188,30 @@ public final class RFWDAO<VO extends RFWVO> {
   private final Class<VO> type;
 
   /**
-   * Schema a ser utilizado no SQL. Se não for definido, será utilizado o schema que estiver definido na Entidade.
+   * Schema a ser utilizado no SQL. Se nï¿½o for definido, serï¿½ utilizado o schema que estiver definido na Entidade.
    */
   private final String schema;
 
   /**
-   * Interface utilizada pela aplicação apra resolver informações sobre a entidade.
+   * Interface utilizada pela aplicaï¿½ï¿½o apra resolver informaï¿½ï¿½es sobre a entidade.
    */
   private final DAOResolver resolver;
 
   /**
-   * Cria um RFWDAO que força a utilização de um determinado Schema, ao invés de utilizar o schema da sessão do usuário. <br>
-   * Este construtor permite passar um DataSource específico. Podendo inclusive ser implementado manualmente para retornar conexões com o banco de dados de forma Local.<br>
+   * Cria um RFWDAO que forï¿½a a utilizaï¿½ï¿½o de um determinado Schema, ao invï¿½s de utilizar o schema da sessï¿½o do usuï¿½rio. <br>
+   * Este construtor permite passar um DataSource especï¿½fico. Podendo inclusive ser implementado manualmente para retornar conexï¿½es com o banco de dados de forma Local.<br>
    * <br>
-   * <b>Atenção:</b> Note que algumas informações, com o schema a ser utilizado, podem ser definidas de várias maneiras: na Entidade, no {@link RFWDAO}, pelo {@link DAOResolver}.<Br>
-   * Nesses casos, o {@link RFWDAO} usará a informação conforme disponibilidade de acordo com a seguinte hierarquia:
-   * <li>solicita {@link DAOResolver}, se este não existir ou retornar nulo;
-   * <li>solicita informação do RFWDAO, se este não tiver a informação ou estiver nula;
-   * <li>Verificamos a definição da annotation {@link br.eng.rodrigogml.rfw.base.dao.annotations.dao.RFWDAO} da entidade. Se esta não tiver, resultará em Exception
+   * <b>Atenï¿½ï¿½o:</b> Note que algumas informaï¿½ï¿½es, com o schema a ser utilizado, podem ser definidas de vï¿½rias maneiras: na Entidade, no {@link RFWDAO}, pelo {@link DAOResolver}.<Br>
+   * Nesses casos, o {@link RFWDAO} usarï¿½ a informaï¿½ï¿½o conforme disponibilidade de acordo com a seguinte hierarquia:
+   * <li>solicita {@link DAOResolver}, se este nï¿½o existir ou retornar nulo;
+   * <li>solicita informaï¿½ï¿½o do RFWDAO, se este nï¿½o tiver a informaï¿½ï¿½o ou estiver nula;
+   * <li>Verificamos a definiï¿½ï¿½o da annotation {@link br.eng.rodrigogml.rfw.base.dao.annotations.dao.RFWDAO} da entidade. Se esta nï¿½o tiver, resultarï¿½ em Exception
    *
-   * @param type Objeto que será manipulado no banco de dados.
+   * @param type Objeto que serï¿½ manipulado no banco de dados.
    * @param schema Schema a ser utilizado.
-   * @param ds DataSource responsável por entregar conexões sob demanda.
-   * @param dialect Defina o dialeto do banco de dados. Embora o comando SQL seja único, cada banco possui diferenças que interferem no funcionamento da classe.
-   * @param resolver interface para deixar o {@link RFWDAO} mais dinâmico. Entre as informações está o próprio Schema e tabela de cada entidade. Caso nenhum {@link DAOResolver} seja passado, ou este retorne nulo nas suas informações, as informações passardas no RFWDAO passam a ser utilizadas.
+   * @param ds DataSource responsï¿½vel por entregar conexï¿½es sob demanda.
+   * @param dialect Defina o dialeto do banco de dados. Embora o comando SQL seja ï¿½nico, cada banco possui diferenï¿½as que interferem no funcionamento da classe.
+   * @param resolver interface para deixar o {@link RFWDAO} mais dinï¿½mico. Entre as informaï¿½ï¿½es estï¿½ o prï¿½prio Schema e tabela de cada entidade. Caso nenhum {@link DAOResolver} seja passado, ou este retorne nulo nas suas informaï¿½ï¿½es, as informaï¿½ï¿½es passardas no RFWDAO passam a ser utilizadas.
    * @throws RFWException
    */
   public RFWDAO(Class<VO> type, String schema, DataSource ds, SQLDialect dialect, DAOResolver resolver) throws RFWException {
@@ -226,21 +225,21 @@ public final class RFWDAO<VO extends RFWVO> {
   /**
    * Exclui uma entidade do banco de dados.
    *
-   * @param ids ID do objeto a ser excluído
+   * @param ids ID do objeto a ser excluï¿½do
    * @throws RFWException
    *           <li>RFW_ERR_000006 - Critical em caso de falha de Constraint.
    */
   public void delete(Long... ids) throws RFWException {
-    // A exclusão é focada apenas na exclusão do objeto principal, uma vez que a restição quando o objeto está em uso ou de objetos de composição deve estar implementada adequadamente no banco de dados.
+    // A exclusï¿½o ï¿½ focada apenas na exclusï¿½o do objeto principal, uma vez que a restiï¿½ï¿½o quando o objeto estï¿½ em uso ou de objetos de composiï¿½ï¿½o deve estar implementada adequadamente no banco de dados.
     final DAOMap map = createDAOMap(this.type, null);
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createDeleteStatement(conn, map, "", dialect, ids)) {
       stmt.executeUpdate();
     } catch (java.sql.SQLIntegrityConstraintViolationException e) {
-      // Se a deleção falha por motivos de constraints é possível que o objeto não possa ser apagado. Neste caso há métodos do CRUD que ao invés de excluir o objeto o desativam, por isso enviamos uma exception diferente
+      // Se a deleï¿½ï¿½o falha por motivos de constraints ï¿½ possï¿½vel que o objeto nï¿½o possa ser apagado. Neste caso hï¿½ mï¿½todos do CRUD que ao invï¿½s de excluir o objeto o desativam, por isso enviamos uma exception diferente
       throw new RFWCriticalException("RFW_ERR_000006", e);
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
@@ -257,7 +256,7 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Método utilizado para persistir um objeto. Objetos com ID serão atualizados, objetos sem ID é considerado para inserção.
+   * Mï¿½todo utilizado para persistir um objeto. Objetos com ID serï¿½o atualizados, objetos sem ID ï¿½ considerado para inserï¿½ï¿½o.
    *
    * @param vo Objeto a ser persistido.
    * @return Objeto com todos os IDs criados.
@@ -268,10 +267,10 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Método utilizado para persistir um objeto. Objetos com ID serão atualizados, objetos sem ID é considerado para inserção.
+   * Mï¿½todo utilizado para persistir um objeto. Objetos com ID serï¿½o atualizados, objetos sem ID ï¿½ considerado para inserï¿½ï¿½o.
    *
    * @param vo Objeto a ser persistido.
-   * @param ignoreFullLoaded Permite ignorar a verificação se um objeto que será persistido não foi recuperado completamente para atualização. Essa opção só deve ser utilizada em casos muito específicos e preferencialmente quando for possível aplicar outra solução, não utilizar essa, utilizar o {@link #findForUpdate(Long, String[])} sempre que possível.
+   * @param ignoreFullLoaded Permite ignorar a verificaï¿½ï¿½o se um objeto que serï¿½ persistido nï¿½o foi recuperado completamente para atualizaï¿½ï¿½o. Essa opï¿½ï¿½o sï¿½ deve ser utilizada em casos muito especï¿½ficos e preferencialmente quando for possï¿½vel aplicar outra soluï¿½ï¿½o, nï¿½o utilizar essa, utilizar o {@link #findForUpdate(Long, String[])} sempre que possï¿½vel.
    * @return Objeto com todos os IDs criados.
    * @throws RFWException
    */
@@ -279,15 +278,15 @@ public final class RFWDAO<VO extends RFWVO> {
   public VO persist(VO vo, boolean ignoreFullLoaded) throws RFWException {
     boolean isNew = vo.getId() == null || vo.isInsertWithID();
 
-    // Para garantir que não vamos estragar objetos pq o desenvolvedor está enviando objetos incompletos para persistência (fazendo com que o RFWDAO exclusi composições e associações, por exemplo) obrigados que o objeto sendo persistido tenha sido obtido através "findForUpdate()" ou similares.
-    // Esta é uma medida de segurança para evitar que dados sejam estragador por alguma parte do sistema que não tenha sido atualizada depois que a estrutura de algum objeto tenha sido alterada.
-    // NÃO REMOVER, NEM NUNCA DEFINIR MANUALMENTE O VALOR DE ISFULLLOADED FORA DO RFWDAO!!!
-    if (!ignoreFullLoaded && !isNew && !vo.isFullLoaded()) throw new RFWCriticalException("O RFWDAO só aceita persistir objetos que foram completamente carregados para edição!");
+    // Para garantir que nï¿½o vamos estragar objetos pq o desenvolvedor estï¿½ enviando objetos incompletos para persistï¿½ncia (fazendo com que o RFWDAO exclusi composiï¿½ï¿½es e associaï¿½ï¿½es, por exemplo) obrigados que o objeto sendo persistido tenha sido obtido atravï¿½s "findForUpdate()" ou similares.
+    // Esta ï¿½ uma medida de seguranï¿½a para evitar que dados sejam estragador por alguma parte do sistema que nï¿½o tenha sido atualizada depois que a estrutura de algum objeto tenha sido alterada.
+    // Nï¿½O REMOVER, NEM NUNCA DEFINIR MANUALMENTE O VALOR DE ISFULLLOADED FORA DO RFWDAO!!!
+    if (!ignoreFullLoaded && !isNew && !vo.isFullLoaded()) throw new RFWCriticalException("O RFWDAO sï¿½ aceita persistir objetos que foram completamente carregados para ediï¿½ï¿½o!");
 
     final String[] updateAttributes = RUReflex.getRFWVOUpdateAttributes(vo.getClass());
     final DAOMap map = createDAOMap(this.type, updateAttributes);
 
-    final HashMap<String, VO> persistedCache = new HashMap<>(); // Cache para armazenas os objetos que já foram persistidos. Evitando assim cair em loop ou múltiplas atualizações no banco de dados.
+    final HashMap<String, VO> persistedCache = new HashMap<>(); // Cache para armazenas os objetos que jï¿½ foram persistidos. Evitando assim cair em loop ou mï¿½ltiplas atualizaï¿½ï¿½es no banco de dados.
 
     VO originalVO = null;
     if (!isNew) originalVO = findForUpdate(vo.getId(), null);
@@ -299,32 +298,32 @@ public final class RFWDAO<VO extends RFWVO> {
       for (List<RFWVOUpdatePending<RFWVO>> pendList : updatePendings.values()) {
         for (RFWVOUpdatePending<RFWVO> pendBean : pendList) {
           if (pendBean.getFieldValueVO().getId() == null) {
-            throw new RFWCriticalException("Falha ao completar os objetos pendentes! Mesmo deixando para atualizar a referência depois do objeto persistido, alguns objetos continuaram sem IDs para validar as FKs.");
+            throw new RFWCriticalException("Falha ao completar os objetos pendentes! Mesmo deixando para atualizar a referï¿½ncia depois do objeto persistido, alguns objetos continuaram sem IDs para validar as FKs.");
           }
           updateInternalFK(ds, map, pendBean.getPath(), pendBean.getProperty(), pendBean.getEntityVO().getId(), pendBean.getFieldValueVO().getId(), dialect);
         }
       }
     }
-    vo.setInsertWithID(false); // Garante que o objeto não vai retornar com a flag em true. Um objeto que tenha ID mas que tenha essa flag em true é considerado pelo sistema como um objeto que não está no banco de dados.
+    vo.setInsertWithID(false); // Garante que o objeto nï¿½o vai retornar com a flag em true. Um objeto que tenha ID mas que tenha essa flag em true ï¿½ considerado pelo sistema como um objeto que nï¿½o estï¿½ no banco de dados.
     return vo;
   }
 
   /**
-   * Este método permite que apenas os atributos passados sejam atualizados no banco de dados.<br>
-   * O método produt o objeto no banco de acordo com sua classe e 'id' definidos, e copia os valores dos atributos definidos em 'attributes' do VO recebido para o objeto obtido do banco de dados, garantindo assim que apenas os valores selecionados serão atualizados.<Br>
+   * Este mï¿½todo permite que apenas os atributos passados sejam atualizados no banco de dados.<br>
+   * O mï¿½todo produt o objeto no banco de acordo com sua classe e 'id' definidos, e copia os valores dos atributos definidos em 'attributes' do VO recebido para o objeto obtido do banco de dados, garantindo assim que apenas os valores selecionados serï¿½o atualizados.<Br>
    * <bR>
-   * <B>Observação de Usos:</b> Propriedades aninhadas podem ser utilizadas, mas apenas em casos bem específicos:
+   * <B>Observaï¿½ï¿½o de Usos:</b> Propriedades aninhadas podem ser utilizadas, mas apenas em casos bem especï¿½ficos:
    * <ul>
-   * <li>Cuidado ao definir propriedades aninhadas, este método não inicaliza os objetos se eles vierem nulos do banco de dados, pois nesses casos é necessário enviar o objeto completo e validado.
-   * <li>Apenas o objeto principal será persistido no banco de dados, assim, definir propriedades aninhadas em objetos com relacionamento de associação ou parent_association, por exemplo, não fará com que o valor seja atualizado.
+   * <li>Cuidado ao definir propriedades aninhadas, este mï¿½todo nï¿½o inicaliza os objetos se eles vierem nulos do banco de dados, pois nesses casos ï¿½ necessï¿½rio enviar o objeto completo e validado.
+   * <li>Apenas o objeto principal serï¿½ persistido no banco de dados, assim, definir propriedades aninhadas em objetos com relacionamento de associaï¿½ï¿½o ou parent_association, por exemplo, nï¿½o farï¿½ com que o valor seja atualizado.
    * </ul>
    *
-   * @param vo Objeto com o id de identificação e os valores que devem ser atualizados.
+   * @param vo Objeto com o id de identificaï¿½ï¿½o e os valores que devem ser atualizados.
    * @param attributes Array com os atributos que devem ser copiados para o objeto original antes de ser persistido.
    * @return
    * @throws RFWException
-   * @Deprecated Este método foi criado para retrocompatibilidade com o BIS2 e deve ser apagado em breve. A alternativa desse método é utilizar o {@link #massUpdate(Map, RFWMO)} com um filtro pelo ID.<br>
-   *             Ou podemos criar um novo método chamado algo como 'simpleUpdate' ou 'uniqueUpdate', que ao invés do MO receba o ID direto do objeto (e internamente direciona o para o massUpdate.
+   * @Deprecated Este mï¿½todo foi criado para retrocompatibilidade com o BIS2 e deve ser apagado em breve. A alternativa desse mï¿½todo ï¿½ utilizar o {@link #massUpdate(Map, RFWMO)} com um filtro pelo ID.<br>
+   *             Ou podemos criar um novo mï¿½todo chamado algo como 'simpleUpdate' ou 'uniqueUpdate', que ao invï¿½s do MO receba o ID direto do objeto (e internamente direciona o para o massUpdate.
    */
   @Deprecated
   public VO persist(VO vo, String[] attributes) throws RFWException {
@@ -345,52 +344,52 @@ public final class RFWDAO<VO extends RFWVO> {
   @SuppressWarnings({ "unchecked", "rawtypes" })
   private void persist(DataSource ds, DAOMap daoMap, boolean isNew, VO entityVO, VO entityVOOrig, String path, HashMap<String, VO> persistedCache, String sortColumn, int sortIndex, HashMap<RFWVO, List<RFWVOUpdatePending<RFWVO>>> updatePendings, SQLDialect dialect) throws RFWException {
     if (isNew && entityVO.getId() != null && !entityVO.isInsertWithID()) {
-      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. A entidade já veio com o ID definido para inserção.", new String[] { entityVO.getClass().getCanonicalName() });
+      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. A entidade jï¿½ veio com o ID definido para inserï¿½ï¿½o.", new String[] { entityVO.getClass().getCanonicalName() });
     }
     if (isNew || !persistedCache.containsKey(entityVO.getClass().getCanonicalName() + "." + entityVO.getId())) {
       int parentCount = 0;
-      boolean needParent = false; // Flag para indicar se encontramos algum PARENT_ASSOCIATION. Se o objeto tiver algum objeto com relacionamento do tipo Parent, torna-se obrigatório ter um parent deifnido
+      boolean needParent = false; // Flag para indicar se encontramos algum PARENT_ASSOCIATION. Se o objeto tiver algum objeto com relacionamento do tipo Parent, torna-se obrigatï¿½rio ter um parent deifnido
       // ===> TRATAMENTO DO RELACIONAMENTO ANTES DE INSERIR O OBJETO <===
       for (Field field : RUReflex.getDeclaredFieldsRecursively(entityVO.getClass())) {
-        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteração da linha acima sugerida pela revisão do Codex, para pré/pós processar os atributos da classe pai, assim como é iterado no momento da parsistência
+        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteraï¿½ï¿½o da linha acima sugerida pela revisï¿½o do Codex, para prï¿½/pï¿½s processar os atributos da classe pai, assim como ï¿½ iterado no momento da parsistï¿½ncia
         final RFWMetaRelationshipField ann = field.getAnnotation(RFWMetaRelationshipField.class);
         if (ann != null) {
           // Verificamos o tipo de relacionamento para validar e saber como proceder.
           switch (ann.relationship()) {
             case WEAK_ASSOCIATION:
-              // Nada para fazer, esse tipo de associação é como se não existisse para o RFWDAO.
+              // Nada para fazer, esse tipo de associaï¿½ï¿½o ï¿½ como se nï¿½o existisse para o RFWDAO.
               break;
             case PARENT_ASSOCIATION: {
               needParent = true;
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
 
-              // DELETE: Atributos de parentAssociation não há nada para fazer em relação a exclusão, já que quem nunca excluímos o pai, pelo contrário, é ele quem nos excluí.
-              // PERSISTENCE: nada a fazer com o objeto pai além da validação abaixo
-              // VALIDA: Cada objeto de composição só pode ter 1 pai (Um objeto pode ser reutilizado como filho de outro objeto, mas ele só pode ter um objeto pai definido).
+              // DELETE: Atributos de parentAssociation nï¿½o hï¿½ nada para fazer em relaï¿½ï¿½o a exclusï¿½o, jï¿½ que quem nunca excluï¿½mos o pai, pelo contrï¿½rio, ï¿½ ele quem nos excluï¿½.
+              // PERSISTENCE: nada a fazer com o objeto pai alï¿½m da validaï¿½ï¿½o abaixo
+              // VALIDA: Cada objeto de composiï¿½ï¿½o sï¿½ pode ter 1 pai (Um objeto pode ser reutilizado como filho de outro objeto, mas ele sï¿½ pode ter um objeto pai definido).
               if (fieldValue != null) parentCount++;
-              if (parentCount > 1) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Encontramos mais de um relacionamento marcado como \"Parent Association\". Cada objeto de composição só pode ter 1 pai.", new String[] { entityVO.getClass().getCanonicalName() });
+              if (parentCount > 1) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Encontramos mais de um relacionamento marcado como \"Parent Association\". Cada objeto de composiï¿½ï¿½o sï¿½ pode ter 1 pai.", new String[] { entityVO.getClass().getCanonicalName() });
 
-              // VALIDA: Se o objeto pai for obrigatório, se já tem ID
+              // VALIDA: Se o objeto pai for obrigatï¿½rio, se jï¿½ tem ID
               if (fieldValue == null) {
-                // Parent Association se for obrigatório
-                if (ann.required()) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação de pai com objeto nulo ou sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                // Parent Association se for obrigatï¿½rio
+                if (ann.required()) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o de pai com objeto nulo ou sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               } else {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
                   RFWVO fieldValueVO = (RFWVO) fieldValue;
-                  // Nos casos de Parent_Association, não precisamos fazer nada pq o pai já deve ter sido inserido e ter o seu ID pronto antes do filho ser chamado para inserção. Só validamos isso
-                  if (fieldValueVO.getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação de pai com objeto nulo ou sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                  // Nos casos de Parent_Association, nï¿½o precisamos fazer nada pq o pai jï¿½ deve ter sido inserido e ter o seu ID pronto antes do filho ser chamado para inserï¿½ï¿½o. Sï¿½ validamos isso
+                  if (fieldValueVO.getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o de pai com objeto nulo ou sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                 } else {
-                  // Parent Association não pode ter nada que não seja um RFWVO
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  // Parent Association nï¿½o pode ter nada que nï¿½o seja um RFWVO
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
             case INNER_ASSOCIATION: {
-              // VALIDAÇÃO: No caso de INNER_ASSOCIATION, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              // VALIDAï¿½ï¿½O: No caso de INNER_ASSOCIATION, ou o atributo column ou columnMapped devem estar preenchidos
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' estï¿½ marcado como relacionamento 'Inner Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
-              // DELETE: quando o ID está neste objeto, sendo ele excluído ou a associação desfeita o ID tudo se resolve ao excluir ou atualizar este objeto. No caso de estar na tabela da contraparte, vamos atualizar ela depois que excluírmos esse objeto.
-              // PERSISTÊNCIA: na persistência, por ser um objeto que está sendo persistido agora, pode ser que já tenhamos o ID, pode ser que não. Se já tiver o ID, deixa seguir, se não tiver, vamos limpar a associação para que se possa inserir o objeto sem a associação. e colocar o objeto na lista de pendências para atualizar a associação depois que tudo tiver sido persistido.
+              // DELETE: quando o ID estï¿½ neste objeto, sendo ele excluï¿½do ou a associaï¿½ï¿½o desfeita o ID tudo se resolve ao excluir ou atualizar este objeto. No caso de estar na tabela da contraparte, vamos atualizar ela depois que excluï¿½rmos esse objeto.
+              // PERSISTï¿½NCIA: na persistï¿½ncia, por ser um objeto que estï¿½ sendo persistido agora, pode ser que jï¿½ tenhamos o ID, pode ser que nï¿½o. Se jï¿½ tiver o ID, deixa seguir, se nï¿½o tiver, vamos limpar a associaï¿½ï¿½o para que se possa inserir o objeto sem a associaï¿½ï¿½o. e colocar o objeto na lista de pendï¿½ncias para atualizar a associaï¿½ï¿½o depois que tudo tiver sido persistido.
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
@@ -433,7 +432,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     }
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
@@ -458,7 +457,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     RFWVO fieldValueVO = (RFWVO) fieldValue;
                     RFWVO fieldValueVOOrig = (RFWVO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if (fieldValueVOOrig != null && (fieldValueVO == null || fieldValueVO.getId() == null)) {
-                      // Se o objeto no banco existir e o objeto atual for diferente ou não tiver ID, temos de excluir o objeto atual pq o objeto mudou.
+                      // Se o objeto no banco existir e o objeto atual for diferente ou nï¿½o tiver ID, temos de excluir o objeto atual pq o objeto mudou.
                       delete(ds, daoMap, fieldValueVOOrig, RUReflex.addPath(path, field.getName()), dialect);
                     }
                   }
@@ -467,7 +466,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     List list = (List) fieldValue;
                     List listOrig = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if ((list == null || list.size() == 0) && (listOrig != null && listOrig.size() > 0)) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object item : listOrig) {
                         delete(ds, daoMap, (VO) item, RUReflex.addPath(path, field.getName()), dialect);
                       }
@@ -486,9 +485,9 @@ public final class RFWDAO<VO extends RFWVO> {
                         if (!found) delete(ds, daoMap, itemOrigVO, RUReflex.addPath(path, field.getName()), dialect);
                       }
                     } else if ((listOrig == null || listOrig.size() == 0) && (list == null || list.size() == 0)) {
-                      // Se não temos lista agora, e já não tinhamos, nada a fazer. O IF só previne cair no else e lançar a Exception de "prevenção de falha de lógica".
+                      // Se nï¿½o temos lista agora, e jï¿½ nï¿½o tinhamos, nada a fazer. O IF sï¿½ previne cair no else e lanï¿½ar a Exception de "prevenï¿½ï¿½o de falha de lï¿½gica".
                     } else {
-                      throw new RFWCriticalException("Falha ao detectar a condição de comparação entre listas do novo objeto e do objeto anterior! Atributo '${0}' da Classe '${1}'.", new String[] { field.getName(), entityVO.getClass().getCanonicalName() });
+                      throw new RFWCriticalException("Falha ao detectar a condiï¿½ï¿½o de comparaï¿½ï¿½o entre listas do novo objeto e do objeto anterior! Atributo '${0}' da Classe '${1}'.", new String[] { field.getName(), entityVO.getClass().getCanonicalName() });
                     }
                   }
                 } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
@@ -496,7 +495,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     Map hash = (Map) fieldValue;
                     Map hashOrig = (Map) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if (hash.size() == 0 && hashOrig.size() > 0) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object itemOrig : hashOrig.values()) {
                         delete(ds, daoMap, (VO) itemOrig, RUReflex.addPath(path, field.getName()), dialect);
                       }
@@ -517,23 +516,23 @@ public final class RFWDAO<VO extends RFWVO> {
                     }
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               } else {
-                // Se não existe no objeto atual, verificamos se existe no objeto original
+                // Se nï¿½o existe no objeto atual, verificamos se existe no objeto original
                 if (entityVOOrig != null) {
                   final Object fieldValueOrig = RUReflex.getPropertyValue(entityVOOrig, field.getName());
                   if (fieldValueOrig != null) {
                     if (RFWVO.class.isAssignableFrom(fieldValueOrig.getClass())) {
-                      // Se o objeto no banco existir e o objeto atual não, temos de excluir o objeto atual pq a composição mudou.
+                      // Se o objeto no banco existir e o objeto atual nï¿½o, temos de excluir o objeto atual pq a composiï¿½ï¿½o mudou.
                       delete(ds, daoMap, (VO) fieldValueOrig, RUReflex.addPath(path, field.getName()), dialect);
                     } else if (List.class.isAssignableFrom(fieldValueOrig.getClass())) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object item : (List) fieldValueOrig) {
                         delete(ds, daoMap, (VO) item, RUReflex.addPath(path, field.getName()), dialect);
                       }
                     } else if (Map.class.isAssignableFrom(fieldValueOrig.getClass())) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object itemOrig : ((Map) fieldValueOrig).values()) {
                         delete(ds, daoMap, (VO) itemOrig, RUReflex.addPath(path, field.getName()), dialect);
                       }
@@ -555,22 +554,22 @@ public final class RFWDAO<VO extends RFWVO> {
             }
               break;
             case COMPOSITION_TREE: {
-              // PERSISTÊNCIA: Em caso de composição, não fazemos nada aqui no pré-processamento, pois os objetos compostos serão persistidos depois do objeto pai.
-              // DELETE: Relacionamento de Composição, precisamos verificar se ele existia antes e deixou de existir. Se ele deixou de existir, precisamos excluir todas sua hierarquia.
-              // ATENÇÃO: Não aceita as coleções nulas pq, por definição, objeto nulo indica que não foi recuperado, a ausência de objetos relacionados deve ser sempre simbolizada por uma lista vazia.
+              // PERSISTï¿½NCIA: Em caso de composiï¿½ï¿½o, nï¿½o fazemos nada aqui no prï¿½-processamento, pois os objetos compostos serï¿½o persistidos depois do objeto pai.
+              // DELETE: Relacionamento de Composiï¿½ï¿½o, precisamos verificar se ele existia antes e deixou de existir. Se ele deixou de existir, precisamos excluir todas sua hierarquia.
+              // ATENï¿½ï¿½O: Nï¿½o aceita as coleï¿½ï¿½es nulas pq, por definiï¿½ï¿½o, objeto nulo indica que nï¿½o foi recuperado, a ausï¿½ncia de objetos relacionados deve ser sempre simbolizada por uma lista vazia.
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
-                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWValidationException("Encontrado a definiï¿½ï¿½o 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definiï¿½ï¿½o sï¿½ pode ser utilizado em coleï¿½ï¿½es para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   if (entityVOOrig != null) {
                     List list = (List) fieldValue;
                     List listOrig = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if ((list == null || list.size() == 0) && (listOrig != null && listOrig.size() > 0)) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object item : listOrig) {
                         String destPath = RUReflex.addPath(path, field.getName());
-                        // Se não tivermos o caminho temos de completar dianimicamente no DAOMap
+                        // Se nï¿½o tivermos o caminho temos de completar dianimicamente no DAOMap
                         if (daoMap.getMapTableByPath(destPath) == null) daoMap.createMapTableForCompositionTree(path, destPath, "id", getMetaRelationColumnMapped(field, ann));
                         delete(ds, daoMap, (VO) item, destPath, dialect);
                       }
@@ -589,9 +588,9 @@ public final class RFWDAO<VO extends RFWVO> {
                         if (!found) delete(ds, daoMap, itemOrigVO, RUReflex.addPath(path, field.getName()), dialect);
                       }
                     } else if ((listOrig == null || listOrig.size() == 0) && (list == null || list.size() == 0)) {
-                      // Se não temos lista agora, e já não tinhamos, nada a fazer. O IF só previne cair no else e lançar a Exception de "prevenção de falha de lógica".
+                      // Se nï¿½o temos lista agora, e jï¿½ nï¿½o tinhamos, nada a fazer. O IF sï¿½ previne cair no else e lanï¿½ar a Exception de "prevenï¿½ï¿½o de falha de lï¿½gica".
                     } else {
-                      throw new RFWCriticalException("Falha ao detectar a condição de comparação entre listas do novo objeto e do objeto anterior! Atributo '${0}' da Classe '${1}'.", new String[] { field.getName(), entityVO.getClass().getCanonicalName() });
+                      throw new RFWCriticalException("Falha ao detectar a condiï¿½ï¿½o de comparaï¿½ï¿½o entre listas do novo objeto e do objeto anterior! Atributo '${0}' da Classe '${1}'.", new String[] { field.getName(), entityVO.getClass().getCanonicalName() });
                     }
                   }
                 } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
@@ -599,7 +598,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     Map hash = (Map) fieldValue;
                     Map hashOrig = (Map) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if (hash.size() == 0 && hashOrig.size() > 0) {
-                      // Se não temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
+                      // Se nï¿½o temos mais objetos relacionados, mas antes tinhamos, apagamos todos os itens da lista anterior.
                       for (Object itemOrig : hashOrig.values()) {
                         delete(ds, daoMap, (VO) itemOrig, RUReflex.addPath(path, field.getName()), dialect);
                       }
@@ -620,59 +619,59 @@ public final class RFWDAO<VO extends RFWVO> {
                     }
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
               break;
             case ASSOCIATION: {
-              // VALIDAÇÃO: No caso de associação, ou o atributo column ou columnMapped devem estar preenchidos
-              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' está marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+              // VALIDAï¿½ï¿½O: No caso de associaï¿½ï¿½o, ou o atributo column ou columnMapped devem estar preenchidos
+              if ("".equals(getMetaRelationColumnMapped(field, ann)) && "".equals(getMetaRelationColumn(field, ann))) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' estï¿½ marcado como relacionamento 'Association', este tipo de relacionamento deve ter os atirbutos 'column' ou 'columnMapped' preenchidos.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
 
-              // DELETE: nos casos de associação, quando o ID está na nossa tabela, ele será definido como null ao atualizar o objeto e não devemos apagar a contra-parte. No caso do ID estar na tabela da contra-parte, vamos defini-lo como nulo depois do persistir o objeto atualizado
-              // PERSISTÊNCIA: Nos casos de associação é esperado que o objeto associado já tenha um ID definido, já que é um objeto a parte
+              // DELETE: nos casos de associaï¿½ï¿½o, quando o ID estï¿½ na nossa tabela, ele serï¿½ definido como null ao atualizar o objeto e nï¿½o devemos apagar a contra-parte. No caso do ID estar na tabela da contra-parte, vamos defini-lo como nulo depois do persistir o objeto atualizado
+              // PERSISTï¿½NCIA: Nos casos de associaï¿½ï¿½o ï¿½ esperado que o objeto associado jï¿½ tenha um ID definido, jï¿½ que ï¿½ um objeto a parte
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
                   VO fieldValueVO = (VO) fieldValue;
-                  if (fieldValueVO.getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                  if (fieldValueVO.getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                 } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
                   for (Object item : list) {
-                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                   }
                 } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
                   Map map = (Map) fieldValue;
                   for (Object item : map.values()) {
-                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
               break;
             case MANY_TO_MANY:
-              // DELETE: os relacionamentos N:N serão excluídos depois da atualização do objeto
-              // PERSISTÊNCIA: Nos casos de ManyToMany a coluna de FK não está na tabela do objeto (e sim na tabela de joinAlias). Por isso tudo o que temos que fazer é validar se todos os objetos tem um ID para a posterior inserção.
-              // PERSISTÊNCIA: Note que ManyToMany deve sempre estar dentro de algum tipo de coleção/lista/hash/etc por ser múltiplos objetos.
+              // DELETE: os relacionamentos N:N serï¿½o excluï¿½dos depois da atualizaï¿½ï¿½o do objeto
+              // PERSISTï¿½NCIA: Nos casos de ManyToMany a coluna de FK nï¿½o estï¿½ na tabela do objeto (e sim na tabela de joinAlias). Por isso tudo o que temos que fazer ï¿½ validar se todos os objetos tem um ID para a posterior inserï¿½ï¿½o.
+              // PERSISTï¿½NCIA: Note que ManyToMany deve sempre estar dentro de algum tipo de coleï¿½ï¿½o/lista/hash/etc por ser mï¿½ltiplos objetos.
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue == null) {
-                // Por ser esperado sempre uma Lista nas associações ManyToMany, um objeto recebido nulo é um erro, já que nulo indica que não foi carregado enquanto que uma coleção vazia indica a ausência de associações.
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção nula. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                // Por ser esperado sempre uma Lista nas associaï¿½ï¿½es ManyToMany, um objeto recebido nulo ï¿½ um erro, jï¿½ que nulo indica que nï¿½o foi carregado enquanto que uma coleï¿½ï¿½o vazia indica a ausï¿½ncia de associaï¿½ï¿½es.
+                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleï¿½ï¿½o nula. A ausï¿½ncia de relacionamento deve sempre ser indicada por uma coleï¿½ï¿½o vazia, o atributo nulo ï¿½ indicativo de que ele nï¿½o foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
               } else {
                 if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
                   for (Object item : list) {
-                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                   }
                 } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
                   Map hash = (Map) fieldValue;
                   for (Object item : hash.values()) {
-                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associação sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                    if (((VO) item).getId() == null) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O atributo '${1}' trouxe uma associaï¿½ï¿½o sem ID!", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
               break;
@@ -680,14 +679,14 @@ public final class RFWDAO<VO extends RFWVO> {
         }
         final RFWMetaCollectionField colAnn = field.getAnnotation(RFWMetaCollectionField.class);
         if (colAnn != null) {
-          // No caso de lista, temos de excluir todos os objetos anteriores do banco para inserir os novos depois. Não temos como comparar pq não utilizamos IDs nesses objetos. Assim, se o objeto original existir excluímos todos os itens associados anteriormente de uma única vez.
+          // No caso de lista, temos de excluir todos os objetos anteriores do banco para inserir os novos depois. Nï¿½o temos como comparar pq nï¿½o utilizamos IDs nesses objetos. Assim, se o objeto original existir excluï¿½mos todos os itens associados anteriormente de uma ï¿½nica vez.
           if (entityVOOrig != null) {
             deleteCollection(ds, daoMap, entityVOOrig, "@" + RUReflex.addPath(path, field.getName()), dialect);
           }
         }
       }
 
-      if (needParent && parentCount == 0) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Há relacionamentos do tipo 'PARENT_ASSOCIATION', o que indica que o objeto é dependente de outro, mas nenhum relacionamento desse tipo foi definido!", new String[] { entityVO.getClass().getCanonicalName() });
+      if (needParent && parentCount == 0) throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Hï¿½ relacionamentos do tipo 'PARENT_ASSOCIATION', o que indica que o objeto ï¿½ dependente de outro, mas nenhum relacionamento desse tipo foi definido!", new String[] { entityVO.getClass().getCanonicalName() });
 
       // ===> INSERIMOS O OBJETO NO BANCO <===
       try (Connection conn = ds.getConnection()) {
@@ -699,7 +698,7 @@ public final class RFWDAO<VO extends RFWVO> {
               if (rs.next()) {
                 id = rs.getLong(1);
               } else {
-                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O ID não foi retornado pelo banco de dados. Verifique se a coluna 'id' gera as chaves automaticamente.", new String[] { entityVO.getClass().getCanonicalName() });
+                throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. O ID nï¿½o foi retornado pelo banco de dados. Verifique se a coluna 'id' gera as chaves automaticamente.", new String[] { entityVO.getClass().getCanonicalName() });
               }
               entityVO.setId(id);
             }
@@ -713,23 +712,23 @@ public final class RFWDAO<VO extends RFWVO> {
         persistedCache.put(entityVO.getClass().getCanonicalName() + "." + entityVO.getId(), entityVO);
 
       } catch (Throwable e) {
-        throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+        throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
       }
 
-      // ===> PROCESSAMENTO DOS RELACIONAMENTOS PÓS INSERÇÃO DO OBJETO
+      // ===> PROCESSAMENTO DOS RELACIONAMENTOS Pï¿½S INSERï¿½ï¿½O DO OBJETO
       for (Field field : RUReflex.getDeclaredFieldsRecursively(entityVO.getClass())) {
-        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteração da linha acima sugerida pela revisão do Codex, para pré/pós processar os atributos da classe pai, assim como é iterado no momento da parsistência
+        // for (Field field : entityVO.getClass().getDeclaredFields()) { //Alteraï¿½ï¿½o da linha acima sugerida pela revisï¿½o do Codex, para prï¿½/pï¿½s processar os atributos da classe pai, assim como ï¿½ iterado no momento da parsistï¿½ncia
         final RFWMetaRelationshipField ann = field.getAnnotation(RFWMetaRelationshipField.class);
         if (ann != null) {
           // Verificamos o tipo de relacionamento para validar e saber como proceder.
           switch (ann.relationship()) {
             case WEAK_ASSOCIATION:
-              // Nada para fazer, esse tipo de associação é como se não existisse para o RFWDAO.
+              // Nada para fazer, esse tipo de associaï¿½ï¿½o ï¿½ como se nï¿½o existisse para o RFWDAO.
               break;
             case ASSOCIATION:
-              // No caso de associação e a FK estar na tabela do outro objeto, temos atualizar a coluna do outro objeto. (Se estiver na tabela do objeto sendo editado o valor já foi definido)
+              // No caso de associaï¿½ï¿½o e a FK estar na tabela do outro objeto, temos atualizar a coluna do outro objeto. (Se estiver na tabela do objeto sendo editado o valor jï¿½ foi definido)
               if (!"".equals(getMetaRelationColumnMapped(field, ann))) {
-                // Verificamos se houve alteração entre a associação atual e a associação existente no banco de dados para saber se precisamos atualizar a tabels
+                // Verificamos se houve alteraï¿½ï¿½o entre a associaï¿½ï¿½o atual e a associaï¿½ï¿½o existente no banco de dados para saber se precisamos atualizar a tabels
                 final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
                 if (fieldValue != null) { // Atualmente temos um relacionamento
                   if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
@@ -737,31 +736,31 @@ public final class RFWDAO<VO extends RFWVO> {
                     RFWVO fieldValueVOOrig = null;
                     if (entityVOOrig != null) fieldValueVOOrig = (RFWVO) RUReflex.getPropertyValue(entityVOOrig, field.getName());
                     if (fieldValueVOOrig != null && !fieldValueVO.getId().equals(fieldValueVOOrig.getId())) {
-                      // Se também temos um relacionamento no VO original e eles tem IDs diferentes, precisamos remover a associação do objeto anterior antes de incluir a nova associação (se tem o mesmo ID não precisamos fazer nada pois já estão certos)
-                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVOOrig.getId(), null, dialect); // Exclui a associação do objeto anterior
+                      // Se tambï¿½m temos um relacionamento no VO original e eles tem IDs diferentes, precisamos remover a associaï¿½ï¿½o do objeto anterior antes de incluir a nova associaï¿½ï¿½o (se tem o mesmo ID nï¿½o precisamos fazer nada pois jï¿½ estï¿½o certos)
+                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVOOrig.getId(), null, dialect); // Exclui a associaï¿½ï¿½o do objeto anterior
                     }
-                    // Agora que já removemos as associações do objeto que não estão mais em uso, vamos atualizar as novas associações.
-                    updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVO.getId(), entityVO.getId(), dialect); // Inclui a associação do novo Objeto
+                    // Agora que jï¿½ removemos as associaï¿½ï¿½es do objeto que nï¿½o estï¿½o mais em uso, vamos atualizar as novas associaï¿½ï¿½es.
+                    updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVO.getId(), entityVO.getId(), dialect); // Inclui a associaï¿½ï¿½o do novo Objeto
                   } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
                     Map fieldValueMap = (Map) fieldValue;
                     Map fieldValueMapOrig = null;
                     if (entityVOOrig != null) fieldValueMapOrig = (Map) RUReflex.getPropertyValue(entityVOOrig, field.getName());
 
                     if (fieldValueMapOrig != null && fieldValueMapOrig.size() > 0) {
-                      // Se também temos um relacionamento no VO original, iteramos seus objetos para comparação...
+                      // Se tambï¿½m temos um relacionamento no VO original, iteramos seus objetos para comparaï¿½ï¿½o...
                       for (Object key : fieldValueMapOrig.keySet()) {
                         RFWVO fieldValueVOOrig = (RFWVO) fieldValueMapOrig.get(key);
                         RFWVO fieldValueVO = (RFWVO) fieldValueMap.get(key);
                         if (fieldValueVO == null || !fieldValueVO.getId().equals(fieldValueVOOrig.getId())) {
-                          // ..., temos o objeto para as mesma chavez, mas eles tem IDs diferentes, precisamos remover a associação antiga (a nova associação é feita depois) (se tem o mesmo ID não precisamos fazer nada pois já estão certos)
-                          updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVOOrig.getId(), null, dialect); // Exclui a associação do objeto anterior na tabela
+                          // ..., temos o objeto para as mesma chavez, mas eles tem IDs diferentes, precisamos remover a associaï¿½ï¿½o antiga (a nova associaï¿½ï¿½o ï¿½ feita depois) (se tem o mesmo ID nï¿½o precisamos fazer nada pois jï¿½ estï¿½o certos)
+                          updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVOOrig.getId(), null, dialect); // Exclui a associaï¿½ï¿½o do objeto anterior na tabela
                         }
                       }
                     }
-                    // Tendo ou não removido associações dos objetos que não estão mais associados, atualizamos os novos objetos associados
+                    // Tendo ou nï¿½o removido associaï¿½ï¿½es dos objetos que nï¿½o estï¿½o mais associados, atualizamos os novos objetos associados
                     for (Object obj : fieldValueMap.values()) {
                       RFWVO fieldValueVO = (RFWVO) obj;
-                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVO.getId(), entityVO.getId(), dialect); // Atualiza a associação na tabela do objeto associado.
+                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueVO.getId(), entityVO.getId(), dialect); // Atualiza a associaï¿½ï¿½o na tabela do objeto associado.
                     }
                   } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                     List list = (List) fieldValue;
@@ -769,12 +768,12 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (entityVOOrig != null) listOriginal = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
 
                     if (listOriginal != null && listOriginal.size() > 0) {
-                      // Se também temos um relacionamento no VO original, iteramos seus objetos para comparação...
+                      // Se tambï¿½m temos um relacionamento no VO original, iteramos seus objetos para comparaï¿½ï¿½o...
                       for (Object itemOriginal : listOriginal) {
                         RFWVO itemVOOrig = (RFWVO) itemOriginal;
                         RFWVO itemVO = null;
                         if (list != null) {
-                          // Se temos uma lista do objeto atual, vamos tentar encontrar o objeto para atualização
+                          // Se temos uma lista do objeto atual, vamos tentar encontrar o objeto para atualizaï¿½ï¿½o
                           for (Object item : list) {
                             if (itemVOOrig.getId().equals(((VO) item).getId())) { // ItemOriginal sempre tem um ID pois veio do banco de dados.
                               itemVO = (VO) item;
@@ -784,21 +783,21 @@ public final class RFWDAO<VO extends RFWVO> {
                         }
 
                         if (itemVO == null || !itemVOOrig.getId().equals(itemVO.getId())) {
-                          // ..., temos o objeto em ambas a lista, mas eles tem IDs diferentes, precisamos remover a associação antiga (a nova associação é feita depois) (se tem o mesmo ID não precisamos fazer nada pois já estão certos)
-                          updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), itemVOOrig.getId(), null, dialect); // Exclui a associação do objeto anterior na tabela
+                          // ..., temos o objeto em ambas a lista, mas eles tem IDs diferentes, precisamos remover a associaï¿½ï¿½o antiga (a nova associaï¿½ï¿½o ï¿½ feita depois) (se tem o mesmo ID nï¿½o precisamos fazer nada pois jï¿½ estï¿½o certos)
+                          updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), itemVOOrig.getId(), null, dialect); // Exclui a associaï¿½ï¿½o do objeto anterior na tabela
                         }
                       }
                     }
-                    // Tendo ou não removido associações dos objetos que não estão mais associados, atualizamos os novos objetos associados
+                    // Tendo ou nï¿½o removido associaï¿½ï¿½es dos objetos que nï¿½o estï¿½o mais associados, atualizamos os novos objetos associados
                     for (Object item : list) {
                       RFWVO itemVO = (RFWVO) item;
-                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), itemVO.getId(), entityVO.getId(), dialect); // Atualiza a associação na tabela do objeto associado.
+                      updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), itemVO.getId(), entityVO.getId(), dialect); // Atualiza a associaï¿½ï¿½o na tabela do objeto associado.
                     }
                   } else {
-                    throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                    throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                   }
                 } else {
-                  // Se não temos uma associação no objeto atual, temos que remover da antiga caso exista
+                  // Se nï¿½o temos uma associaï¿½ï¿½o no objeto atual, temos que remover da antiga caso exista
                   Object fieldValueOrig = null;
                   if (entityVOOrig != null) fieldValueOrig = RUReflex.getPropertyValue(entityVOOrig, field.getName());
                   if (fieldValueOrig != null) {
@@ -806,11 +805,11 @@ public final class RFWDAO<VO extends RFWVO> {
                       RFWVO fieldValueOrigVO = (RFWVO) fieldValueOrig;
                       updateExternalFK(ds, daoMap, RUReflex.addPath(path, field.getName()), fieldValueOrigVO.getId(), null, dialect); // Exclui a associao na tabela do objeto anterior
                     } else if (List.class.isAssignableFrom(fieldValueOrig.getClass())) {
-                      // Caso no objeto original tenha uma list lançamos erro. Pois o objeto sendo persistido não deve ter as collections nulas e sim vazias para indicar a ausência de associações. Uma collection nula provavelmente indica que o objeto não foi bem inicializado, ou mal recuperado do banco em caso de atualização.
-                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                      // Caso no objeto original tenha uma list lanï¿½amos erro. Pois o objeto sendo persistido nï¿½o deve ter as collections nulas e sim vazias para indicar a ausï¿½ncia de associaï¿½ï¿½es. Uma collection nula provavelmente indica que o objeto nï¿½o foi bem inicializado, ou mal recuperado do banco em caso de atualizaï¿½ï¿½o.
+                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleï¿½ï¿½o vazia. A ausï¿½ncia de relacionamento deve sempre ser indicada por uma coleï¿½ï¿½o vazia, o atributo nulo ï¿½ indicativo de que ele nï¿½o foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                     } else if (Map.class.isAssignableFrom(fieldValueOrig.getClass())) {
-                      // Caso no objeto original tenha uma hash lançamos erro. Pois o objeto sendo persistido não deve ter as collections nulas e sim vazias para indicar a ausência de associações. Uma collection nula provavelmente indica que o objeto não foi bem inicializado, ou mal recuperado do banco em caso de atualização.
-                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleção vazia. A ausência de relacionamento deve sempre ser indicada por uma coleção vazia, o atributo nulo é indicativo de que ele não foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
+                      // Caso no objeto original tenha uma hash lanï¿½amos erro. Pois o objeto sendo persistido nï¿½o deve ter as collections nulas e sim vazias para indicar a ausï¿½ncia de associaï¿½ï¿½es. Uma collection nula provavelmente indica que o objeto nï¿½o foi bem inicializado, ou mal recuperado do banco em caso de atualizaï¿½ï¿½o.
+                      throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. No atributo '${1}' recebemos uma coleï¿½ï¿½o vazia. A ausï¿½ncia de relacionamento deve sempre ser indicada por uma coleï¿½ï¿½o vazia, o atributo nulo ï¿½ indicativo de que ele nï¿½o foi carredo do banco de dados.", new String[] { entityVO.getClass().getCanonicalName(), field.getName() });
                     }
                   }
                 }
@@ -877,26 +876,26 @@ public final class RFWDAO<VO extends RFWVO> {
             }
               break;
             case COMPOSITION_TREE: {
-              // PERSISTÊNCIA: Em caso de composição de árvore, temos agora que persistir todos os objetos filhos
+              // PERSISTï¿½NCIA: Em caso de composiï¿½ï¿½o de ï¿½rvore, temos agora que persistir todos os objetos filhos
               final Object fieldValue = RUReflex.getPropertyValue(entityVO, field.getName());
               if (fieldValue != null) {
                 if (RFWVO.class.isAssignableFrom(fieldValue.getClass())) {
-                  throw new RFWValidationException("Encontrado a definição 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definição só pode ser utilizado em coleções para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWValidationException("Encontrado a definiï¿½ï¿½o 'COMPOSITION_TREE' em um relacionamento 1:1. Essa definiï¿½ï¿½o sï¿½ pode ser utilizado em coleï¿½ï¿½es para indicar os 'filhos' do relacionamento hierarquico. Classe: ${0} / Field: ${1} / FieldClass: ${2}.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 } else if (List.class.isAssignableFrom(fieldValue.getClass())) {
                   List list = (List) fieldValue;
                   List listOriginal = null;
                   if (entityVOOrig != null) listOriginal = (List) RUReflex.getPropertyValue(entityVOOrig, field.getName());
 
-                  // Se é uma lista, verificamos se tem o atributo "sortColumn" definido na Annotation. Nestes casos temos de criar esse atributo para ser salvo junto
+                  // Se ï¿½ uma lista, verificamos se tem o atributo "sortColumn" definido na Annotation. Nestes casos temos de criar esse atributo para ser salvo junto
                   String sColumn = null;
                   if (!"".equals(ann.sortColumn())) sColumn = ann.sortColumn();
 
-                  int countIndex = 0; // Contador de indice. Usado para saber o índice do item na lista. Utilizado quando o sortColumn é definido para garantir a ordem da lista.
+                  int countIndex = 0; // Contador de indice. Usado para saber o ï¿½ndice do item na lista. Utilizado quando o sortColumn ï¿½ definido para garantir a ordem da lista.
                   for (Object item : list) {
                     VO itemVO = (VO) item;
                     VO itemVOOrig = null;
                     if (listOriginal != null) {
-                      // Se temos uma lista do objeto original, vamos tentar encontrar o objeto para passar como objeto original para comparação
+                      // Se temos uma lista do objeto original, vamos tentar encontrar o objeto para passar como objeto original para comparaï¿½ï¿½o
                       for (Object itemOriginal : listOriginal) {
                         if (((VO) itemOriginal).getId().equals(itemVO.getId())) { // ItemOriginal sempre tem um ID pois veio do banco de dados.
                           itemVOOrig = (VO) itemOriginal;
@@ -905,12 +904,12 @@ public final class RFWDAO<VO extends RFWVO> {
                       }
                     }
 
-                    // Antes de passar para os objetos filhos em "esquema de árvore". Precisamos completar o DAOMap, isso pq quando ele é feito limitamos o mapeamento de estruturas hierarquicas por tender ao infinito. Vamos duplicando o mapeamento aqui, dinamicamente
+                    // Antes de passar para os objetos filhos em "esquema de ï¿½rvore". Precisamos completar o DAOMap, isso pq quando ele ï¿½ feito limitamos o mapeamento de estruturas hierarquicas por tender ao infinito. Vamos duplicando o mapeamento aqui, dinamicamente
                     String destPath = RUReflex.addPath(path, field.getName());
                     // System.out.println(dumpDAOMap(daoMap));
-                    // Se não tivermos o caminho temos de completar dianimicamente no DAOMap
+                    // Se nï¿½o tivermos o caminho temos de completar dianimicamente no DAOMap
                     daoMap.createMapTableForCompositionTree(path, destPath, "id", getMetaRelationColumnMapped(field, ann));
-                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
+                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composiï¿½ï¿½o nï¿½o podem ter ID definido antes do prï¿½prio pai, provavelmente isso ï¿½ um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composiï¿½ï¿½o novo (em insert).
                     persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, destPath, persistedCache, sColumn, countIndex, updatePendings, dialect);
 
                     countIndex++;
@@ -923,20 +922,20 @@ public final class RFWDAO<VO extends RFWVO> {
                     VO itemVO = (VO) hash.get(key);
                     VO itemVOOrig = null;
                     if (hashOriginal != null) itemVOOrig = (VO) hashOriginal.get(key);
-                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composição não podem ter ID definido antes do próprio pai, provavelmente isso é um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composição novo (em insert).
+                    // Passamos isNew como true sempre que o objeto atual (objeto pai) for novo, isso pq objetos de composiï¿½ï¿½o nï¿½o podem ter ID definido antes do prï¿½prio pai, provavelmente isso ï¿½ um erro. No entanto, o pai pode ser "velho" (em update) e o objeto da composiï¿½ï¿½o novo (em insert).
                     persist(ds, daoMap, (isNew || itemVO.getId() == null), itemVO, itemVOOrig, RUReflex.addPath(path, field.getName()), persistedCache, null, 0, updatePendings, dialect);
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
             }
               break;
             case INNER_ASSOCIATION:
-              // Neste caso não há nada para fazer neste ponto.
+              // Neste caso nï¿½o hï¿½ nada para fazer neste ponto.
               break;
             case PARENT_ASSOCIATION:
-              // No caso de um relacionamento com o objeto pai, não temos de fazer nada, pois tanto o pai quando o ID do pai já deve ter sido persistido
+              // No caso de um relacionamento com o objeto pai, nï¿½o temos de fazer nada, pois tanto o pai quando o ID do pai jï¿½ deve ter sido persistido
               break;
             case MANY_TO_MANY: {
               // Os relacionamentos ManyToMany precisam ter os inserts da tabela de Join realizados para "linkar" os dois objetos
@@ -946,33 +945,33 @@ public final class RFWDAO<VO extends RFWVO> {
                   for (Object item : (List) fieldValue) {
                     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createManyToManySelectStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) item, dialect); ResultSet rs = stmt.executeQuery()) {
                       if (!rs.next()) {
-                        // Se não tem um resultado próximo, criamos a inserção, se não deixa quieto que já foi feito
+                        // Se nï¿½o tem um resultado prï¿½ximo, criamos a inserï¿½ï¿½o, se nï¿½o deixa quieto que jï¿½ foi feito
                         try (PreparedStatement stmt2 = DAOMap.createManyToManyInsertStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) item, dialect)) {
                           stmt2.executeUpdate();
                         }
                       }
                     } catch (Throwable e) {
-                      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+                      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
                     }
                   }
                 } else if (Map.class.isAssignableFrom(fieldValue.getClass())) {
                   for (Object item : ((Map) fieldValue).values()) {
                     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createManyToManySelectStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) item, dialect); ResultSet rs = stmt.executeQuery()) {
                       if (!rs.next()) {
-                        // Se não tem um resultado próximo, criamos a inserção, se não deixa quieto que já foi feito
+                        // Se nï¿½o tem um resultado prï¿½ximo, criamos a inserï¿½ï¿½o, se nï¿½o deixa quieto que jï¿½ foi feito
                         try (PreparedStatement stmt2 = DAOMap.createManyToManyInsertStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) item, dialect)) {
                           stmt2.executeUpdate();
                         }
                       }
                     } catch (Throwable e) {
-                      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+                      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
                     }
                   }
                 } else {
-                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValue.getClass().getCanonicalName() });
                 }
               }
-              // Se existir uma lista no objeto original, precisamos apagar todos os mapeamentos que não existem mais, caso contrário as desassociações não deixarão de existir
+              // Se existir uma lista no objeto original, precisamos apagar todos os mapeamentos que nï¿½o existem mais, caso contrï¿½rio as desassociaï¿½ï¿½es nï¿½o deixarï¿½o de existir
               if (entityVOOrig != null) {
                 final Object fieldValueOrig = RUReflex.getPropertyValue(entityVOOrig, field.getName());
                 if (fieldValueOrig != null) {
@@ -980,7 +979,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     List listOrig = (List) fieldValueOrig;
                     for (Object itemOrig : listOrig) {
                       boolean found = false;
-                      // Vamos iterar a lista de objetos atual para ver se encontramos o objeto. se não encontrar excluimos o link entre os objetos
+                      // Vamos iterar a lista de objetos atual para ver se encontramos o objeto. se nï¿½o encontrar excluimos o link entre os objetos
                       if (fieldValue != null) {
                         for (Object item : (List) fieldValue) {
                           if (((VO) itemOrig).getId().equals(((VO) item).getId())) {
@@ -993,7 +992,7 @@ public final class RFWDAO<VO extends RFWVO> {
                         try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createManyToManyDeleteStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) itemOrig, dialect)) {
                           stmt.executeUpdate();
                         } catch (Throwable e) {
-                          throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+                          throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
                         }
                       }
                     }
@@ -1001,7 +1000,7 @@ public final class RFWDAO<VO extends RFWVO> {
                     Map hashOrig = (Map) fieldValueOrig;
                     for (Object itemOrig : hashOrig.values()) {
                       boolean found = false;
-                      // Vamos iterar a lista de objetos atual para ver se encontramos o objeto. se não encontrar excluimos o link entre os objetos
+                      // Vamos iterar a lista de objetos atual para ver se encontramos o objeto. se nï¿½o encontrar excluimos o link entre os objetos
                       if (fieldValue != null) {
                         for (Object item : ((Map) fieldValue).values()) {
                           if (((VO) itemOrig).getId().equals(((VO) item).getId())) {
@@ -1014,12 +1013,12 @@ public final class RFWDAO<VO extends RFWVO> {
                         try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createManyToManyDeleteStatement(conn, daoMap, RUReflex.addPath(path, field.getName()), entityVO, (VO) itemOrig, dialect)) {
                           stmt.executeUpdate();
                         } catch (Throwable e) {
-                          throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+                          throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
                         }
                       }
                     }
                   } else {
-                    throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Não é possível persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValueOrig.getClass().getCanonicalName() });
+                    throw new RFWCriticalException("Falha ao persistir o objeto '${0}'. Nï¿½o ï¿½ possï¿½vel persistir o atributo '${1}' por ser do tipo '${2}'.", new String[] { entityVO.getClass().getCanonicalName(), field.getName(), fieldValueOrig.getClass().getCanonicalName() });
                   }
                 }
               }
@@ -1039,7 +1038,7 @@ public final class RFWDAO<VO extends RFWVO> {
             } else if (colValue instanceof Map<?, ?>) {
               if (((Map<?, ?>) colValue).size() > 0) insertCollection(ds, daoMap, "@" + RUReflex.addPath(path, field.getName()), new LinkedList<Object>(((Map<?, ?>) colValue).entrySet()), entityVO.getId(), dialect, colAnn);
             } else {
-              throw new RFWCriticalException("O RFWDAO não sabe persistir uma RFWMetaCollectionField com o objeto do tipo '" + colValue.getClass().getCanonicalName() + "'");
+              throw new RFWCriticalException("O RFWDAO nï¿½o sabe persistir uma RFWMetaCollectionField com o objeto do tipo '" + colValue.getClass().getCanonicalName() + "'");
             }
           }
         }
@@ -1049,10 +1048,10 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Recupera a definição do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   * Recupera a definiï¿½ï¿½o do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenï¿½ï¿½o do {@link DAOResolver}.
    *
    * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
-   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @param ann referï¿½ncia para a {@link RFWMetaRelationshipField} encontrada.
    * @return Retorna o nome da coluna a ser utilizada no mapeamento.
    * @throws RFWException
    */
@@ -1068,10 +1067,10 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Recupera a definição do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   * Recupera a definiï¿½ï¿½o do atributo "column" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenï¿½ï¿½o do {@link DAOResolver}.
    *
    * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
-   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @param ann referï¿½ncia para a {@link RFWMetaRelationshipField} encontrada.
    * @return Retorna o nome da coluna a ser utilizada no mapeamento.
    * @throws RFWException
    */
@@ -1109,10 +1108,10 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Recupera a definição do atributo "columnMapped" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenção do {@link DAOResolver}.
+   * Recupera a definiï¿½ï¿½o do atributo "columnMapped" da Annotation {@link RFWMetaRelationshipField}, com a possibilidade de intervenï¿½ï¿½o do {@link DAOResolver}.
    *
    * @param field Field do objeto que estamos tratando, e procurando o valor da coluna para terminar o mapeamento.
-   * @param ann referência para a {@link RFWMetaRelationshipField} encontrada.
+   * @param ann referï¿½ncia para a {@link RFWMetaRelationshipField} encontrada.
    * @return Retorna o nome da coluna a ser utilizada no mapeamento.
    * @throws RFWException
    */
@@ -1128,13 +1127,13 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Atualiza uma associação quando a coluna de FK está na tabela do objento associado, e não na tabela da entidade sendo atualizada.
+   * Atualiza uma associaï¿½ï¿½o quando a coluna de FK estï¿½ na tabela do objento associado, e nï¿½o na tabela da entidade sendo atualizada.
    *
-   * @param ds Data Source da conexão.
+   * @param ds Data Source da conexï¿½o.
    * @param map Mapeamento Objeto x Tabelas
    * @param path Caminho completo do atributo que contem o objeto associado.
-   * @param id ID do objeto associado (para identificação na tabela que será atualizada).
-   * @param newID ID que será colocado na tabela. Normalmente o ID do objeto sendo editado pelo RFWDAO ou null caso estejamos eliminando a associação.
+   * @param id ID do objeto associado (para identificaï¿½ï¿½o na tabela que serï¿½ atualizada).
+   * @param newID ID que serï¿½ colocado na tabela. Normalmente o ID do objeto sendo editado pelo RFWDAO ou null caso estejamos eliminando a associaï¿½ï¿½o.
    * @throws RFWException
    */
   private static <VO extends RFWVO> void updateExternalFK(DataSource ds, DAOMap map, String path, Long id, Long newID, SQLDialect dialect) throws RFWException {
@@ -1146,26 +1145,26 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Atualiza uma associação quando a coluna de FK está na tabela do próprio objeto (sem alterar mais dada do objeto.
+   * Atualiza uma associaï¿½ï¿½o quando a coluna de FK estï¿½ na tabela do prï¿½prio objeto (sem alterar mais dada do objeto.
    *
-   * @param ds Data Source da conexão.
+   * @param ds Data Source da conexï¿½o.
    * @param map Mapeamento Objeto x Tabelas
-   * @param path Caminho completo até o objeto que será atualizado.
-   * @param property Propriedade do objeto que tem a associação com a FK na própria tabela.
-   * @param id ID do objeto (para identificação na tabela que será atualizada).
-   * @param newID ID que será colocado na tabela. Normalmente o ID do objeto sendo editado pelo RFWDAO ou null caso estejamos eliminando a associação.
+   * @param path Caminho completo atï¿½ o objeto que serï¿½ atualizado.
+   * @param property Propriedade do objeto que tem a associaï¿½ï¿½o com a FK na prï¿½pria tabela.
+   * @param id ID do objeto (para identificaï¿½ï¿½o na tabela que serï¿½ atualizada).
+   * @param newID ID que serï¿½ colocado na tabela. Normalmente o ID do objeto sendo editado pelo RFWDAO ou null caso estejamos eliminando a associaï¿½ï¿½o.
    * @throws RFWException
    */
   private static <VO extends RFWVO> void updateInternalFK(DataSource ds, DAOMap map, String path, String property, Long id, Long newID, SQLDialect dialect) throws RFWException {
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createUpdateInternalFKStatement(conn, map, path, property, id, newID, dialect)) {
       stmt.executeUpdate();
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao corrigir FK de associação do objeto no banco de dados!", e);
+      throw new RFWCriticalException("Falha ao corrigir FK de associaï¿½ï¿½o do objeto no banco de dados!", e);
     }
   }
 
   /**
-   * Este método é utilizado para excluir do banco todos os elementos de um atributo anotado com a {@link RFWMetaCollectionField}.
+   * Este mï¿½todo ï¿½ utilizado para excluir do banco todos os elementos de um atributo anotado com a {@link RFWMetaCollectionField}.
    */
   private static <VO extends RFWVO> void deleteCollection(DataSource ds, DAOMap map, VO vo, String path, SQLDialect dialect) throws RFWException {
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createDeleteCollectionStatement(conn, map, path, vo.getId(), dialect)) {
@@ -1187,7 +1186,7 @@ public final class RFWDAO<VO extends RFWVO> {
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createDeleteStatement(conn, map, path, dialect, vo.getId())) {
       stmt.executeUpdate();
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
@@ -1196,8 +1195,8 @@ public final class RFWDAO<VO extends RFWVO> {
    *
    * @param id ID do objeto a ser encontrado no banco de dados.
    * @param attributes Atributos da entidade que devem ser recuperados.
-   * @return Objeto montado caso seja encontrado, null caso contrário.
-   * @throws RFWException Lançado caso ocorra algum problema para montar ou obter o objeto
+   * @return Objeto montado caso seja encontrado, null caso contrï¿½rio.
+   * @throws RFWException Lanï¿½ado caso ocorra algum problema para montar ou obter o objeto
    */
   @SuppressWarnings("unchecked")
   public VO findById(Long id, String[] attributes) throws RFWException {
@@ -1205,7 +1204,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
     final DAOMap map = createDAOMap(this.type, attributes);
 
-    // Cria a condição do ID
+    // Cria a condiï¿½ï¿½o do ID
     RFWMO mo = new RFWMO();
     mo.equal("id", id);
 
@@ -1218,18 +1217,18 @@ public final class RFWDAO<VO extends RFWVO> {
         return (VO) list.get(0);
       }
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
     return null;
   }
 
   /**
-   * Busca a entidade a partir do seu ID para Atualização.
+   * Busca a entidade a partir do seu ID para Atualizaï¿½ï¿½o.
    *
    * @param id ID do objeto a ser encontrado no banco de dados.
-   * @param attributes Atributos da entidade que devem ser recuperados. Atributos de associação e composição são recuperados automaticamente.
-   * @return Objeto montado caso seja encontrado, null caso contrário.
-   * @throws RFWException Lançado caso ocorra algum problema para montar ou obter o objeto
+   * @param attributes Atributos da entidade que devem ser recuperados. Atributos de associaï¿½ï¿½o e composiï¿½ï¿½o sï¿½o recuperados automaticamente.
+   * @return Objeto montado caso seja encontrado, null caso contrï¿½rio.
+   * @throws RFWException Lanï¿½ado caso ocorra algum problema para montar ou obter o objeto
    */
   @SuppressWarnings({ "deprecation", "unchecked" }) // attributes = new String[0];
   public VO findForUpdate(Long id, String[] attributes) throws RFWException {
@@ -1240,7 +1239,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
     final DAOMap map = createDAOMap(this.type, attributes);
 
-    // Cria a condição do ID
+    // Cria a condiï¿½ï¿½o do ID
     RFWMO mo = new RFWMO();
     mo.equal("id", id);
 
@@ -1255,35 +1254,35 @@ public final class RFWDAO<VO extends RFWVO> {
         return v;
       }
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
     return null;
   }
 
   /**
-   * Busca uma lista IDs dos VOs baseado em um critério de "search".
+   * Busca uma lista IDs dos VOs baseado em um critï¿½rio de "search".
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
-   * @param orderBy Objeto para definir a ordenação da lista
-   * @return Lista com os objetos que respeitam o critério estabelecido e na ordem desejada.
-   * @throws RFWException Lançado em caso de erro.
+   * @param orderBy Objeto para definir a ordenaï¿½ï¿½o da lista
+   * @return Lista com os objetos que respeitam o critï¿½rio estabelecido e na ordem desejada.
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   public List<Long> findIDs(RFWMO mo, RFWOrderBy orderBy) throws RFWException {
     return findIDs(mo, orderBy, null, null);
   }
 
   /**
-   * Busca uma lista IDs dos VOs baseado em um critério de "search".
+   * Busca uma lista IDs dos VOs baseado em um critï¿½rio de "search".
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
-   * @param orderBy Objeto para definir a ordenação da lista
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @return Lista com os objetos que respeitam o critério estabelecido e na ordem desejada.
-   * @throws RFWException Lançado em caso de erro.
+   * @param orderBy Objeto para definir a ordenaï¿½ï¿½o da lista
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @return Lista com os objetos que respeitam o critï¿½rio estabelecido e na ordem desejada.
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   public List<Long> findIDs(RFWMO mo, RFWOrderBy orderBy, Integer offSet, Integer limit) throws RFWException {
-    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condições
+    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condiï¿½ï¿½es
     String[] moAtt = new String[0];
     if (mo != null) moAtt = RUArray.concatAll(moAtt, mo.getAttributes().toArray(new String[0]));
     if (orderBy != null) moAtt = RUArray.concatAll(moAtt, orderBy.getAttributes().toArray(new String[0]));
@@ -1295,8 +1294,8 @@ public final class RFWDAO<VO extends RFWVO> {
       try (PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, new String[] { "id" }, false, mo, orderBy, offSet, limit, null, dialect)) {
         stmt.setFetchSize(1000);
         try (ResultSet rs = stmt.executeQuery()) {
-          // Ao usar o LinkedHashSet ele não aceita valores iguais (ele os sobrepõe automaticamente na Hash) fazendo com que no final só tenhamos uma lista de objetos distintos.
-          // Precisamos utilizar o LinkedHashSet ao invés do habitual HashSet para que ele mantenha a ordem dos objetos na saída.
+          // Ao usar o LinkedHashSet ele nï¿½o aceita valores iguais (ele os sobrepï¿½e automaticamente na Hash) fazendo com que no final sï¿½ tenhamos uma lista de objetos distintos.
+          // Precisamos utilizar o LinkedHashSet ao invï¿½s do habitual HashSet para que ele mantenha a ordem dos objetos na saï¿½da.
           final LinkedHashSet<Long> ids = new LinkedHashSet<>();
           DAOMapTable mTable = map.getMapTableByPath("");
           while (rs.next())
@@ -1309,17 +1308,17 @@ public final class RFWDAO<VO extends RFWVO> {
         }
       }
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
   /**
-   * Busca a quantidade de itens que uma busca por filtro {@link RFWMO} retornará.<br>
-   * Esta busca faz uma query do tipo 'SELECT COUNT(*)...' trazendo do banco apenas o total, sem carregar qualquer outro tipo de objeto, o que melhora a performance quando o desejado é apenas o total de itens.
+   * Busca a quantidade de itens que uma busca por filtro {@link RFWMO} retornarï¿½.<br>
+   * Esta busca faz uma query do tipo 'SELECT COUNT(*)...' trazendo do banco apenas o total, sem carregar qualquer outro tipo de objeto, o que melhora a performance quando o desejado ï¿½ apenas o total de itens.
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
    * @return Long com a quantidade de itens encontrados. Zero se a query retornou vazia.
-   * @throws RFWException Lanaçado em caso de erro.
+   * @throws RFWException Lanaï¿½ado em caso de erro.
    */
   public Long count(RFWMO mo) throws RFWException {
     RFWField[] fields = new RFWField[1];
@@ -1335,7 +1334,7 @@ public final class RFWDAO<VO extends RFWVO> {
    *
    * @param attribute nome do atributo (ou caminho) para realizar a consulta de valores distintos no banco de dados.
    * @param mo Match Object para realizar o filtro no banco de dados.
-   * @return Lista com os valores distintos da coluna/propriedade solicitada. Os objetos tendem a ser equivalente ao tipo de dado no banco de dados. Pois são criados a partir do método .getObject() do ResultSet, e sem intervenção do RFWDAO.
+   * @return Lista com os valores distintos da coluna/propriedade solicitada. Os objetos tendem a ser equivalente ao tipo de dado no banco de dados. Pois sï¿½o criados a partir do mï¿½todo .getObject() do ResultSet, e sem intervenï¿½ï¿½o do RFWDAO.
    * @throws RFWException
    */
   public List<Object> findDistinct(String attribute, RFWMO mo) throws RFWException {
@@ -1354,33 +1353,33 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Busca uma lista de VOs baseado em um critério de "search".
+   * Busca uma lista de VOs baseado em um critï¿½rio de "search".
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
-   * @param orderBy Objeto para definir a ordenação da lista
+   * @param orderBy Objeto para definir a ordenaï¿½ï¿½o da lista
    * @param attributes Atributos que devem ser recuperados em cada objeto.
-   * @return Lista com os objetos que respeitam o critério estabelecido e na ordem desejada.
-   * @throws RFWException Lançado em caso de erro.
+   * @return Lista com os objetos que respeitam o critï¿½rio estabelecido e na ordem desejada.
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   public List<VO> findList(RFWMO mo, RFWOrderBy orderBy, String[] attributes) throws RFWException {
     return findList(mo, orderBy, attributes, null, null);
   }
 
   /**
-   * Busca uma lista de VOs baseado em um critério de "search".
+   * Busca uma lista de VOs baseado em um critï¿½rio de "search".
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
-   * @param orderBy Objeto para definir a ordenação da lista
+   * @param orderBy Objeto para definir a ordenaï¿½ï¿½o da lista
    * @param attributes Atributos que devem ser recuperados em cada objeto.
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @return Lista com os objetos que respeitam o critério estabelecido e na ordem desejada.
-   * @throws RFWException Lançado em caso de erro.
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @return Lista com os objetos que respeitam o critï¿½rio estabelecido e na ordem desejada.
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   @SuppressWarnings("unchecked")
   public List<VO> findList(RFWMO mo, RFWOrderBy orderBy, String[] attributes, Integer offSet, Integer limit) throws RFWException {
     if (mo == null) mo = new RFWMO();
-    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condições
+    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condiï¿½ï¿½es
     String[] atts = RUArray.concatAll(new String[0], mo.getAttributes().toArray(new String[0]), attributes);
     if (orderBy != null) atts = RUArray.concatAll(atts, orderBy.getAttributes().toArray(new String[0]));
     final DAOMap map = createDAOMap(this.type, atts);
@@ -1390,13 +1389,13 @@ public final class RFWDAO<VO extends RFWVO> {
       DAOMapTable mTable = map.getMapTableByPath("");
       while (rs.next()) {
         final long id = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect);// rs.getLong("id");
-        if (!ids.contains(id)) ids.add(id); // Não permite colocar duplicado, dependendo das conexões utilizadas nos LeftJoins, o mesmo ID pode retornar múltiplas vezes
+        if (!ids.contains(id)) ids.add(id); // Nï¿½o permite colocar duplicado, dependendo das conexï¿½es utilizadas nos LeftJoins, o mesmo ID pode retornar mï¿½ltiplas vezes
       }
 
-      // Se não temos um ID para procurar, é pq o objeto não foi encontrado, simplesmente retorna a lista vazia
+      // Se nï¿½o temos um ID para procurar, ï¿½ pq o objeto nï¿½o foi encontrado, simplesmente retorna a lista vazia
       if (ids.size() == 0) return new LinkedList<>();
 
-      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso já passamos as colunas que queremos montar no objeto
+      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso jï¿½ passamos as colunas que queremos montar no objeto
       RFWMO moIDs = new RFWMO();
       moIDs.in("id", ids);
 
@@ -1415,7 +1414,7 @@ public final class RFWDAO<VO extends RFWVO> {
         return list;
       }
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
@@ -1426,10 +1425,10 @@ public final class RFWDAO<VO extends RFWVO> {
   public List<Object[]> findListEspecial(RFWField[] fields, RFWMO mo, RFWOrderBy orderBy, RFWField[] groupBy, Integer offSet, Integer limit, Boolean useFullJoin) throws RFWException {
     if (mo == null) mo = new RFWMO();
 
-    // Verificamos todos os atributos que precisamos mapear conforme utilização em cada parte do SQL
+    // Verificamos todos os atributos que precisamos mapear conforme utilizaï¿½ï¿½o em cada parte do SQL
     String[] attsMO = mo.getAttributes().toArray(new String[0]);
     String[] attsFields = new String[0];
-    if (fields == null) throw new RFWCriticalException("O parâmetro 'fields' não pode ser nulo!");
+    if (fields == null) throw new RFWCriticalException("O parï¿½metro 'fields' nï¿½o pode ser nulo!");
     for (RFWField field : fields) {
       attsFields = RUArray.concatAll(attsFields, field.getAttributes().toArray(new String[0]));
     }
@@ -1442,7 +1441,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
     String[] attsTotal = RUArray.concatAll(attsMO, attsFields, attsOrderBy, attsGroupBy);
 
-    // Mapeamos todos os objetos necessários
+    // Mapeamos todos os objetos necessï¿½rios
     final DAOMap map = createDAOMap(this.type, attsTotal);
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt2 = DAOMap.createSelectStatement(conn, map, fields, mo, orderBy, groupBy, offSet, limit, useFullJoin, dialect); ResultSet rs2 = stmt2.executeQuery()) {
@@ -1456,22 +1455,22 @@ public final class RFWDAO<VO extends RFWVO> {
       }
       return list;
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
   /**
-   * Busca um objeto através do MatchObject. Note que as condições usadas no MO devem garantir que apenas 1 objeto será retornado, como a busca por um campo definido como Unique. <br>
-   * Caso este método encontre mais de um objeto para a mesma busca, um erro crítico será lançado.
+   * Busca um objeto atravï¿½s do MatchObject. Note que as condiï¿½ï¿½es usadas no MO devem garantir que apenas 1 objeto serï¿½ retornado, como a busca por um campo definido como Unique. <br>
+   * Caso este mï¿½todo encontre mais de um objeto para a mesma busca, um erro crï¿½tico serï¿½ lanï¿½ado.
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
    * @param attributes Atributos que devem ser recuperados em cada objeto.
-   * @return Objecto único encontrado
-   * @throws RFWException Lançado em caso de erro.
+   * @return Objecto ï¿½nico encontrado
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   public VO findUniqueMatch(RFWMO mo, String[] attributes) throws RFWException {
     if (mo == null) mo = new RFWMO();
-    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condições
+    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condiï¿½ï¿½es
     final DAOMap map = createDAOMap(this.type, RUArray.concatAll(new String[0], mo.getAttributes().toArray(new String[0]), attributes));
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, new String[] { "id" }, false, mo, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
@@ -1480,32 +1479,32 @@ public final class RFWDAO<VO extends RFWVO> {
       Long id = null;
       while (rs.next()) {
         final long rsID = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect); // rs.getLong("id");
-        // Precisamos verficiar se não é o mesmo ID pq as vezes a consult inclui joins de listas, o que faz com que várias linhas retornem para o mesmo objeto
-        if (id != null && id != rsID) throw new RFWCriticalException("Encontrado mais de um objeto pelo método 'findUniqueMatch()'.");
+        // Precisamos verficiar se nï¿½o ï¿½ o mesmo ID pq as vezes a consult inclui joins de listas, o que faz com que vï¿½rias linhas retornem para o mesmo objeto
+        if (id != null && id != rsID) throw new RFWCriticalException("Encontrado mais de um objeto pelo mï¿½todo 'findUniqueMatch()'.");
         id = rsID;
       }
 
-      // Se não temos um ID para procurar, é pq o objeto não foi encontrado, simplesmente retorna null
+      // Se nï¿½o temos um ID para procurar, ï¿½ pq o objeto nï¿½o foi encontrado, simplesmente retorna null
       if (id == null) return null;
-      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso já passamos as colunas que queremos montar no objeto
+      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso jï¿½ passamos as colunas que queremos montar no objeto
       return findById(id, attributes);
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
   /**
-   * Busca um objeto através do MatchObject para edição. Note que as condições usadas no MO devem garantir que apenas 1 objeto será retornado, como a busca por um campo definido como Unique. <br>
-   * Caso este método encontre mais de um objeto para a mesma busca, um erro crítico será lançado.
+   * Busca um objeto atravï¿½s do MatchObject para ediï¿½ï¿½o. Note que as condiï¿½ï¿½es usadas no MO devem garantir que apenas 1 objeto serï¿½ retornado, como a busca por um campo definido como Unique. <br>
+   * Caso este mï¿½todo encontre mais de um objeto para a mesma busca, um erro crï¿½tico serï¿½ lanï¿½ado.
    *
    * @param mo Match Object para realizar o filtro no banco de dados.
    * @param attributes Atributos que devem ser recuperados em cada objeto.
-   * @return Objecto único encontrado
-   * @throws RFWException Lançado em caso de erro.
+   * @return Objecto ï¿½nico encontrado
+   * @throws RFWException Lanï¿½ado em caso de erro.
    */
   public VO findUniqueMatchForUpdate(RFWMO mo, String[] attributes) throws RFWException {
     if (mo == null) mo = new RFWMO();
-    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condições
+    // Primeiro vamos buscar apenas os ids do objeto raiz que satisfazem as condiï¿½ï¿½es
     final DAOMap map = createDAOMap(this.type, RUArray.concatAll(new String[0], mo.getAttributes().toArray(new String[0]), attributes));
 
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectStatement(conn, map, new String[] { "id" }, false, mo, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
@@ -1513,17 +1512,17 @@ public final class RFWDAO<VO extends RFWVO> {
       Long id = null;
       while (rs.next()) {
         final long rsID = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect); // rs.getLong("id");
-        // Precisamos verficiar se não é o mesmo ID pq as vezes a consult inclui joins de listas, o que faz com que várias linhas retornem para o mesmo objeto
-        if (id != null && id != rsID) throw new RFWCriticalException("Encontrado mais de um objeto pelo método 'findUniqueMatch()'.");
+        // Precisamos verficiar se nï¿½o ï¿½ o mesmo ID pq as vezes a consult inclui joins de listas, o que faz com que vï¿½rias linhas retornem para o mesmo objeto
+        if (id != null && id != rsID) throw new RFWCriticalException("Encontrado mais de um objeto pelo mï¿½todo 'findUniqueMatch()'.");
         id = rsID;
       }
 
-      // Se não temos um ID para procurar, é pq o objeto não foi encontrado, simplesmente retorna null
+      // Se nï¿½o temos um ID para procurar, ï¿½ pq o objeto nï¿½o foi encontrado, simplesmente retorna null
       if (id == null) return null;
-      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso já passamos as colunas que queremos montar no objeto
+      // Com base nos IDs retornados, montar um RFWMO para retornar todos os objetos com os IDs, e neste caso jï¿½ passamos as colunas que queremos montar no objeto
       return findForUpdate(id, attributes);
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
   }
 
@@ -1550,7 +1549,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // RFWVO vo = null;
   // try {
   // if (mTable.path.startsWith(".")) { // Tabelas de N:N
-  // // Tabelas de Join não têm uma entidade, no momento de montar o objeto só é necessário "pular" a tabela do join e carregar a próxima tabela
+  // // Tabelas de Join nï¿½o tï¿½m uma entidade, no momento de montar o objeto sï¿½ ï¿½ necessï¿½rio "pular" a tabela do join e carregar a prï¿½xima tabela
   // vo = loadVO(rs, map, mTable.joinedTables.get(0), cache);
   // } else {
   // Long id = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect);
@@ -1626,9 +1625,9 @@ public final class RFWDAO<VO extends RFWVO> {
   //
   // final DAOMapField mField = map.getMapFieldByPath(joinedTable.path.substring(1) + "@");
   // final RFWMetaCollectionField ann = (RFWMetaCollectionField) RUReflex.getRFWMetaAnnotation(mField.table.type, mField.field.substring(0, mField.field.length() - 1));
-  // if (ann.targetRelationship() == null) throw new RFWCriticalException("Não foi possível encontrar o TargetRelationship da MetaCollection em '" + vo.getClass().getCanonicalName() + "' do método '" + mField.field.substring(0, mField.field.length() - 1) + "'.");
+  // if (ann.targetRelationship() == null) throw new RFWCriticalException("Nï¿½o foi possï¿½vel encontrar o TargetRelationship da MetaCollection em '" + vo.getClass().getCanonicalName() + "' do mï¿½todo '" + mField.field.substring(0, mField.field.length() - 1) + "'.");
   //
-  // // Recupera o conteúdo a ser colocado na MetaCollection
+  // // Recupera o conteï¿½do a ser colocado na MetaCollection
   // Object content = null;
   // if (String.class.isAssignableFrom(ann.targetRelationship())) {
   // content = getRSString(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, mField.column, dialect);
@@ -1638,15 +1637,15 @@ public final class RFWDAO<VO extends RFWVO> {
   // content = getRSString(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, mField.column, dialect);
   // if (content != null) content = Enum.valueOf((Class<Enum>) ann.targetRelationship(), (String) content);
   // } else {
-  // throw new RFWCriticalException("RFWDAO não preparado para tratar Collections com target do tipo '" + ann.targetRelationship().getCanonicalName() + "'!");
+  // throw new RFWCriticalException("RFWDAO nï¿½o preparado para tratar Collections com target do tipo '" + ann.targetRelationship().getCanonicalName() + "'!");
   // }
   //
   // if (content != null) {
   // final Class<?> rt = RUReflex.getPropertyTypeByType(mTable.type, mField.field.substring(0, mField.field.length() - 1));
   // if (List.class.isAssignableFrom(rt)) {
-  // // Se é um List procuramos a coluna de 'sort' para saber como organizar os itens
+  // // Se ï¿½ um List procuramos a coluna de 'sort' para saber como organizar os itens
   // DAOMapField sortField = map.getMapFieldByPath(joinedTable.path.substring(1) + "@sortColumn");
-  // Integer sortIndex = null; // A coluna de organização não é obrigatória para montar uma lista, só deixamos de garantir a ordem.
+  // Integer sortIndex = null; // A coluna de organizaï¿½ï¿½o nï¿½o ï¿½ obrigatï¿½ria para montar uma lista, sï¿½ deixamos de garantir a ordem.
   // if (sortField != null) {
   // sortIndex = getRSInteger(rs, joinedTable.schema, joinedTable.table, joinedTable.alias, sortField.column, dialect);
   // }
@@ -1672,17 +1671,17 @@ public final class RFWDAO<VO extends RFWVO> {
   // set = new HashSet<>();
   // RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), set, false);
   // }
-  // set.add(content); // não testamos se já existe pq o SET não permite itens repetidos, ele substituirá automaticamente itens repetidos
+  // set.add(content); // nï¿½o testamos se jï¿½ existe pq o SET nï¿½o permite itens repetidos, ele substituirï¿½ automaticamente itens repetidos
   // } else if (Map.class.isAssignableFrom(rt)) {
-  // // Se é um Map procuramos a coluna de 'key' para saber a chave que devemos incluir na Map
+  // // Se ï¿½ um Map procuramos a coluna de 'key' para saber a chave que devemos incluir na Map
   // DAOMapField keyField = map.getMapFieldByPath(mTable.path.substring(1) + "@keyColumn");
   // Object keyValue = getRSString(rs, mTable.schema, mTable.table, mTable.alias, keyField.column, dialect); // rs.getString(mTable.alias + "." + keyField.column);
   //
-  // // Verifica a existência de um Converter para a chave de acesso
+  // // Verifica a existï¿½ncia de um Converter para a chave de acesso
   // if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
   // // Object ni = ann.keyConverterClass().newInstance();
   // Object ni = createNewInstance(ann.keyConverterClass());
-  // if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+  // if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
   // keyValue = ((RFWDAOConverterInterface) ni).toVO(keyValue);
   // }
   //
@@ -1691,20 +1690,20 @@ public final class RFWDAO<VO extends RFWVO> {
   // hash = new LinkedHashMap<>();
   // RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), hash, false);
   // }
-  // hash.put(keyValue, content); // O próprio map substituirá e validará se a chave é repetida
+  // hash.put(keyValue, content); // O prï¿½prio map substituirï¿½ e validarï¿½ se a chave ï¿½ repetida
   // } else {
-  // throw new RFWCriticalException("O tipo ${0} não é suportado pela RFWMetaCollection! Atributo '${1}' da classe '${2}'.", new String[] { rt.getCanonicalName(), mField.field.substring(0, mField.field.length() - 1), mTable.type.getCanonicalName() });
+  // throw new RFWCriticalException("O tipo ${0} nï¿½o ï¿½ suportado pela RFWMetaCollection! Atributo '${1}' da classe '${2}'.", new String[] { rt.getCanonicalName(), mField.field.substring(0, mField.field.length() - 1), mTable.type.getCanonicalName() });
   // }
   // }
   // }
 
   // /**
-  // * Este método itera o ResultSet recebido e monta todos os objetos {@link RFWVO} encontrados no {@link DAOMap} passado e no ResultSet. Ele não monta a hierarquia dos objetos, apenas monta todos os VOs encontrados dentro do ResultSet.
+  // * Este mï¿½todo itera o ResultSet recebido e monta todos os objetos {@link RFWVO} encontrados no {@link DAOMap} passado e no ResultSet. Ele nï¿½o monta a hierarquia dos objetos, apenas monta todos os VOs encontrados dentro do ResultSet.
   // *
   // * @param rs ResultSet da consulta no banco de dados
   // * @param map mapeamento da consulta.
-  // * @param cache Cache com os objetos já criados ou cach limpe. Se não tiver, passar um objeto novo instânciado. JAMAIS PASSAR OBJETO NULO!
-  // * @return HashSet com os VOs raiz já montados.
+  // * @param cache Cache com os objetos jï¿½ criados ou cach limpe. Se nï¿½o tiver, passar um objeto novo instï¿½nciado. JAMAIS PASSAR OBJETO NULO!
+  // * @return HashSet com os VOs raiz jï¿½ montados.
   // * @throws RFWException
   // */
   // @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1721,7 +1720,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // while (rs.next()) { // rs.beforeFirst();
   // for (DAOMapTable mTable : map.getMapTable()) {
   // if (mTable.path.startsWith("@")) { // Tabelas de Collection (RFWMetaCollection)
-  // // Faz a busca pela coluna ID no resultSet, se encontrar indica que a tabela do objeto foi recuperada mesmo que o conteúdo venha vazio
+  // // Faz a busca pela coluna ID no resultSet, se encontrar indica que a tabela do objeto foi recuperada mesmo que o conteï¿½do venha vazio
   // boolean retrived = false;
   // Long id = null;
   // try {
@@ -1729,7 +1728,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // retrived = true;
   // } catch (RFWException e) {
   // if (e.getCause() != null && e.getCause() instanceof SQLException) {
-  // // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+  // // um SQLException indica que a coluna nï¿½o estï¿½ presente, provavelmente pq os objetos nï¿½o foram exigidos. Neste caso pulamos este objeto.
   // } else {
   // throw e;
   // }
@@ -1753,7 +1752,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // });
   // }
   // } else if (mTable.path.startsWith(".")) { // Tabelas de N:N (join Tables)
-  // // Não faz nenhuma operação, apenas no momento montar os mapeamentos que pularemos a tabela de "join"
+  // // Nï¿½o faz nenhuma operaï¿½ï¿½o, apenas no momento montar os mapeamentos que pularemos a tabela de "join"
   // } else {
   // boolean retrived = false;
   // Long id = null;
@@ -1762,7 +1761,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // retrived = true;
   // } catch (RFWException e) {
   // if (e.getCause() != null && e.getCause() instanceof SQLException) {
-  // // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+  // // um SQLException indica que a coluna nï¿½o estï¿½ presente, provavelmente pq os objetos nï¿½o foram exigidos. Neste caso pulamos este objeto.
   // } else {
   // throw e;
   // }
@@ -1770,18 +1769,18 @@ public final class RFWDAO<VO extends RFWVO> {
   //
   // if (retrived) {
   // // Monta Um array com os dados para o relacionamento
-  // // Nota que se a tabela do objeto foi recuperado, mesmo que o ID seja nulo (não tenha o objeto), no passo de montar o objeto isso representará, nos atributos que são colleções, uma coleção vazia ao invés do valor nulo. Em outras palavras, de que não há relacionamentos e não que não foi recuperado no banco de dados.
+  // // Nota que se a tabela do objeto foi recuperado, mesmo que o ID seja nulo (nï¿½o tenha o objeto), no passo de montar o objeto isso representarï¿½, nos atributos que sï¿½o colleï¿½ï¿½es, uma coleï¿½ï¿½o vazia ao invï¿½s do valor nulo. Em outras palavras, de que nï¿½o hï¿½ relacionamentos e nï¿½o que nï¿½o foi recuperado no banco de dados.
   // DAOMapTable parentTable = null;
   // Long parentId = null;
   // if (mTable.joinAlias != null) {
   // parentTable = map.getMapTableByAlias(mTable.joinAlias);
-  // if (parentTable.path.startsWith(".")) { // Se o caminho começa com '.', significa que é uma tabela da N:N, nestes casos temos que abstrair "um join" e usar tabela "parent da parent" para obter os IDs e objetos corretos. Isso pq temos 3 tabelas, mas apenas 2 objetos.
+  // if (parentTable.path.startsWith(".")) { // Se o caminho comeï¿½a com '.', significa que ï¿½ uma tabela da N:N, nestes casos temos que abstrair "um join" e usar tabela "parent da parent" para obter os IDs e objetos corretos. Isso pq temos 3 tabelas, mas apenas 2 objetos.
   // parentTable = map.getMapTableByAlias(parentTable.joinAlias);
   // }
   // parentId = getRSLong(rs, parentTable.schema, parentTable.table, parentTable.alias, "id", dialect);
   // }
   //
-  // if (parentId != null || id != null) { // Se não temos nem o ID do objeto pai, nem o id do objeto atual, não temos nada a fazer com a informação desse mapeamento. Já descartamos aqui para evitar loops desnecessários a frente
+  // if (parentId != null || id != null) { // Se nï¿½o temos nem o ID do objeto pai, nem o id do objeto atual, nï¿½o temos nada a fazer com a informaï¿½ï¿½o desse mapeamento. Jï¿½ descartamos aqui para evitar loops desnecessï¿½rios a frente
   // // mapRelList.add(new Object[] {
   // // parentTable,
   // // parentId,
@@ -1822,13 +1821,13 @@ public final class RFWDAO<VO extends RFWVO> {
   // }
   // }
   //
-  // // Atenção: A lógica da montagem dos objetos abaixo mira em utilizar o menos de reflexão possível, por ser a parte mais "cara" par a performance, mesmo que para isso haja mais interações nos mesmos loops, fazemos o máximo possível para cada objeto que já foi carregado.
+  // // Atenï¿½ï¿½o: A lï¿½gica da montagem dos objetos abaixo mira em utilizar o menos de reflexï¿½o possï¿½vel, por ser a parte mais "cara" par a performance, mesmo que para isso haja mais interaï¿½ï¿½es nos mesmos loops, fazemos o mï¿½ximo possï¿½vel para cada objeto que jï¿½ foi carregado.
   //
   // List<VO> rootVOs = new LinkedList<VO>();
   // LinkedList<Object[]> mapHashRelList = new LinkedList<Object[]>();
   // int lastsize = -1;
   // // for (Object[] mapRel : new ArrayList<Object[]>(mapRelations)) {
-  // while (mapRelHash.size() > 0) {// Iteramos até o esgotamento pois vamos remover vários objetos a cada iteração desse while
+  // while (mapRelHash.size() > 0) {// Iteramos atï¿½ o esgotamento pois vamos remover vï¿½rios objetos a cada iteraï¿½ï¿½o desse while
   // if (mapRelHash.size() == lastsize) throw new RFWCriticalException("Infinity Loop Detected!");
   // lastsize = mapRelHash.size();
   //
@@ -1842,7 +1841,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // RFWVO vo = null;
   // if (id != null) vo = cache.get(mTable.type.getCanonicalName() + "." + id);
   //
-  // if (parentTable == null) { // Se não há tabela pai, é um VO "raiz", vai para a lista re objetos a serem retornados
+  // if (parentTable == null) { // Se nï¿½o hï¿½ tabela pai, ï¿½ um VO "raiz", vai para a lista re objetos a serem retornados
   // if (vo != null) rootVOs.add((VO) vo);
   // mapRelHash.remove(hashK);
   // } else {
@@ -1860,7 +1859,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // list = new ArrayList<>();
   // RUReflex.setPropertyValue(parentVO, parentAttribute, list, false);
   // }
-  // if (vo != null) list.add(vo); // não é preciso testar por repetição pq cada mapeamento só é incluído uma vez e é removido a seguir
+  // if (vo != null) list.add(vo); // nï¿½o ï¿½ preciso testar por repetiï¿½ï¿½o pq cada mapeamento sï¿½ ï¿½ incluï¿½do uma vez e ï¿½ removido a seguir
   // mapRelHash.remove(hashK);
   //
   // // Itera por outros objetos que fazem parte desta lista
@@ -1886,7 +1885,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // set = new HashSet<>();
   // RUReflex.setPropertyValue(parentVO, parentAttribute, set, false);
   // }
-  // if (vo != null) set.add(vo); // não é preciso testar por repetição pq cada mapeamento só é incluído uma vez e é removido a seguir
+  // if (vo != null) set.add(vo); // nï¿½o ï¿½ preciso testar por repetiï¿½ï¿½o pq cada mapeamento sï¿½ ï¿½ incluï¿½do uma vez e ï¿½ removido a seguir
   // mapRelHash.remove(hashK);
   //
   // // Itera por outros objetos que fazem parte desta lista
@@ -1906,7 +1905,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // }
   // }
   // } else if (Map.class.isAssignableFrom(propertyType)) {
-  // // Não montamos as Hash nesse ponto pois os objetos filhos podem ainda não estar montados e não vamos conseguir pegar a chave da hash, salvamos esse mapeamento para montar a hash na próxima fase
+  // // Nï¿½o montamos as Hash nesse ponto pois os objetos filhos podem ainda nï¿½o estar montados e nï¿½o vamos conseguir pegar a chave da hash, salvamos esse mapeamento para montar a hash na prï¿½xima fase
   // mapHashRelList.add(mapRel);
   // mapRelHash.remove(hashK);
   // }
@@ -1916,7 +1915,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // // Itera e termina de montar as Hashs
   // lastsize = -1;
   // // for (Object[] mapRel : new ArrayList<Object[]>(mapRelations)) {
-  // while (mapHashRelList.size() > 0) {// Iteramos até o esgotamento pois vamos remover vários objetos a cada iteração desse while
+  // while (mapHashRelList.size() > 0) {// Iteramos atï¿½ o esgotamento pois vamos remover vï¿½rios objetos a cada iteraï¿½ï¿½o desse while
   // if (mapHashRelList.size() == lastsize) throw new RFWCriticalException("Infinity Loop Detected!");
   // lastsize = mapHashRelList.size();
   //
@@ -1934,7 +1933,7 @@ public final class RFWDAO<VO extends RFWVO> {
   // vo = cache.get(mTable.type.getCanonicalName() + "." + id);
   // }
   //
-  // // Todos os mapeamentos iterados aqui são hash, não é necessário testar, apenas montar a hash
+  // // Todos os mapeamentos iterados aqui sï¿½o hash, nï¿½o ï¿½ necessï¿½rio testar, apenas montar a hash
   //
   // Map hash = (Map) RUReflex.getPropertyValue(parentVO, parentAttribute);
   // if (hash == null) {
@@ -1957,11 +1956,11 @@ public final class RFWDAO<VO extends RFWVO> {
   // }
 
   /**
-   * Método utilizado ler os dados do result set e montar os objetos conforme forem retornados.
+   * Mï¿½todo utilizado ler os dados do result set e montar os objetos conforme forem retornados.
    *
    * @param rs ResultSet da consulta no banco de dados
    * @param map mapeamento da consulta.
-   * @param cache Cache com os objetos já criados. Utilizado para a recursão do método. Quando chamado de fora do próprio método: passar NULL.
+   * @param cache Cache com os objetos jï¿½ criados. Utilizado para a recursï¿½o do mï¿½todo. Quando chamado de fora do prï¿½prio mï¿½todo: passar NULL.
    * @throws RFWException
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1977,18 +1976,18 @@ public final class RFWDAO<VO extends RFWVO> {
       // return (List<RFWVO>) rsToVO(rs, map, fullCache);
       // }
 
-      // ATENÇÃO: NÃO TRABALHAMOS COM LinkedList, apesar de ter menos overhead que o ArrayList pq o Glassfish ao tentar colocar o linkedlist na fachada acaba estourando a memória. É um BUG do Glassfish que não clona direito o objeto.
-      // Ao usar o ArrayList o Glassfish funciona melhor. Ou seja, para passar pela fachada o Arraylist é mais rápido e evita stackoverflow de "copyObject"
+      // ATENï¿½ï¿½O: Nï¿½O TRABALHAMOS COM LinkedList, apesar de ter menos overhead que o ArrayList pq o Glassfish ao tentar colocar o linkedlist na fachada acaba estourando a memï¿½ria. ï¿½ um BUG do Glassfish que nï¿½o clona direito o objeto.
+      // Ao usar o ArrayList o Glassfish funciona melhor. Ou seja, para passar pela fachada o Arraylist ï¿½ mais rï¿½pido e evita stackoverflow de "copyObject"
       final ArrayList<RFWVO> vos = new ArrayList<>();
 
       // Lista de listas de obejtos que precisam ser "limpas"
-      // Quando as listas tem um sortIndex definido, o banco envia os objetos conforme o orderBy definido do banco e não como deveriamos ter na lista.
-      // Como não temos o sortIndex salvo no VO, o valor será jogado fora com o ResultSet, nós criamos objetos "dummies" para ocupar a posição informada pelo indexOrder até que o objeto correto seja recuperado.
+      // Quando as listas tem um sortIndex definido, o banco envia os objetos conforme o orderBy definido do banco e nï¿½o como deveriamos ter na lista.
+      // Como nï¿½o temos o sortIndex salvo no VO, o valor serï¿½ jogado fora com o ResultSet, nï¿½s criamos objetos "dummies" para ocupar a posiï¿½ï¿½o informada pelo indexOrder atï¿½ que o objeto correto seja recuperado.
       // PROBLEMAS: se por algum motivo o sortIndex ficou errado, digamos faltando o elemento 4 de um total de 10, por exemplo pq o mapeamento foi apagado por ON DELETE CASCADE do banco,
-      // a lista acaba sendo retornada com o dummie objetct ocupando a posição do item que sumiu. Por isso salvamos aqui todas as listas que tiveram dummies objetos colocados, para que no fim da montagem possamos limpar essas listas e manter a ordem desejada
+      // a lista acaba sendo retornada com o dummie objetct ocupando a posiï¿½ï¿½o do item que sumiu. Por isso salvamos aqui todas as listas que tiveram dummies objetos colocados, para que no fim da montagem possamos limpar essas listas e manter a ordem desejada
       final HashSet<List<?>> cleanLists = new HashSet<List<?>>();
 
-      // Cache com os objetos já criados, assim reaproveitamos ao invés de criar várias instâncias do mesmo objeto.
+      // Cache com os objetos jï¿½ criados, assim reaproveitamos ao invï¿½s de criar vï¿½rias instï¿½ncias do mesmo objeto.
       final HashMap<String, RFWVO> objCache;
       if (cache == null) {
         objCache = new HashMap<>();
@@ -1997,7 +1996,7 @@ public final class RFWDAO<VO extends RFWVO> {
       }
 
       while (rs.next()) {
-        final HashMap<String, RFWVO> aliasCache = new HashMap<>(); // este cache armazena os objetos desse ResultSet. Sendo que a chave da Hash é o Alias utilizado no SQL para representar o objeto/tabela.
+        final HashMap<String, RFWVO> aliasCache = new HashMap<>(); // este cache armazena os objetos desse ResultSet. Sendo que a chave da Hash ï¿½ o Alias utilizado no SQL para representar o objeto/tabela.
 
         // Vamos iterar cada tabela para criar seus objetos principais
         for (DAOMapTable mTable : map.getMapTable()) {
@@ -2006,12 +2005,12 @@ public final class RFWDAO<VO extends RFWVO> {
             boolean retrived = false;
             try {
               getRSLong(rs, mTable.schema, mTable.table, mTable.alias, mTable.column, dialect); // rs.getLong(mTable.alias + "." + mTable.column);
-              // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-              // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+              // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+              // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
               retrived = true;
             } catch (RFWException e) {
               if (e.getCause() != null && e.getCause() instanceof SQLException) {
-                // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+                // um SQLException indica que a coluna nï¿½o estï¿½ presente, provavelmente pq os objetos nï¿½o foram exigidos. Neste caso pulamos este objeto.
               } else {
                 throw e;
               }
@@ -2023,22 +2022,22 @@ public final class RFWDAO<VO extends RFWVO> {
               Long parentID = getRSLong(rs, joinTable.schema, joinTable.table, joinTable.alias, "id", dialect); // Long parentID = rs.getLong(mTable.joinAlias + ".id");
               if (rs.wasNull()) parentID = null;
 
-              // Se não temos um ID do Pai, não temos nem um objeto para incializar
+              // Se nï¿½o temos um ID do Pai, nï¿½o temos nem um objeto para incializar
               if (parentID != null) {
                 final DAOMapTable parentTable = joinTable;
                 final String key = parentTable.type.getCanonicalName() + "." + parentID;
                 RFWVO vo = objCache.get(key);
 
-                // Se temos a chave da FK mas não encontramos o objeto, temos um probema... Se não temos a FK é pq provavelmente já temos o objeto pai nulo também...
-                if (vo == null) throw new RFWCriticalException("Não foi possível encontrar o pai para colocar os valores da RFWMetaCollection!", new String[] { mTable.table, mTable.column });
+                // Se temos a chave da FK mas nï¿½o encontramos o objeto, temos um probema... Se nï¿½o temos a FK ï¿½ pq provavelmente jï¿½ temos o objeto pai nulo tambï¿½m...
+                if (vo == null) throw new RFWCriticalException("Nï¿½o foi possï¿½vel encontrar o pai para colocar os valores da RFWMetaCollection!", new String[] { mTable.table, mTable.column });
 
-                // Recupera o field com o valor baseado no atributo do Path da Tabela. Note que o Path da tabela tem o @ no início para identificar que é uma tabela de MetaCollection. Já os campos, tem o @ no fim do nome do field, por isso a operação remover a @ do começo e concatena-la no final.
+                // Recupera o field com o valor baseado no atributo do Path da Tabela. Note que o Path da tabela tem o @ no inï¿½cio para identificar que ï¿½ uma tabela de MetaCollection. Jï¿½ os campos, tem o @ no fim do nome do field, por isso a operaï¿½ï¿½o remover a @ do comeï¿½o e concatena-la no final.
                 final DAOMapField mField = map.getMapFieldByPath(mTable.path.substring(1) + "@");
 
                 final RFWMetaCollectionField ann = (RFWMetaCollectionField) RUReflex.getRFWMetaAnnotation(vo.getClass(), mField.field.substring(0, mField.field.length() - 1));
-                if (ann.targetRelationship() == null) throw new RFWCriticalException("Não foi possível encontrar o TargetRelationship da MetaCollection em '" + vo.getClass().getCanonicalName() + "' do método '" + mField.field.substring(0, mField.field.length() - 1) + "'.");
+                if (ann.targetRelationship() == null) throw new RFWCriticalException("Nï¿½o foi possï¿½vel encontrar o TargetRelationship da MetaCollection em '" + vo.getClass().getCanonicalName() + "' do mï¿½todo '" + mField.field.substring(0, mField.field.length() - 1) + "'.");
 
-                // Recupera o conteúdo a ser colocado na MetaCollection
+                // Recupera o conteï¿½do a ser colocado na MetaCollection
                 Object content = null;
                 try {
                   if (String.class.isAssignableFrom(ann.targetRelationship())) {
@@ -2054,19 +2053,19 @@ public final class RFWDAO<VO extends RFWVO> {
                       content = Enum.valueOf((Class<Enum>) ann.targetRelationship(), (String) content);
                     }
                   } else {
-                    throw new RFWCriticalException("RFWDAO não preparado para tratar Collections com target do tipo '" + ann.targetRelationship().getCanonicalName() + "'!");
+                    throw new RFWCriticalException("RFWDAO nï¿½o preparado para tratar Collections com target do tipo '" + ann.targetRelationship().getCanonicalName() + "'!");
                   }
                 } catch (SQLException e) {
-                  // Uma SQLException ao tentar recuperar a coluna, indica que a coluna não foi "solicitada", assim não temos nada para adicionar, nem o objeto Hash
+                  // Uma SQLException ao tentar recuperar a coluna, indica que a coluna nï¿½o foi "solicitada", assim nï¿½o temos nada para adicionar, nem o objeto Hash
                 }
 
                 if (content != null) {
-                  // Com o VO em mãos, verificamos o tipo de MetaCollection que temos na entidade (Map ou List) para saber como popular e instanciar se ainda for o primeiro
+                  // Com o VO em mï¿½os, verificamos o tipo de MetaCollection que temos na entidade (Map ou List) para saber como popular e instanciar se ainda for o primeiro
                   final Class<?> rt = RUReflex.getPropertyTypeByType(parentTable.type, mField.field.substring(0, mField.field.length() - 1)); // Remove a @ do final do Field
                   if (List.class.isAssignableFrom(rt)) {
-                    // Se é um List procuramos a coluna de 'sort' para saber como organizar os itens
+                    // Se ï¿½ um List procuramos a coluna de 'sort' para saber como organizar os itens
                     DAOMapField sortField = map.getMapFieldByPath(mTable.path.substring(1) + "@sortColumn");
-                    Integer sortIndex = null; // A coluna de organização não é obrigatória para montar uma lista, só deixamos de garantir a ordem.
+                    Integer sortIndex = null; // A coluna de organizaï¿½ï¿½o nï¿½o ï¿½ obrigatï¿½ria para montar uma lista, sï¿½ deixamos de garantir a ordem.
                     if (sortField != null) {
                       sortIndex = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, sortField.column, dialect);
                       // sortIndex = rs.getInt(mTable.alias + "." + sortField.column);
@@ -2079,15 +2078,15 @@ public final class RFWDAO<VO extends RFWVO> {
 
                     if (!list.contains(content)) {
                       if (sortIndex == null) {
-                        // Se não temos sortIndex, simplesmente adicionamos à lista a medida que vamos recuperando
+                        // Se nï¿½o temos sortIndex, simplesmente adicionamos ï¿½ lista a medida que vamos recuperando
                         list.add(content);
                       } else {
-                        if (list.size() == 0) cleanLists.add(list); // Se é nova, e temos indexação, incluímos a lista para limpeza depois.
-                        // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posição a ser ocupada, incluímos alguns "Dummy" Objects para crescer a lista e já deixar o objeto na posição correta
+                        if (list.size() == 0) cleanLists.add(list); // Se ï¿½ nova, e temos indexaï¿½ï¿½o, incluï¿½mos a lista para limpeza depois.
+                        // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posiï¿½ï¿½o a ser ocupada, incluï¿½mos alguns "Dummy" Objects para crescer a lista e jï¿½ deixar o objeto na posiï¿½ï¿½o correta
                         while (list.size() < sortIndex + 1)
-                          list.add(map); // incluimos um objeto que já existe para evitar instanciar novos objetos na memória. E Adicionar NULL não funciona na Linked List
-                        // Incluímos inclusive um objeto no lugar onde nosso objeto será colocado propositalmente, assim não precisamos ter duas lógicas abaixo
-                        list.add(sortIndex, content); // Ao incluir o objeto no índex determinado, empurramos todos os outros para frente, por isso temos de remover o próximo objeto (que antes ocupava o lugar deste)
+                          list.add(map); // incluimos um objeto que jï¿½ existe para evitar instanciar novos objetos na memï¿½ria. E Adicionar NULL nï¿½o funciona na Linked List
+                        // Incluï¿½mos inclusive um objeto no lugar onde nosso objeto serï¿½ colocado propositalmente, assim nï¿½o precisamos ter duas lï¿½gicas abaixo
+                        list.add(sortIndex, content); // Ao incluir o objeto no ï¿½ndex determinado, empurramos todos os outros para frente, por isso temos de remover o prï¿½ximo objeto (que antes ocupava o lugar deste)
                         list.remove(sortIndex + 1);
                       }
                       RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), list, false);
@@ -2097,18 +2096,18 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (set == null) {
                       set = new HashSet<>();
                     }
-                    set.add(content); // não testamos se já existe pq o SET não permite itens repetidos, ele substituirá automaticamente itens repetidos
+                    set.add(content); // nï¿½o testamos se jï¿½ existe pq o SET nï¿½o permite itens repetidos, ele substituirï¿½ automaticamente itens repetidos
                     RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), set, false);
                   } else if (Map.class.isAssignableFrom(rt)) {
-                    // Se é um Map procuramos a coluna de 'key' para saber a chave que devemos incluir na Map
+                    // Se ï¿½ um Map procuramos a coluna de 'key' para saber a chave que devemos incluir na Map
                     DAOMapField keyField = map.getMapFieldByPath(mTable.path.substring(1) + "@keyColumn");
                     Object keyValue = getRSString(rs, mTable.schema, mTable.table, mTable.alias, keyField.column, dialect); // rs.getString(mTable.alias + "." + keyField.column);
 
-                    // Verifica a existência de um Converter para a chave de acesso
+                    // Verifica a existï¿½ncia de um Converter para a chave de acesso
                     if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
                       // Object ni = ann.keyConverterClass().newInstance();
                       Object ni = createNewInstance(ann.keyConverterClass());
-                      if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+                      if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
                       keyValue = ((RFWDAOConverterInterface) ni).toVO(keyValue);
                     }
 
@@ -2116,31 +2115,31 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (hash == null) {
                       hash = new LinkedHashMap<>();
                     }
-                    // Recupera o atributo do objeto que é usado como chave da hash
+                    // Recupera o atributo do objeto que ï¿½ usado como chave da hash
                     if (!hash.containsKey(keyValue)) {
-                      hash.put(keyValue, content); // Só adiciona se ainda não tiver este objeto
+                      hash.put(keyValue, content); // Sï¿½ adiciona se ainda nï¿½o tiver este objeto
                       RUReflex.setPropertyValue(vo, mField.field.substring(0, mField.field.length() - 1), hash, false);
                     }
                   } else {
-                    throw new RFWCriticalException("O tipo ${0} não é suportado pela RFWMetaCollection! Atributo '${1}' da classe '${2}'.", new String[] { rt.getCanonicalName(), mField.field.substring(0, mField.field.length() - 1), parentTable.type.getCanonicalName() });
+                    throw new RFWCriticalException("O tipo ${0} nï¿½o ï¿½ suportado pela RFWMetaCollection! Atributo '${1}' da classe '${2}'.", new String[] { rt.getCanonicalName(), mField.field.substring(0, mField.field.length() - 1), parentTable.type.getCanonicalName() });
                   }
                 }
               }
             }
           } else if (mTable.path.startsWith(".")) { // Tabelas de N:N (join Tables)
-            // Ignora as tabelas de N:N, não faz nada!
+            // Ignora as tabelas de N:N, nï¿½o faz nada!
           } else {
             // Verifica se temos a coluna ID no resultSet, isso indica que a tabela do objeto foi recuperada
             Long id = null;
             boolean retrived = false;
             try {
               id = getRSLong(rs, mTable.schema, mTable.table, mTable.alias, "id", dialect); // rs.getLong(mTable.alias + ".id");
-              // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-              // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+              // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+              // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
               retrived = true;
             } catch (RFWException e) {
               if (e.getCause() != null && e.getCause() instanceof SQLException) {
-                // um SQLException indica que a coluna não está presente, provavelmente pq os objetos não foram exigidos. Neste caso pulamos este objeto.
+                // um SQLException indica que a coluna nï¿½o estï¿½ presente, provavelmente pq os objetos nï¿½o foram exigidos. Neste caso pulamos este objeto.
               } else {
                 throw e;
               }
@@ -2153,41 +2152,41 @@ public final class RFWDAO<VO extends RFWVO> {
                 vo.setId(id);
                 objCache.put(key, vo);
 
-                // Iteramos os campos em busca das informações deste VO
+                // Iteramos os campos em busca das informaï¿½ï¿½es deste VO
                 for (DAOMapField mField : map.getMapField()) {
-                  // Ignora o field ID pq ele não está no objeto sendo escrito (é herdado do pai) e o método write não o encontra. Sem contar que já foi escrito diretamente acima sem a necessidade de reflexão
+                  // Ignora o field ID pq ele nï¿½o estï¿½ no objeto sendo escrito (ï¿½ herdado do pai) e o mï¿½todo write nï¿½o o encontra. Sem contar que jï¿½ foi escrito diretamente acima sem a necessidade de reflexï¿½o
                   if (mField.table == mTable && !"id".equals(mField.field)) writeToVO(mField, vo, rs);
                 }
               }
               aliasCache.put(mTable.alias, vo);
-              // Se é um objeto da tabela raiz, adicionamos também na lista que vamos retornar. Não podemos ter essa linha só quando criamos o objeto pq as vezes um objeto raiz é criado primeiro por ter sido apontado em um relacionamento cíclico. E embor ao objeto já tenha sido criado em outra iteração, ele deve ser adiconado na lista de objetos raiz só agora.
+              // Se ï¿½ um objeto da tabela raiz, adicionamos tambï¿½m na lista que vamos retornar. Nï¿½o podemos ter essa linha sï¿½ quando criamos o objeto pq as vezes um objeto raiz ï¿½ criado primeiro por ter sido apontado em um relacionamento cï¿½clico. E embor ao objeto jï¿½ tenha sido criado em outra iteraï¿½ï¿½o, ele deve ser adiconado na lista de objetos raiz sï¿½ agora.
               if ("".equals(mTable.path) && !vos.contains(vo)) vos.add(vo);
 
             } else if (retrived) {
-              // Se não tem objeto, mas o procuramos, vamos incluir o objeto "nulo" na hash de cache para que fique explicito de que o procuramos o objeto, só não existe nenhuma associação
+              // Se nï¿½o tem objeto, mas o procuramos, vamos incluir o objeto "nulo" na hash de cache para que fique explicito de que o procuramos o objeto, sï¿½ nï¿½o existe nenhuma associaï¿½ï¿½o
               aliasCache.put(mTable.alias, null);
             }
           }
         }
 
-        // Com todos os objetos criados, só precisamos defini-los para montar a hierarquia
+        // Com todos os objetos criados, sï¿½ precisamos defini-los para montar a hierarquia
         for (int iterationControl = 0; iterationControl < 2; iterationControl++) {
-          // O Loop do iteration control foi criado para garantir que as hashs só serão montadas em uma segunda iteração, depois que os demais objetos já foram montados. Isso porquê a chave da hash possa ter propriedades aninhadas em seus subobjetos, e garantir que eles já foram montados:
-          // - Iteração 0: monta todos os objetos e os "relaciona" nas propriedades diretas e Listas
-          // - Iteração 1: monta as Hashs para que suas propriedaes aninhadas não estejam nulas.
+          // O Loop do iteration control foi criado para garantir que as hashs sï¿½ serï¿½o montadas em uma segunda iteraï¿½ï¿½o, depois que os demais objetos jï¿½ foram montados. Isso porquï¿½ a chave da hash possa ter propriedades aninhadas em seus subobjetos, e garantir que eles jï¿½ foram montados:
+          // - Iteraï¿½ï¿½o 0: monta todos os objetos e os "relaciona" nas propriedades diretas e Listas
+          // - Iteraï¿½ï¿½o 1: monta as Hashs para que suas propriedaes aninhadas nï¿½o estejam nulas.
           for (DAOMapTable mTable : map.getMapTable()) {
-            if (mTable.joinAlias != null && !mTable.path.startsWith(".")) { // joinAlias != null -> ignora a tabela raiz, Todos os objetos raíz não precisem ser colocados dentro de outro objeto, mas colocamos no array de objetos que vamos retornar | !mTable.path.startsWith(".") -> ignora as tabelas de N:N que não tem um objeto
+            if (mTable.joinAlias != null && !mTable.path.startsWith(".")) { // joinAlias != null -> ignora a tabela raiz, Todos os objetos raï¿½z nï¿½o precisem ser colocados dentro de outro objeto, mas colocamos no array de objetos que vamos retornar | !mTable.path.startsWith(".") -> ignora as tabelas de N:N que nï¿½o tem um objeto
               RFWVO vo = aliasCache.get(mTable.alias);
-              // VO pode ser nulo caso a associação não exista
+              // VO pode ser nulo caso a associaï¿½ï¿½o nï¿½o exista
               if (vo != null) {
                 RFWVO join = aliasCache.get(mTable.joinAlias);
                 if (join == null) {
-                  // Join é nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
+                  // Join ï¿½ nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
                   final DAOMapTable tmp = map.getMapTableByAlias(mTable.joinAlias);
-                  // Se for mesmo a tabela de Join, ela tem o caminho começando com ".". Se não for uma tabela de join não utilizamos o objeto pois pode ser só um caso de 2 Joins de objetos diferentes e estamos pulando 1
+                  // Se for mesmo a tabela de Join, ela tem o caminho comeï¿½ando com ".". Se nï¿½o for uma tabela de join nï¿½o utilizamos o objeto pois pode ser sï¿½ um caso de 2 Joins de objetos diferentes e estamos pulando 1
                   if (tmp.path.startsWith(".")) join = aliasCache.get(tmp.joinAlias);
                 }
-                final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
+                final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralaï¿½ï¿½o ao objeto atual, nï¿½o desde a raiz
                 final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
                 if (RFWVO.class.isAssignableFrom(rt)) {
                   if (iterationControl == 0) {
@@ -2199,30 +2198,30 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (list == null) {
                       list = new ArrayList<>();
                     }
-                    if (!list.contains(vo)) { // Só adiciona se ainda não tiver este objeto
-                      // Se é uma lista, verificamos se no atributo do VO temos a definição da coluna de 'sortColumn', para montar a lista na ordem correta.
+                    if (!list.contains(vo)) { // Sï¿½ adiciona se ainda nï¿½o tiver este objeto
+                      // Se ï¿½ uma lista, verificamos se no atributo do VO temos a definiï¿½ï¿½o da coluna de 'sortColumn', para montar a lista na ordem correta.
                       final RFWMetaRelationshipField ann = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class);
                       Integer sortIndex = null;
                       if (ann != null && !"".equals(ann.sortColumn())) {
                         sortIndex = getRSInteger(rs, mTable.schema, mTable.table, mTable.alias, ann.sortColumn(), dialect); // rs.getInt(mTable.alias + "." + ann.sortColumn());
                       }
-                      // Verificamos se é um caso de composição de árvore
+                      // Verificamos se ï¿½ um caso de composiï¿½ï¿½o de ï¿½rvore
                       if (ann.relationship() == RelationshipTypes.COMPOSITION_TREE) {
-                        // Nos casos de composição de árvore vamos recber o primeiro objeto, mas não os objetos filhos da árvore completa. Isso pq não teriamos como fazer infinitos JOINS no SQL para garantir que todos os objetos seriam retornados.
-                        // Nestes casos vamos resolicitar ao DAO este objeto de forma completa, incluindo seu próximo filho. Isso será feito de forma recursiva até que todos sejam recuperados.
-                        // Para aproveitar o mesmo cache de objetos, chamamos um método específico para isso, que criará um SQL baseado no DAOMap que já temos deste objeto e passando o cache de objetos
+                        // Nos casos de composiï¿½ï¿½o de ï¿½rvore vamos recber o primeiro objeto, mas nï¿½o os objetos filhos da ï¿½rvore completa. Isso pq nï¿½o teriamos como fazer infinitos JOINS no SQL para garantir que todos os objetos seriam retornados.
+                        // Nestes casos vamos resolicitar ao DAO este objeto de forma completa, incluindo seu prï¿½ximo filho. Isso serï¿½ feito de forma recursiva atï¿½ que todos sejam recuperados.
+                        // Para aproveitar o mesmo cache de objetos, chamamos um mï¿½todo especï¿½fico para isso, que criarï¿½ um SQL baseado no DAOMap que jï¿½ temos deste objeto e passando o cache de objetos
                         vo = fullFillCompositoinTreeObject(map, map.getMapTableByAlias(mTable.joinAlias), vo, objCache);
                       }
                       if (sortIndex == null) {
-                        // Se não temos sortIndex, simplesmente adicionamos à lista a medida que vamos recuperando
+                        // Se nï¿½o temos sortIndex, simplesmente adicionamos ï¿½ lista a medida que vamos recuperando
                         list.add(vo);
                       } else {
-                        if (list.size() == 0) cleanLists.add(list); // Se é nova, e temos indexação, incluímos a lista para limpeza depois.
-                        // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posição a ser ocupada, incluímos alguns "Dummy" Objects para crescer a lista e já deixar o objeto na posição correta
+                        if (list.size() == 0) cleanLists.add(list); // Se ï¿½ nova, e temos indexaï¿½ï¿½o, incluï¿½mos a lista para limpeza depois.
+                        // Se temos um index, temos de repeita-lo e ir populando a lista corretamente. Como podemos receber a lista fora de ordem temos de verificar o tamanho da lista antes de inserir o objeto. Caso a lista ainda seja menor do que a posiï¿½ï¿½o a ser ocupada, incluï¿½mos alguns "Dummy" Objects para crescer a lista e jï¿½ deixar o objeto na posiï¿½ï¿½o correta
                         while (list.size() <= sortIndex + 3)
-                          list.add(map); // incluimos um objeto que já existe para evitar instanciar novos objetos na memória. E Adicionar NULL não funciona na Linked List
-                        // Incluímos inclusive um objeto no lugar onde nosso objeto será colocado propositalmente, assim não precisamos ter duas lógicas abaixo
-                        list.add(sortIndex, vo); // Ao incluir o objeto no índex determinado, empurramos todos os outros para frente, por isso temos de remover o próximo objeto (que antes ocupava o lugar deste)
+                          list.add(map); // incluimos um objeto que jï¿½ existe para evitar instanciar novos objetos na memï¿½ria. E Adicionar NULL nï¿½o funciona na Linked List
+                        // Incluï¿½mos inclusive um objeto no lugar onde nosso objeto serï¿½ colocado propositalmente, assim nï¿½o precisamos ter duas lï¿½gicas abaixo
+                        list.add(sortIndex, vo); // Ao incluir o objeto no ï¿½ndex determinado, empurramos todos os outros para frente, por isso temos de remover o prï¿½ximo objeto (que antes ocupava o lugar deste)
                         list.remove(sortIndex + 1);
                       }
                       RUReflex.setPropertyValue(join, relativePath, list, false);
@@ -2234,33 +2233,33 @@ public final class RFWDAO<VO extends RFWVO> {
                     if (hash == null) {
                       hash = new LinkedHashMap<>();
                     }
-                    // Recupera o atributo do objeto que é usado como chave da hash
+                    // Recupera o atributo do objeto que ï¿½ usado como chave da hash
                     final String keyMapAttributeName = join.getClass().getDeclaredField(relativePath).getAnnotation(RFWMetaRelationshipField.class).keyMap();
                     final Object key = RUReflex.getPropertyValue(vo, keyMapAttributeName);
                     if (!hash.containsKey(key)) {
-                      hash.put(key, vo); // Só adiciona se ainda não tiver este objeto
+                      hash.put(key, vo); // Sï¿½ adiciona se ainda nï¿½o tiver este objeto
                       RUReflex.setPropertyValue(join, relativePath, hash, false);
                     }
                   }
                 } else {
-                  throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
+                  throw new RFWCriticalException("O RFWDAO nï¿½o sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
                 }
               } else {
-                // Se o objeto da tabela não foi montado, verifica se a chave consta na Hash. Isso não há objeto para associar, mas que o objeto foi procurado. Nesse caso não temos objeto para adicionar, mas devemos criar a Lista/Hash Vazia se ela ainda não existir
+                // Se o objeto da tabela nï¿½o foi montado, verifica se a chave consta na Hash. Isso nï¿½o hï¿½ objeto para associar, mas que o objeto foi procurado. Nesse caso nï¿½o temos objeto para adicionar, mas devemos criar a Lista/Hash Vazia se ela ainda nï¿½o existir
                 if (aliasCache.containsKey(mTable.alias)) {
                   RFWVO join = aliasCache.get(mTable.joinAlias);
                   if (join == null) {
-                    // Join é nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
+                    // Join ï¿½ nulo quando temos entre este objeto e o objeto de joinAlias uma tabela de N:N. Neste caso temos de pular esse objeto
                     final DAOMapTable tmp = map.getMapTableByAlias(mTable.joinAlias);
-                    // Se for mesmo a tabela de Join, ela tem o caminho começando com ".". Se não for uma tabela de join não utilizamos o objeto pois pode ser só um caso de 2 Joins de objetos diferentes e estamos pulando 1
+                    // Se for mesmo a tabela de Join, ela tem o caminho comeï¿½ando com ".". Se nï¿½o for uma tabela de join nï¿½o utilizamos o objeto pois pode ser sï¿½ um caso de 2 Joins de objetos diferentes e estamos pulando 1
                     if (tmp.path.startsWith(".")) join = aliasCache.get(tmp.joinAlias);
                   }
                   if (join != null) {
-                    // Se joinAlias continuar nulo, é pq mesmo o objeto pai não foi montado. Isso pode acontecer am casos de múltiplos LEFT JOIN e o relacionamento anterior também retornou nulo. Como ele é nulo não precisamos criar a lista vazia
-                    final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralação ao objeto atual, não desde a raiz
+                    // Se joinAlias continuar nulo, ï¿½ pq mesmo o objeto pai nï¿½o foi montado. Isso pode acontecer am casos de mï¿½ltiplos LEFT JOIN e o relacionamento anterior tambï¿½m retornou nulo. Como ele ï¿½ nulo nï¿½o precisamos criar a lista vazia
+                    final String relativePath = RUReflex.getLastPath(mTable.path); // pega o caminho em ralaï¿½ï¿½o ao objeto atual, nï¿½o desde a raiz
                     final Class<?> rt = RUReflex.getPropertyTypeByType(join.getClass(), relativePath);
                     if (RFWVO.class.isAssignableFrom(rt)) {
-                      // Não faz nada, só não deixa cair no else
+                      // Nï¿½o faz nada, sï¿½ nï¿½o deixa cair no else
                     } else if (List.class.isAssignableFrom(rt)) {
                       List list = (List) RUReflex.getPropertyValue(join, relativePath);
                       if (list == null) {
@@ -2274,7 +2273,7 @@ public final class RFWDAO<VO extends RFWVO> {
                         RUReflex.setPropertyValue(join, relativePath, hash, false);
                       }
                     } else {
-                      throw new RFWCriticalException("O RFWDAO não sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
+                      throw new RFWCriticalException("O RFWDAO nï¿½o sabe montar mapeamento do tipo '${0}', presente no '${1}'.", new String[] { rt.getCanonicalName(), join.getClass().getCanonicalName() });
                     }
                   }
                 }
@@ -2308,15 +2307,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getBoolean(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2341,15 +2340,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getBigDecimal(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2374,15 +2373,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getBlob(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2407,15 +2406,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getTime(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2440,15 +2439,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getTimestamp(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2473,15 +2472,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getLong(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2506,15 +2505,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getObject(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2539,15 +2538,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getInt(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2572,15 +2571,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           l = rs.getFloat(tableAlias + "." + column);
           if (rs.wasNull()) l = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2605,15 +2604,15 @@ public final class RFWDAO<VO extends RFWVO> {
         try {
           s = rs.getString(tableAlias + "." + column);
           if (rs.wasNull()) s = null;
-          // Essa flag é passada para true quando não tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, só retornou nulo. Isso quer dizer buscamos pelo objeto mas não existe a associação.
-          // Neste caso temos de inicializar as listas do objeto, mesmo que vá vazia, para indicar que procuramos pelas associações mesmo qu não exista nenhuma. Já que enviar null indica que nem procuramos.
+          // Essa flag ï¿½ passada para true quando nï¿½o tivemos uma exception nas linhas acima. Isso quer dizer que a coluna existe no resultado, sï¿½ retornou nulo. Isso quer dizer buscamos pelo objeto mas nï¿½o existe a associaï¿½ï¿½o.
+          // Neste caso temos de inicializar as listas do objeto, mesmo que vï¿½ vazia, para indicar que procuramos pelas associaï¿½ï¿½es mesmo qu nï¿½o exista nenhuma. Jï¿½ que enviar null indica que nem procuramos.
         } catch (SQLException e) {
           throw new RFWCriticalException("Falha ao obter o valor da coluna no banco de dados.", e);
         }
         break;
       case DerbyDB:
         try {
-          // Note que o DerbyDB não dá suporte à recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
+          // Note que o DerbyDB nï¿½o dï¿½ suporte ï¿½ recuperar o valor pelo nome da coluna quando o select utiliza o * ou algo tipo t0.*. Nesses casos tentamos procurar utilizando os metadados
           String col = (schema + "." + tableName + "." + column).toUpperCase();
           ResultSetMetaData md = rs.getMetaData();
           for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -2632,31 +2631,31 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   private RFWVO fullFillCompositoinTreeObject(DAOMap map, DAOMapTable startTable, RFWVO vo, HashMap<String, RFWVO> objCache) throws RFWException {
-    // Se não for a tabela raiz, temos de criar um subMap para conseguir prosseguir, se for, já estamos com ele pronto (provavelmente pq já estamos seguindo a árvore desse objeto
+    // Se nï¿½o for a tabela raiz, temos de criar um subMap para conseguir prosseguir, se for, jï¿½ estamos com ele pronto (provavelmente pq jï¿½ estamos seguindo a ï¿½rvore desse objeto
     if (!"".equals(startTable.path)) map = map.createSubMap(startTable);
     try (Connection conn = ds.getConnection(); PreparedStatement stmt = DAOMap.createSelectCompositionTreeStatement(conn, map, startTable, vo.getId(), null, null, null, null, null, dialect); ResultSet rs = stmt.executeQuery()) {
-      // Removemos o objeto atual da Cache, ou ele não será remontado conforme os novos dados
+      // Removemos o objeto atual da Cache, ou ele nï¿½o serï¿½ remontado conforme os novos dados
       objCache.remove(vo.getClass().getCanonicalName() + "." + vo.getId());
       final List<RFWVO> list = mountVO(rs, map, objCache);
       if (list.size() > 1) {
-        throw new RFWCriticalException("O RFWDAO montou mais de um objeto de CompositionTree para o mesmo ID! Alguma falha de modelo da tabelas ou configuração de chaves de banco.");
+        throw new RFWCriticalException("O RFWDAO montou mais de um objeto de CompositionTree para o mesmo ID! Alguma falha de modelo da tabelas ou configuraï¿½ï¿½o de chaves de banco.");
       } else if (list.size() == 1) {
         return list.get(0);
       }
     } catch (RFWException e) {
       throw e;
     } catch (Throwable e) {
-      throw new RFWCriticalException("Falha ao executar a operação no banco de dados.", e);
+      throw new RFWCriticalException("Falha ao executar a operaï¿½ï¿½o no banco de dados.", e);
     }
     throw new RFWCriticalException("O RFWDAO falhou em montar o CompositionTree para um objeto que acabara de ser recuperado do banco.");
   }
 
   /**
-   * Este método recupera o conteúdo do ResultSet, e de acordo com o tipo do atributo no VO, faz a conversão e passa o valor.
+   * Este mï¿½todo recupera o conteï¿½do do ResultSet, e de acordo com o tipo do atributo no VO, faz a conversï¿½o e passa o valor.
    *
    * @param mField Descritor do Mapeamento do Campo
-   * @param vo VO onde a informação será escrita
-   * @param rs ResultSet com o conteúdo do banco de dados.
+   * @param vo VO onde a informaï¿½ï¿½o serï¿½ escrita
+   * @param rs ResultSet com o conteï¿½do do banco de dados.
    * @throws RFWException
    */
   private void writeToVO(DAOMapField mField, RFWVO vo, ResultSet rs) throws RFWException {
@@ -2668,7 +2667,7 @@ public final class RFWDAO<VO extends RFWVO> {
       final RFWDAOConverter convAnn = decField.getAnnotation(RFWDAOConverter.class);
       if (convAnn != null) {
         final Object ni = createNewInstance(convAnn.converterClass());
-        if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+        if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
         Object obj = getRSObject(rs, mTable.schema, mTable.table, mTable.alias, mField.column, dialect);
         // final Object s = ((RFWDAOConverterInterface) ni).toVO(rs.getObject(mTable.alias + "." + mField.column));
         final Object s = ((RFWDAOConverterInterface) ni).toVO(obj);
@@ -2690,10 +2689,10 @@ public final class RFWDAO<VO extends RFWVO> {
             RUReflex.setPropertyValue(vo, mField.field, s, false);
           }
         } else if (Date.class.isAssignableFrom(dataType)) {
-          if (RFW.isDevelopmentEnvironment() && !RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
-            // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
-            new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
-          }
+          // if (RFW.isDevelopmentEnvironment() && !RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
+          // // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendaï¿½ï¿½o para que tenha o Stack da chamada completa, mas deixa o cï¿½digo seguir normalmente
+          // new RFWWarningException("O RFW nï¿½o recomenda utilizar o 'java.util.Date'. Verifique a implementaï¿½ï¿½o e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
+          // }
           Timestamp timestamp = rs.getTimestamp(mField.table.alias + "." + mField.column);
           if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, new Date(timestamp.getTime()), false);
         } else if (LocalDate.class.isAssignableFrom(dataType)) {
@@ -2704,7 +2703,7 @@ public final class RFWDAO<VO extends RFWVO> {
             } else if (obj instanceof java.sql.Date) {
               RUReflex.setPropertyValue(vo, mField.field, ((java.sql.Date) obj).toLocalDate(), false);
             } else {
-              throw new RFWCriticalException("Não foi possível identificar o objeto '" + obj.getClass().getCanonicalName() + "' recebido para o atributo '" + mField.field + "' do VO: '" + vo.getClass().getCanonicalName() + "'. Tabela: '" + mTable.table + "." + mField.column + "'.");
+              throw new RFWCriticalException("Nï¿½o foi possï¿½vel identificar o objeto '" + obj.getClass().getCanonicalName() + "' recebido para o atributo '" + mField.field + "' do VO: '" + vo.getClass().getCanonicalName() + "'. Tabela: '" + mTable.table + "." + mField.column + "'.");
             }
           }
         } else if (LocalTime.class.isAssignableFrom(dataType)) {
@@ -2745,13 +2744,13 @@ public final class RFWDAO<VO extends RFWVO> {
             if (!rs.wasNull()) RUReflex.setPropertyValue(vo, mField.field, b, false);
           }
         } else if (RFWVO.class.isAssignableFrom(dataType)) {
-          // Não fazemos nada. Isso pq o caso em que esse objeto aparece é quando temos uma coluna de FK na tabela do objeto. Para inserir só o ID não vamos criar o objeto para dar preferência em mandar sempre um objeto mais leve. Caso o objeto tenha sido solicitado explicitamente, ele será montado durante leitura da sua propria tabela e colocado aqui.
-          // Assim inclusive garantimos que não vamos sobrepor um objeto completo por um só com o ID
+          // Nï¿½o fazemos nada. Isso pq o caso em que esse objeto aparece ï¿½ quando temos uma coluna de FK na tabela do objeto. Para inserir sï¿½ o ID nï¿½o vamos criar o objeto para dar preferï¿½ncia em mandar sempre um objeto mais leve. Caso o objeto tenha sido solicitado explicitamente, ele serï¿½ montado durante leitura da sua propria tabela e colocado aqui.
+          // Assim inclusive garantimos que nï¿½o vamos sobrepor um objeto completo por um sï¿½ com o ID
         } else if (List.class.isAssignableFrom(dataType)) {
-          // Não fazemos nada. Isso pq o caso em que esse objeto aparece é quando temos uma coluna de FK na tabela do objeto. Para inserir só o ID não vamos criar o objeto para dar preferência em mandar sempre um objeto mais leve. Caso o objeto tenha sido solicitado explicitamente, ele será montado durante leitura da sua propria tabela e colocado aqui.
-          // Assim inclusive garantimos que não vamos sobrepor um objeto completo por um só com o ID
+          // Nï¿½o fazemos nada. Isso pq o caso em que esse objeto aparece ï¿½ quando temos uma coluna de FK na tabela do objeto. Para inserir sï¿½ o ID nï¿½o vamos criar o objeto para dar preferï¿½ncia em mandar sempre um objeto mais leve. Caso o objeto tenha sido solicitado explicitamente, ele serï¿½ montado durante leitura da sua propria tabela e colocado aqui.
+          // Assim inclusive garantimos que nï¿½o vamos sobrepor um objeto completo por um sï¿½ com o ID
         } else {
-          throw new RFWCriticalException("O RFWDAO não escrever no VO dados do tipo '${0}'.", new String[] { dataType.getCanonicalName() });
+          throw new RFWCriticalException("O RFWDAO nï¿½o escrever no VO dados do tipo '${0}'.", new String[] { dataType.getCanonicalName() });
         }
       }
     } catch (Throwable e) {
@@ -2766,9 +2765,9 @@ public final class RFWDAO<VO extends RFWVO> {
     // Primeiro passo, carregar os mapeamentos da entidade raiz
     loadEntityMap(type, map, "");
 
-    // Iteramos todos os atributos para mapea-los também
+    // Iteramos todos os atributos para mapea-los tambï¿½m
     if (attributes != null) for (String attribute : attributes) {
-      loadEntityMap(type, map, RUReflex.getParentPath(attribute)); // Removemos o último bloco de attribute pq é um atributo, e queremos passar para o método somente o "caminho" até a entidade.
+      loadEntityMap(type, map, RUReflex.getParentPath(attribute)); // Removemos o ï¿½ltimo bloco de attribute pq ï¿½ um atributo, e queremos passar para o mï¿½todo somente o "caminho" atï¿½ a entidade.
       loadEntityCollectionMap(type, map, attribute);
     }
 
@@ -2780,13 +2779,13 @@ public final class RFWDAO<VO extends RFWVO> {
    *
    * @param type Tipo da Entidade a ser carregada (Classe)
    * @param map Objeto de mapeamento onde os novos mapeamentos devem ser colocados.
-   * @param path Caminho do atributo com o mapeamento para esta entidade. Passe "" para carregar como objeto raiz. NUNCA PASSE NULL, não testamos null para diminuir o if.
+   * @param path Caminho do atributo com o mapeamento para esta entidade. Passe "" para carregar como objeto raiz. NUNCA PASSE NULL, nï¿½o testamos null para diminuir o if.
    * @throws RFWException
    */
   @SuppressWarnings("unchecked")
   private void loadEntityMap(Class<? extends RFWVO> root, DAOMap map, String path) throws RFWException {
-    if (map.getMapTableByPath(path) == null) { // se já encontramos não precisamos processar o bloco abaixo, pois não só o mapeamento da tabela já foi criado, qualquer qualquer mapeamento de tabela N:N e seus campos
-      // Variáveis com o prefixo "entity" referen-se à entidade sendo mapeada
+    if (map.getMapTableByPath(path) == null) { // se jï¿½ encontramos nï¿½o precisamos processar o bloco abaixo, pois nï¿½o sï¿½ o mapeamento da tabela jï¿½ foi criado, qualquer qualquer mapeamento de tabela N:N e seus campos
+      // Variï¿½veis com o prefixo "entity" referen-se ï¿½ entidade sendo mapeada
       Class<? extends RFWVO> entityType = null;
       RFWDAOAnnotation entityDAOAnn = null;
       String entityTable = null;
@@ -2796,29 +2795,29 @@ public final class RFWDAO<VO extends RFWVO> {
       String entityJoinColumn = null;
       DAOMapTable mapTable = null;
 
-      if (path.equals("")) { // Deixado nessa ordem, ao invés do "".equals(path) para forçar o nullpointer caso alguém passe null. Em caso de null o if retornria true e estragaria a lógica de qualquer forma. Como null não é esperado, conforme javadoc, é melhor que dê nullpointer logo aqui para que o real problema seja encontrado (que é de onde vem o null)
-        entityType = getEntity(root); // Se estamos no objeto raiz, a entidade é exatamente o objeto raiz
+      if (path.equals("")) { // Deixado nessa ordem, ao invï¿½s do "".equals(path) para forï¿½ar o nullpointer caso alguï¿½m passe null. Em caso de null o if retornria true e estragaria a lï¿½gica de qualquer forma. Como null nï¿½o ï¿½ esperado, conforme javadoc, ï¿½ melhor que dï¿½ nullpointer logo aqui para que o real problema seja encontrado (que ï¿½ de onde vem o null)
+        entityType = getEntity(root); // Se estamos no objeto raiz, a entidade ï¿½ exatamente o objeto raiz
         entityDAOAnn = entityType.getAnnotation(RFWDAOAnnotation.class);
         entityTable = getTable(entityType, entityDAOAnn);
         entitySchema = getSchema(entityType, entityDAOAnn);
 
-        PreProcess.requiredNonNull(entitySchema, "O RFWDAO não conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
-        PreProcess.requiredNonNull(entityTable, "O RFWDAO não conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+        PreProcess.requiredNonNull(entitySchema, "O RFWDAO nï¿½o conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+        PreProcess.requiredNonNull(entityTable, "O RFWDAO nï¿½o conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
 
         mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, entityColumn, entityJoin, entityJoinColumn);
       } else {
         String parentPath = RUReflex.getParentPath(path);
         if (parentPath != null) {
-          // Se temos um caminho e obtivemos um caminho do pai, procuramos se essa tabela já foi mapeada
+          // Se temos um caminho e obtivemos um caminho do pai, procuramos se essa tabela jï¿½ foi mapeada
           DAOMapTable parentMapTable = map.getMapTableByPath(parentPath);
           if (parentMapTable == null) {
-            // Se não encontramos, chamamos o método recursivamente para primeiro cadastrar o pai
+            // Se nï¿½o encontramos, chamamos o mï¿½todo recursivamente para primeiro cadastrar o pai
             loadEntityMap(root, map, parentPath);
-            // Recuperamos o parent recem criado na recursão
+            // Recuperamos o parent recem criado na recursï¿½o
             parentMapTable = map.getMapTableByPath(parentPath);
           }
 
-          // Se temos o pai, temos de verificar o relacionamento que entre o objeto pai e este e suas definições. Dependendo do tipo de relacionamento, posicionamento da FK e etc., o mapeamento será diferente
+          // Se temos o pai, temos de verificar o relacionamento que entre o objeto pai e este e suas definiï¿½ï¿½es. Dependendo do tipo de relacionamento, posicionamento da FK e etc., o mapeamento serï¿½ diferente
           Field parentField = null;
           try {
             parentField = parentMapTable.type.getDeclaredField(RUReflex.getCleanPath(RUReflex.getLastPath(path)));
@@ -2827,13 +2826,13 @@ public final class RFWDAO<VO extends RFWVO> {
           }
           final RFWMetaRelationshipField parentRelAnn = parentField.getAnnotation(RFWMetaRelationshipField.class);
 
-          // Para definir a entidade destino primeiro tentamos retirar do atributo da anotação da classe pai, se não tiver tentamos verificar o tipo do atributo. A ordem é usada assim pr conta de litas, hashs e interfaces que impedem a detecção automaticamente
+          // Para definir a entidade destino primeiro tentamos retirar do atributo da anotaï¿½ï¿½o da classe pai, se nï¿½o tiver tentamos verificar o tipo do atributo. A ordem ï¿½ usada assim pr conta de litas, hashs e interfaces que impedem a detecï¿½ï¿½o automaticamente
           if (!parentRelAnn.targetRelationship().equals(RFWVO.class)) {
             entityType = parentRelAnn.targetRelationship();
           } else if (RFWVO.class.isAssignableFrom(parentField.getType())) {
             entityType = (Class<? extends RFWVO>) parentField.getType();
           } else {
-            throw new RFWCriticalException("Não foi possível detectar a classe de relacionamento do atributo '${0}'. Verifique se é um RFWVO ou se a classe está definida corretamente no 'targetRelatioship'.", new String[] { parentMapTable.type.getCanonicalName() + "." + parentField.getName() });
+            throw new RFWCriticalException("Nï¿½o foi possï¿½vel detectar a classe de relacionamento do atributo '${0}'. Verifique se ï¿½ um RFWVO ou se a classe estï¿½ definida corretamente no 'targetRelatioship'.", new String[] { parentMapTable.type.getCanonicalName() + "." + parentField.getName() });
           }
 
           entityType = getEntity(entityType);
@@ -2841,32 +2840,32 @@ public final class RFWDAO<VO extends RFWVO> {
           entitySchema = getSchema(entityType, entityDAOAnn);
           entityTable = getTable(entityType, entityDAOAnn);
 
-          PreProcess.requiredNonNull(entitySchema, "O RFWDAO não conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
-          PreProcess.requiredNonNull(entityTable, "O RFWDAO não conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+          PreProcess.requiredNonNull(entitySchema, "O RFWDAO nï¿½o conseguiu determinar o schema a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
+          PreProcess.requiredNonNull(entityTable, "O RFWDAO nï¿½o conseguiu determinar a tabela a ser utilizada com a entidade: '${0}'.", new String[] { entityType.getCanonicalName() });
 
           switch (parentRelAnn.relationship()) {
             case MANY_TO_MANY:
-              // Se o relacionamento entre um objeto e outro é N:N temos de criar um mapeamento de tabela de "joinAlias", se ainda não existir
+              // Se o relacionamento entre um objeto e outro ï¿½ N:N temos de criar um mapeamento de tabela de "joinAlias", se ainda nï¿½o existir
               DAOMapTable joinMapTable = map.getMapTableByPath("." + path); // Tabelas de Join tem o mesmo caminho da tabela da entidade relacionada, precedidas de um '.'
               if (joinMapTable == null) joinMapTable = map.createMapTable(null, "." + path, parentMapTable.schema, getMetaRelationJoinTable(parentField, parentRelAnn), getMetaRelationColumn(parentField, parentRelAnn), parentMapTable.alias, "id");
-              // Usamos as informações do mapeamento de joinAlias criado para criar o mapeamento desta entidade agora
+              // Usamos as informaï¿½ï¿½es do mapeamento de joinAlias criado para criar o mapeamento desta entidade agora
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", joinMapTable.alias, getMetaRelationColumnMapped(parentField, parentRelAnn));
               break;
             case PARENT_ASSOCIATION:
-              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como PARENT_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' estï¿½ marcado como PARENT_ASSOCIATION, mas nï¿½o tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
             case WEAK_ASSOCIATION:
               // No mapeamento, este tipo de relacionamento se comporta igualzinho o ASSOCIATION, por isso deixamos seguir para o ASSOCIATION e realizar o mesmo tipo de mapeamento/regras.
             case ASSOCIATION:
               if (!"".equals(getMetaRelationColumn(parentField, parentRelAnn))) {
-                // Se a coluna mapeada está na tabela pai
+                // Se a coluna mapeada estï¿½ na tabela pai
                 mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               } else if (!"".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) {
-                // Se a coluna mapeada está na nossa tabela
+                // Se a coluna mapeada estï¿½ na nossa tabela
                 mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               } else {
-                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como ASSOCIATION, mas não tem o atributo 'column' nem 'columMapper' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+                throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' estï¿½ marcado como ASSOCIATION, mas nï¿½o tem o atributo 'column' nem 'columMapper' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               }
               break;
             case COMPOSITION:
@@ -2884,50 +2883,50 @@ public final class RFWDAO<VO extends RFWVO> {
             }
               break;
             case COMPOSITION_TREE:
-              // Se é composição de hierarquia, criamos o mapeamento só do primeiro objeto mas não vamos dar sequência recursivamente. A sequência recursiva deverá ser tratada dinamicamente no objeto posteriormente
-              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como COMPOSITION_TREE, mas não tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              // Se ï¿½ composiï¿½ï¿½o de hierarquia, criamos o mapeamento sï¿½ do primeiro objeto mas nï¿½o vamos dar sequï¿½ncia recursivamente. A sequï¿½ncia recursiva deverï¿½ ser tratada dinamicamente no objeto posteriormente
+              if ("".equals(getMetaRelationColumnMapped(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' estï¿½ marcado como COMPOSITION_TREE, mas nï¿½o tem o atributo 'columnMapped' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, getMetaRelationColumnMapped(parentField, parentRelAnn), parentMapTable.alias, "id");
               break;
             case INNER_ASSOCIATION:
-              // Uma associação interna é similar a uma PARENT ASSOCIATION, mesmo que o RFWDAO vá reutilizar o objeto caso ele já exista, em casos de consultas específicas precisamos fazer o Join da tabela de qualquer forma.
-              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' está marcado como INNER_ASSOCIATION, mas não tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
+              // Uma associaï¿½ï¿½o interna ï¿½ similar a uma PARENT ASSOCIATION, mesmo que o RFWDAO vï¿½ reutilizar o objeto caso ele jï¿½ exista, em casos de consultas especï¿½ficas precisamos fazer o Join da tabela de qualquer forma.
+              if ("".equals(getMetaRelationColumn(parentField, parentRelAnn))) throw new RFWCriticalException("O atributo '${0}' da entidade '${1}' estï¿½ marcado como INNER_ASSOCIATION, mas nï¿½o tem o atributo 'column' definido corretamente.", new String[] { parentField.getName(), parentMapTable.type.getCanonicalName() });
               mapTable = map.createMapTable(entityType, path, entitySchema, entityTable, "id", parentMapTable.alias, getMetaRelationColumn(parentField, parentRelAnn));
               break;
           }
         }
       }
 
-      // mapeamos o atributo "id" que não é enxergado pq está na classe pai RFWVO.
-      map.createMapField(path, "id", mapTable, "id"); // Este atributo segue o padrão que no banco de ser sempre "id" e no objeto herda sempre o atributo "id" da classe pai.
+      // mapeamos o atributo "id" que nï¿½o ï¿½ enxergado pq estï¿½ na classe pai RFWVO.
+      map.createMapField(path, "id", mapTable, "id"); // Este atributo segue o padrï¿½o que no banco de ser sempre "id" e no objeto herda sempre o atributo "id" da classe pai.
       // RFWDAO.dumpDAOMap(map)
-      // Tendo o mapeamento da tabela feito, iteramos a classe para mapear todos os seus fields que tenham alguma anotação RFWMeta definida. Qualquer attributo sem uma annotation RFWMeta é ignorado.
+      // Tendo o mapeamento da tabela feito, iteramos a classe para mapear todos os seus fields que tenham alguma anotaï¿½ï¿½o RFWMeta definida. Qualquer attributo sem uma annotation RFWMeta ï¿½ ignorado.
       for (Field field : RUReflex.getDeclaredFieldsRecursively(entityType)) {
         final Annotation metaAnn = RUReflex.getRFWMetaAnnotation(field);
         if (metaAnn != null) {
 
-          // Se não tivermos um nome de coluna definido, utilizaremos o nome do próprio atributo da classe
+          // Se nï¿½o tivermos um nome de coluna definido, utilizaremos o nome do prï¿½prio atributo da classe
           String fieldColumn = field.getName();
           try {
-            // Tentamos recuperar por reflexão o field "column" da annotation já que não sabemos qual annotation é. Se falhar não tem problema, deixa o código seguir e tentar usar o nome da coluna como sendo do atributo da classe.
+            // Tentamos recuperar por reflexï¿½o o field "column" da annotation jï¿½ que nï¿½o sabemos qual annotation ï¿½. Se falhar nï¿½o tem problema, deixa o cï¿½digo seguir e tentar usar o nome da coluna como sendo do atributo da classe.
             String t = (String) metaAnn.annotationType().getMethod("column").invoke(metaAnn);
-            if (!"".equals(t)) fieldColumn = t; // Só passamos se não estiver "", já que "" é o valor padrão do atributo column na annotation.
+            if (!"".equals(t)) fieldColumn = t; // Sï¿½ passamos se nï¿½o estiver "", jï¿½ que "" ï¿½ o valor padrï¿½o do atributo column na annotation.
           } catch (Throwable e) {
-            throw new RFWCriticalException("Não encontramos o atributo 'column' na RFWMetaAnnotation '${0}'. Este atributo é obrigatório em todas as RFWMetaAnnotations.", new String[] { metaAnn.annotationType().getCanonicalName() });
+            throw new RFWCriticalException("Nï¿½o encontramos o atributo 'column' na RFWMetaAnnotation '${0}'. Este atributo ï¿½ obrigatï¿½rio em todas as RFWMetaAnnotations.", new String[] { metaAnn.annotationType().getCanonicalName() });
           }
 
           if (metaAnn instanceof RFWMetaRelationshipField) {
             RFWMetaRelationshipField relAnn = (RFWMetaRelationshipField) metaAnn;
             if (relAnn.relationship() != RelationshipTypes.MANY_TO_MANY && !"".equals(getMetaRelationColumn(field, relAnn))) {
-              // Se a coluna com a FK fica na tabela deste objeto (ou seja o column foi definido e não é um relacionamento N:N)
+              // Se a coluna com a FK fica na tabela deste objeto (ou seja o column foi definido e nï¿½o ï¿½ um relacionamento N:N)
               map.createMapField(path, field.getName(), mapTable, getMetaRelationColumn(field, relAnn));
             } else {
-              // Relacionamentos que não tenham a FK dentro da tabela do objeto em questão, não precisam ser mapeadas. Isso pq ou não serão recuperados de qualquer forma, ou serão mapeados depois no mapa da entidade associada.
+              // Relacionamentos que nï¿½o tenham a FK dentro da tabela do objeto em questï¿½o, nï¿½o precisam ser mapeadas. Isso pq ou nï¿½o serï¿½o recuperados de qualquer forma, ou serï¿½o mapeados depois no mapa da entidade associada.
             }
           } else if (metaAnn instanceof RFWMetaCollectionField) {
-            // Se for um collection não cadastramos nada neste momento, os atirbutos de collection precisam ser solicitados explicitamente.
-            // Ao recebermos o atributo do collection ele é tratado posteriormente no método loadEntityCollectionMap
+            // Se for um collection nï¿½o cadastramos nada neste momento, os atirbutos de collection precisam ser solicitados explicitamente.
+            // Ao recebermos o atributo do collection ele ï¿½ tratado posteriormente no mï¿½todo loadEntityCollectionMap
           } else {
-            // Se não for um Relationship, deixamos simplesmente cadastramos o mapeamento comum
+            // Se nï¿½o for um Relationship, deixamos simplesmente cadastramos o mapeamento comum
             map.createMapField(path, field.getName(), mapTable, fieldColumn);
           }
         }
@@ -2939,22 +2938,22 @@ public final class RFWDAO<VO extends RFWVO> {
     if (!"id".equals(attribute)) {
       if (attribute.endsWith("@") && attribute.length() > 0) attribute = attribute.substring(0, attribute.length() - 1);
 
-      // Verifica se será substituído
+      // Verifica se serï¿½ substituï¿½do
       Class<? extends RFWVO> entityType = getEntity(root);
 
       Annotation ann = RUReflex.getRFWMetaAnnotation(entityType, attribute);
       if (ann instanceof RFWMetaCollectionField) {
         RFWMetaCollectionField colAnn = (RFWMetaCollectionField) ann;
-        String parentPath = RUReflex.getParentPath(attribute); // Recuperamos o caminho pai para obter o mapeamento do pai. Já devemos ter todos pois o método loadEntityMap deve ser sempre chamado antes deste método
+        String parentPath = RUReflex.getParentPath(attribute); // Recuperamos o caminho pai para obter o mapeamento do pai. Jï¿½ devemos ter todos pois o mï¿½todo loadEntityMap deve ser sempre chamado antes deste mï¿½todo
 
         String[] paths = attribute.split("\\.");
         String fieldName = paths[paths.length - 1];
 
-        // Validamos se já não associamos essa tabela (isso pode acontecer se o usuário solicitar mais de uma vez o mesmo atributo de collection... tsc tsc tsc...)
+        // Validamos se jï¿½ nï¿½o associamos essa tabela (isso pode acontecer se o usuï¿½rio solicitar mais de uma vez o mesmo atributo de collection... tsc tsc tsc...)
         if (map.getMapTableByPath("@" + RUReflex.addPath(parentPath, fieldName)) == null) {
           DAOMapTable daoMapTable = map.getMapTableByPath(parentPath);
 
-          // para indicar que o caminho é uma Collection, o path recebe um '@' como prefixo do path
+          // para indicar que o caminho ï¿½ uma Collection, o path recebe um '@' como prefixo do path
           final DAOMapTable colMapTable = map.createMapTable(daoMapTable.type, "@" + RUReflex.addPath(parentPath, fieldName), daoMapTable.schema, colAnn.table(), colAnn.fkColumn(), daoMapTable.alias, "id");
           // Mapeia o campo e as colunas de key e Sort caso existam
           map.createMapField(parentPath, fieldName + "@", colMapTable, colAnn.column());
@@ -2968,7 +2967,7 @@ public final class RFWDAO<VO extends RFWVO> {
 
   /**
    * Retorna a entitidade que deve ser utilizada para mapear o DAOMap.<br>
-   * Este método permite que o {@link DAOResolver} substitua um objeto por outro a ser mapeado em seu lugar.
+   * Este mï¿½todo permite que o {@link DAOResolver} substitua um objeto por outro a ser mapeado em seu lugar.
    *
    * @param entityType Entidate a descobrir o Schema
    * @param entityDAOAnn
@@ -2988,7 +2987,7 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Retorna o schema/catalog conforme definição da annotation da entidade.
+   * Retorna o schema/catalog conforme definiï¿½ï¿½o da annotation da entidade.
    *
    * @param entityType Entidate a descobrir o Schema
    * @param entityDAOAnn
@@ -3001,7 +3000,7 @@ public final class RFWDAO<VO extends RFWVO> {
     if (this.resolver != null) {
       schema = this.resolver.getSchema(entityType, entityDAOAnn);
     }
-    // Verifica se foi pasado na construção do RFWDAO
+    // Verifica se foi pasado na construï¿½ï¿½o do RFWDAO
     if (schema == null) {
       schema = this.schema;
     }
@@ -3010,7 +3009,7 @@ public final class RFWDAO<VO extends RFWVO> {
       schema = entityDAOAnn.schema();
     }
     if (schema == null) {
-      throw new RFWCriticalException("Não há um schema definido para a entidade '" + entityType.getCanonicalName() + "'.");
+      throw new RFWCriticalException("Nï¿½o hï¿½ um schema definido para a entidade '" + entityType.getCanonicalName() + "'.");
     }
     return schema;
   }
@@ -3031,7 +3030,7 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Retorna a tabela conforme definição da annotation da entidade.
+   * Retorna a tabela conforme definiï¿½ï¿½o da annotation da entidade.
    *
    * @param entityType Entidate a descobrir o Schema
    * @param entityDAOAnn
@@ -3049,13 +3048,13 @@ public final class RFWDAO<VO extends RFWVO> {
       table = entityDAOAnn.table();
     }
     if (table == null) {
-      throw new RFWCriticalException("Não há uma tabela definida para a entidade '" + entityType.getCanonicalName() + "'.");
+      throw new RFWCriticalException("Nï¿½o hï¿½ uma tabela definida para a entidade '" + entityType.getCanonicalName() + "'.");
     }
     return table;
   }
 
   /**
-   * Método para DEBUG, retorna uma String (e imprime no console) o conteúdo do Map, tanto mapeamento das tabelas quanto dos campos.
+   * Mï¿½todo para DEBUG, retorna uma String (e imprime no console) o conteï¿½do do Map, tanto mapeamento das tabelas quanto dos campos.
    *
    * @param map Map a ser impresso.
    * @return String contendo o dump do {@link DAOMap}
