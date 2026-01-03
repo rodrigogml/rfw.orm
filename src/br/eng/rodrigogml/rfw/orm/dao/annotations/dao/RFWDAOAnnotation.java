@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Description: Annotation usada para definir o cat·logo a qual uma entidade pertence.<br>
+ * Description: Annotation usada para definir o cat√°logo a qual uma entidade pertence.<br>
  *
- * @author Rodrigo Leit„o
+ * @author Rodrigo Leit√£o
  * @since 10.0.0 (12 de jul de 2018)
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface RFWDAOAnnotation {
 
   /**
-   * Define o noma da tabela ‡ qual esta entidade deve ser associada.
+   * Define o noma da tabela √† qual esta entidade deve ser associada.
    */
   String table();
 
