@@ -8,10 +8,10 @@ import java.lang.annotation.Target;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 
 /**
- * Description: Esta Annotation permite definir um "interprete" para converter os dados que est„o no VO e o que ser· escrito na base de dados.<br>
- * Essa ferramenta È muito ˙til quando temos algum valor que precisa ser tratado antes de ir para o banco, e vice-versa. Como valores que no Objeto est„o como uma interface e o RFWDAO n„o sabe que objeto instanciar.
+ * Description: Esta Annotation permite definir um "interprete" para converter os dados que est√£o no VO e o que ser√° escrito na base de dados.<br>
+ * Essa ferramenta √© muito √∫til quando temos algum valor que precisa ser tratado antes de ir para o banco, e vice-versa. Como valores que no Objeto est√£o como uma interface e o RFWDAO n√£o sabe que objeto instanciar.
  *
- * @author Rodrigo Leit„o
+ * @author Rodrigo Leit√£o
  * @since 7.1.0 (13 de out de 2018)
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -19,7 +19,7 @@ import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 public @interface RFWDAOConverter {
 
   /**
-   * Define a classe do {@link RFWDAOConverterInterface} que ser· utilizado.
+   * Define a classe do {@link RFWDAOConverterInterface} que ser√° utilizado.
    */
   Class<?> converterClass();
 
