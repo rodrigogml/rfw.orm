@@ -1,16 +1,16 @@
 package br.eng.rodrigogml.rfw.orm.dao.interfaces;
 
 /**
- * Description: Interface do conversor de dados, que deve ser anotado com a @RFWDAOConverterInterface para converter os dados que v„o para o banco e/ou para o objeto.<br>
+ * Description: Interface do conversor de dados, que deve ser anotado com a @RFWDAOConverterInterface para converter os dados que v√£o para o banco e/ou para o objeto.<br>
  *
- * @author Rodrigo Leit„o
+ * @author Rodrigo Leit√£o
  * @since 7.1.0 (13 de out de 2018)
  */
 public interface RFWDAOConverterInterface {
 
   /**
    * Converte o valor para ser colocado no Objeto.<br>
-   * Note que o Objeto recebido ser· criado pelo Java, de acordo com o objeto padr„o do Java para o tipo de coluna do bando de dados.
+   * Note que o Objeto recebido ser√° criado pelo Java, de acordo com o objeto padr√£o do Java para o tipo de coluna do bando de dados.
    *
    * @param value Valor como foi lido do banco de dados.
    * @return Objeto pronto para ser colocado no VO. Deve respeitar o tipo do objeto no VO

@@ -9,9 +9,9 @@ import br.eng.rodrigogml.rfw.kernel.measureruler.interfaces.MeasureUnit.MeasureD
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 
 /**
- * Description: Implementa o conversor do DAO para que seja possÌvel persistir um objeto que utilize a MeasureUnit como um de seus atributos.<br>
+ * Description: Implementa o conversor do DAO para que seja poss√≠vel persistir um objeto que utilize a MeasureUnit como um de seus atributos.<br>
  *
- * @author Rodrigo Leit„o
+ * @author Rodrigo Leit√£o
  * @since 7.1.0 (13 de out de 2018)
  */
 public class MeasureUnitDAOConverter implements RFWDAOConverterInterface {
@@ -44,7 +44,7 @@ public class MeasureUnitDAOConverter implements RFWDAOConverterInterface {
     String rvalue = null;
     if (value != null) {
       if (value.getDimension() == MeasureDimension.CUSTOM) {
-        // Salva a unidade de medida custom comeÁando com #, no padr„o "#<Symbol>(<name>)", para que seja possÌvel fazer o parser e recria-la quando for lida do banco de dados.
+        // Salva a unidade de medida custom come√ßando com #, no padr√£o "#<Symbol>(<name>)", para que seja poss√≠vel fazer o parser e recria-la quando for lida do banco de dados.
         rvalue = "#" + value.getSymbol() + "|" + value.name();
       } else {
         rvalue = value.name();

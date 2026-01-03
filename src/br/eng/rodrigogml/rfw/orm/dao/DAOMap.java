@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import br.eng.rodrigogml.rfw.kernel.RFW;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWCriticalException;
 import br.eng.rodrigogml.rfw.kernel.exceptions.RFWException;
-import br.eng.rodrigogml.rfw.kernel.exceptions.RFWWarningException;
 import br.eng.rodrigogml.rfw.kernel.logger.RFWLogger;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaCollectionField;
 import br.eng.rodrigogml.rfw.kernel.rfwmeta.RFWMetaEncrypt;
@@ -43,9 +42,9 @@ import br.eng.rodrigogml.rfw.orm.dao.annotations.dao.RFWDAOConverter;
 import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 
 /**
- * Description: Classe que cria um mapeamento para execução de um comando SQL entre os objetos e o banco de dados.<br>
+ * Description: Classe que cria um mapeamento para execuï¿½ï¿½o de um comando SQL entre os objetos e o banco de dados.<br>
  *
- * @author Rodrigo Leitão
+ * @author Rodrigo Leitï¿½o
  * @since 10.0.0 (13 de jul de 2018)
  */
 class DAOMap {
@@ -61,12 +60,12 @@ class DAOMap {
     Class<? extends RFWVO> type = null;
 
     /**
-     * Caminho do atributo, vazio quando o atributo está no objeto raiz. Nulo quando é apenas uma tabela de joinAlias de N:N.
+     * Caminho do atributo, vazio quando o atributo estï¿½ no objeto raiz. Nulo quando ï¿½ apenas uma tabela de joinAlias de N:N.
      */
     String path = null;
 
     /**
-     * Schema do banco de dados em que esta tabela será encontrada.
+     * Schema do banco de dados em que esta tabela serï¿½ encontrada.
      */
     String schema = null;
 
@@ -76,22 +75,22 @@ class DAOMap {
     String table = null;
 
     /**
-     * Alias da tabela no SQL. Segue a sequência t0, t1, t2, ..., tN
+     * Alias da tabela no SQL. Segue a sequï¿½ncia t0, t1, t2, ..., tN
      */
     String alias = null;
 
     /**
-     * Nulo na tabela t0, que representa o começo do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas ao SQL deve conter o Alias da tabela à qual esta está anexada.
+     * Nulo na tabela t0, que representa o comeï¿½o do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas ao SQL deve conter o Alias da tabela ï¿½ qual esta estï¿½ anexada.
      */
     String joinAlias = null;
 
     /**
-     * Nulo na tabela t0, que representa o começo do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas, contem a coluna desta tabela que será usada para fazer o joinAlias com a tabela descrita em {@link #joinAlias}.
+     * Nulo na tabela t0, que representa o comeï¿½o do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas, contem a coluna desta tabela que serï¿½ usada para fazer o joinAlias com a tabela descrita em {@link #joinAlias}.
      */
     String column = null;
 
     /**
-     * Nulo na tabela t0, que representa o começo do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas, contem a coluna da tabela descrita em {@link #joinAlias} que será usada para fazer o joinAlias com esta tabela.
+     * Nulo na tabela t0, que representa o comeï¿½o do SQL e a tabela do objeto raiz. Para as demais tabelas anexadas, contem a coluna da tabela descrita em {@link #joinAlias} que serï¿½ usada para fazer o joinAlias com esta tabela.
      */
     String joinColumn = null;
 
@@ -114,7 +113,7 @@ class DAOMap {
   static class DAOMapField {
 
     /**
-     * Caminho do atributo a partir do objeto raiz. Vazio para os campos do objeto raiz. Não incluí o nome do atributo do objeto, este deve ser declarado em {@link #field}.
+     * Caminho do atributo a partir do objeto raiz. Vazio para os campos do objeto raiz. Nï¿½o incluï¿½ o nome do atributo do objeto, este deve ser declarado em {@link #field}.
      */
     String path = null;
 
@@ -129,19 +128,19 @@ class DAOMap {
     String column = null;
 
     /**
-     * Tabela à qual este campo está associado
+     * Tabela ï¿½ qual este campo estï¿½ associado
      */
     DAOMapTable table = null;
   }
 
   /**
-   * Mantém referência para a tabela "raiz", a primeira tabela do SELECT, com alias t0.
+   * Mantï¿½m referï¿½ncia para a tabela "raiz", a primeira tabela do SELECT, com alias t0.
    */
   private DAOMapTable rootTable = null;
 
   /**
    * Hash com os mapas de tabela indexados pelo caminho.<BR>
-   * <b>ATENÇÃO: os mapeamentos de tabelas de N:N que não tem "path" são colocados na hash com uma chave gerada com o seguinte formato: { '.' + <alias> + '.' + <joinAlias> } para garantir a unicidade da chave.</b>
+   * <b>ATENï¿½ï¿½O: os mapeamentos de tabelas de N:N que nï¿½o tem "path" sï¿½o colocados na hash com uma chave gerada com o seguinte formato: { '.' + <alias> + '.' + <joinAlias> } para garantir a unicidade da chave.</b>
    */
   private final LinkedHashMap<String, DAOMapTable> mapTableByPath = new LinkedHashMap<>();
 
@@ -162,11 +161,11 @@ class DAOMap {
    * Cria um novo mapeamento entre VO e Tabela do Banco de dados.
    *
    * @param type Classe do objeto / entidade do sistema.
-   * @param path Caminho até esta entidade a partir do objeto raiz. Usar "" para o objeto raiz. Para tabelas de N:N que não tem objeto associado, utilizar o caminho do objeto N:N precedido de um '.', para que não se confunda com o path da tabela do próprio objeto.
+   * @param path Caminho atï¿½ esta entidade a partir do objeto raiz. Usar "" para o objeto raiz. Para tabelas de N:N que nï¿½o tem objeto associado, utilizar o caminho do objeto N:N precedido de um '.', para que nï¿½o se confunda com o path da tabela do prï¿½prio objeto.
    * @param schema Schema onde a tabela se encontra.
    * @param table Tabela do Banco de Dados que armazena os dados dessa entidade.
-   * @param column Coluna na tabela desta entidade que é utilizada para realizar o Join.
-   * @param joinAlias Alias da tabela na qual esta fará o joinAlias. Null para a tabela raiz.
+   * @param column Coluna na tabela desta entidade que ï¿½ utilizada para realizar o Join.
+   * @param joinAlias Alias da tabela na qual esta farï¿½ o joinAlias. Null para a tabela raiz.
    * @param joinColumn Coluna na outra tabela (informada em 'joinAlias') utilizada para fazer o joinAlias.
    * @return Objeto de mapeamento entre Banco de Dados e Objeto do sistema.
    * @throws RFWException
@@ -179,19 +178,19 @@ class DAOMap {
    * Cria um novo mapeamento entre VO e Tabela do Banco de dados.
    *
    * @param type Classe do objeto / entidade do sistema.
-   * @param path Caminho até esta entidade a partir do objeto raiz. Usar "" para o objeto raiz. Para tabelas de N:N que não tem objeto associado, utilizar o caminho do objeto N:N precedido de um '.', para que não se confunda com o path da tabela do próprio objeto.
+   * @param path Caminho atï¿½ esta entidade a partir do objeto raiz. Usar "" para o objeto raiz. Para tabelas de N:N que nï¿½o tem objeto associado, utilizar o caminho do objeto N:N precedido de um '.', para que nï¿½o se confunda com o path da tabela do prï¿½prio objeto.
    * @param schema Schema onde a tabela se encontra.
    * @param table Tabela do Banco de Dados que armazena os dados dessa entidade.
-   * @param column Coluna na tabela desta entidade que é utilizada para realizar o Join.
-   * @param joinAlias Alias da tabela na qual esta fará o joinAlias. Null para a tabela raiz.
+   * @param column Coluna na tabela desta entidade que ï¿½ utilizada para realizar o Join.
+   * @param joinAlias Alias da tabela na qual esta farï¿½ o joinAlias. Null para a tabela raiz.
    * @param joinColumn Coluna na outra tabela (informada em 'joinAlias') utilizada para fazer o joinAlias.
-   * @param alias Força a definição de um Alias personalizado. Utilizado somente para casos de clone.
+   * @param alias Forï¿½a a definiï¿½ï¿½o de um Alias personalizado. Utilizado somente para casos de clone.
    * @return Objeto de mapeamento entre Banco de Dados e Objeto do sistema.
    * @throws RFWException
    */
   private DAOMapTable createMapTable(Class<? extends RFWVO> type, String path, String schema, String table, String column, String joinAlias, String joinColumn, String alias) throws RFWException {
     if (this.mapTableByAlias.containsKey(alias) || this.mapTableByPath.containsKey(path)) {
-      throw new RFWCriticalException("Alias já existente neste DAOMap!");
+      throw new RFWCriticalException("Alias jï¿½ existente neste DAOMap!");
     }
 
     DAOMapTable t = new DAOMapTable();
@@ -215,11 +214,11 @@ class DAOMap {
 
   /**
    * Acrescenta o mapeamento de mais uma tabela Replica o mapeamento de uma tabela existente para um caminho (entidade) para outro caminho (outra entidade similar).<br>
-   * Essa replicação é útil quando precisamos modificar dinamicamente o DAOMap para iteragir com objetos hierarquicos.
+   * Essa replicaï¿½ï¿½o ï¿½ ï¿½til quando precisamos modificar dinamicamente o DAOMap para iteragir com objetos hierarquicos.
    *
-   * @param originalPath Caminho original (já existente) para ser replicado. Normalmente o caminho do primeiro objeto da estrutura hierarquica.
-   * @param destinationPath Caminho final (a ser duplicado) para o mesmo objeto e que utilizará as definições do objeto original, para que o caminho seja replicado.
-   * @param column Coluna na tabela desta entidade que é utilizada para realizar o Join.
+   * @param originalPath Caminho original (jï¿½ existente) para ser replicado. Normalmente o caminho do primeiro objeto da estrutura hierarquica.
+   * @param destinationPath Caminho final (a ser duplicado) para o mesmo objeto e que utilizarï¿½ as definiï¿½ï¿½es do objeto original, para que o caminho seja replicado.
+   * @param column Coluna na tabela desta entidade que ï¿½ utilizada para realizar o Join.
    * @param joinColumn Coluna na outra tabela (informada em 'joinAlias') utilizada para fazer o joinAlias.
    * @return Objeto de mapeamento duplicado.
    * @throws RFWException
@@ -229,14 +228,14 @@ class DAOMap {
   }
 
   /**
-   * @param Define o alias base, da primeira tabela sendo replicada, para evitar de entrar em loop eterno replicando as associações recém criadas
+   * @param Define o alias base, da primeira tabela sendo replicada, para evitar de entrar em loop eterno replicando as associaï¿½ï¿½es recï¿½m criadas
    */
   private DAOMapTable createMapTableForCompositionTree(String originalPath, String destinationPath, String column, String joinColumn, DAOMapTable parentTable, String baseAlias) throws RFWException {
     DAOMapTable origTable = this.mapTableByPath.get(originalPath);
     if (origTable != null) {
       DAOMapTable newTable = this.mapTableByPath.get(destinationPath);
       if (newTable == null) {
-        // Se ainda não existir a tabela criamos. Se existir utilizamos a existente com seu alias, mas vamos completar. Isso pq o primeiro nível de objetos hierarquivos já é mapeado, só seus subobjetos que não.
+        // Se ainda nï¿½o existir a tabela criamos. Se existir utilizamos a existente com seu alias, mas vamos completar. Isso pq o primeiro nï¿½vel de objetos hierarquivos jï¿½ ï¿½ mapeado, sï¿½ seus subobjetos que nï¿½o.
         String joinAlias = origTable.alias;
         if (parentTable != null) {
           joinAlias = parentTable.alias;
@@ -247,17 +246,17 @@ class DAOMap {
       // Buscamos todos os atributos associadoa a tabela base, para replicar para este novo mapeamento
       for (DAOMapField mapField : new ArrayList<>(getMapField())) {
         if (mapField.table == origTable) {
-          // Verifica se o campo ainda não existe.
+          // Verifica se o campo ainda nï¿½o existe.
           if (this.getMapFieldByPath(destinationPath, mapField.field) == null) {
             createMapField(destinationPath, mapField.field, newTable, mapField.column);
           }
         }
       }
 
-      // Busca todas as tabelas que fazem JOIN com a tabela recebida (que são os subobjetos da árvore) e replicamos
+      // Busca todas as tabelas que fazem JOIN com a tabela recebida (que sï¿½o os subobjetos da ï¿½rvore) e replicamos
       for (DAOMapTable mTable : new ArrayList<>(getMapTable())) {
-        if (origTable.alias.equals(mTable.joinAlias)) { // Só duplica as tabelas com Join direto
-          if (newTable != mTable) { // Não deixa entrar em Loop replicando a própria tabela
+        if (origTable.alias.equals(mTable.joinAlias)) { // Sï¿½ duplica as tabelas com Join direto
+          if (newTable != mTable) { // Nï¿½o deixa entrar em Loop replicando a prï¿½pria tabela
             if (!mTable.alias.equals(baseAlias)) {
               if (baseAlias == null) baseAlias = newTable.alias;
               if (!this.mapTableByPath.containsKey(destinationPath + mTable.path.substring(originalPath.length()))) {
@@ -275,10 +274,10 @@ class DAOMap {
   /**
    * Cria um mapeamnto entre um 'field' de um objeto do sistema e uma coluna da tabela do banco de dados.
    *
-   * @param path Caminho no objeto desde o objeto raiz até o objeto deste atributo. Não inclui o atributo deste objeto. Utilizar "" para o objeto raiz.
+   * @param path Caminho no objeto desde o objeto raiz atï¿½ o objeto deste atributo. Nï¿½o inclui o atributo deste objeto. Utilizar "" para o objeto raiz.
    * @param field Nome do field no objeto sendo mapeado.
    * @param table Objeto mapeamento da entidade na tabela do sistema.
-   * @param column Coluna do banco de dados onde o campo será associado.
+   * @param column Coluna do banco de dados onde o campo serï¿½ associado.
    * @return Objeto criado de mapeamento entre o field e a coluna da tabela.
    */
   public DAOMapField createMapField(String path, String field, DAOMapTable table, String column) {
@@ -300,7 +299,7 @@ class DAOMap {
   /**
    * Retorna um mapeamento de tabela a partir do Path definido.
    *
-   * @param path Caminho desde o objeto raiz até este objeto.
+   * @param path Caminho desde o objeto raiz atï¿½ este objeto.
    * @return Mapeamento da Tabela
    */
   public DAOMapTable getMapTableByPath(String path) {
@@ -310,7 +309,7 @@ class DAOMap {
   /**
    * Retorna um mapeamento de tabela a partir do Alias utilizado na tabela.
    *
-   * @param alias Apelido da tabela no SQL. Criado automaticamente no método {@link #createMapTable(Class, String, String, String, String, String, String)}.
+   * @param alias Apelido da tabela no SQL. Criado automaticamente no mï¿½todo {@link #createMapTable(Class, String, String, String, String, String, String)}.
    * @return Mapeamento da Tabela
    */
   public DAOMapTable getMapTableByAlias(String alias) {
@@ -318,7 +317,7 @@ class DAOMap {
   }
 
   /**
-   * Retorna Coleção com todos os Mapeamentos de Tabelas do DAOMap
+   * Retorna Coleï¿½ï¿½o com todos os Mapeamentos de Tabelas do DAOMap
    */
   public Collection<DAOMapTable> getMapTable() {
     return this.mapTableByPath.values();
@@ -327,7 +326,7 @@ class DAOMap {
   /**
    * Recupera um mapeamento entre field e coluna do banco de dados.
    *
-   * @param path Caminho desde o objeto raiz até o este objeto. Não inclui o nome do atributo.
+   * @param path Caminho desde o objeto raiz atï¿½ o este objeto. Nï¿½o inclui o nome do atributo.
    * @param fieldName field/atributo do objeto.
    * @return Objeto de Mapeamento entre field e coluna do banco de dados
    */
@@ -340,7 +339,7 @@ class DAOMap {
   /**
    * Recupera um mapeamento entre field e coluna do banco de dados pelo caminho/nome completo.
    *
-   * @param fullPath Caminho desde o objeto raiz até o este objeto. INCLUI o nome do atributo.
+   * @param fullPath Caminho desde o objeto raiz atï¿½ o este objeto. INCLUI o nome do atributo.
    * @return Objeto de Mapeamento entre field e coluna do banco de dados
    */
   public DAOMapField getMapFieldByPath(String fullPath) {
@@ -348,7 +347,7 @@ class DAOMap {
   }
 
   /**
-   * Coleção de objetos de mapeamento entre field dos VOs e colunas das tabelas.
+   * Coleï¿½ï¿½o de objetos de mapeamento entre field dos VOs e colunas das tabelas.
    */
   public Collection<DAOMapField> getMapField() {
     return this.mapFieldByPath.values();
@@ -356,16 +355,16 @@ class DAOMap {
 
   /**
    * Cria o Statement SQL para consulta baseado em no Map recebido.<br>
-   * Mesmo que o método {@link #createMapTable(Class, String, String, String, String, String, String)} com o attributo selectFields nulo.
+   * Mesmo que o mï¿½todo {@link #createMapTable(Class, String, String, String, String, String, String)} com o attributo selectFields nulo.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param mo Objeto com as confições da Clausula WHERE a ser utilizada.
-   * @param orderBy Objeto com as informações de ordenação. Passar Null para não defir nenhum OrderBy.
-   * @param useFullJoin Caso TRUE, o SELECTED será montado com FULL JOIN ao invés do LEFT JOIN
+   * @param mo Objeto com as confiï¿½ï¿½es da Clausula WHERE a ser utilizada.
+   * @param orderBy Objeto com as informaï¿½ï¿½es de ordenaï¿½ï¿½o. Passar Null para nï¿½o defir nenhum OrderBy.
+   * @param useFullJoin Caso TRUE, o SELECTED serï¿½ montado com FULL JOIN ao invï¿½s do LEFT JOIN
    * @param dialect
    * @return PreparedStatemetn pronto para realizar a consulta e obter o ResultSet.
-   * @throws RFWException Lançado em caso de Erro.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static PreparedStatement createSelectStatement(Connection conn, DAOMap map, RFWMO mo, RFWOrderBy orderBy, Boolean useFullJoin, SQLDialect dialect) throws RFWException {
     return createSelectStatement(conn, map, null, null, false, mo, orderBy, null, null, null, useFullJoin, dialect);
@@ -374,18 +373,18 @@ class DAOMap {
   /**
    * Cria o Statement SQL para consulta baseado em no Map recebido.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param selectFields Campos que devem ser obtidos das tabelas. Se passo nulo, será obtido todos os campos que estão no objeto de mapeamento.
-   * @param expandTable Este atributo só é utilizando quando o selectFields não é nulo. Caso TRUE obtem todos os campos de uma tabela mesmo que só uma coluna esteja definida no selectFields. Caso FALSE recupera estritamente os campos passados em selectFields.
-   * @param mo Objeto com as confições da Clausula WHERE a ser utilizada.
+   * @param selectFields Campos que devem ser obtidos das tabelas. Se passo nulo, serï¿½ obtido todos os campos que estï¿½o no objeto de mapeamento.
+   * @param expandTable Este atributo sï¿½ ï¿½ utilizando quando o selectFields nï¿½o ï¿½ nulo. Caso TRUE obtem todos os campos de uma tabela mesmo que sï¿½ uma coluna esteja definida no selectFields. Caso FALSE recupera estritamente os campos passados em selectFields.
+   * @param mo Objeto com as confiï¿½ï¿½es da Clausula WHERE a ser utilizada.
    * @param orderBy Objeto que define a ordem da lista.
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @param useFullJoin Caso TRUE, o SELECTED será montado com FULL JOIN ao invés do LEFT JOIN
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @param useFullJoin Caso TRUE, o SELECTED serï¿½ montado com FULL JOIN ao invï¿½s do LEFT JOIN
    * @param dialect
    * @return PreparedStatemetn pronto para realizar a consulta e obter o ResultSet.
-   * @throws RFWException Lançado em caso de Erro.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static PreparedStatement createSelectStatement(Connection conn, DAOMap map, String[] selectFields, boolean expandTable, RFWMO mo, RFWOrderBy orderBy, Integer offSet, Integer limit, Boolean useFullJoin, SQLDialect dialect) throws RFWException {
     return createSelectStatement(conn, map, null, selectFields, expandTable, mo, orderBy, null, offSet, limit, useFullJoin, dialect);
@@ -394,17 +393,17 @@ class DAOMap {
   /**
    * Cria o Statement SQL para consulta baseado em no Map recebido.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param fields Campos com funções para serem recuperados.
-   * @param mo Objeto com as confições da Clausula WHERE a ser utilizada.
+   * @param fields Campos com funï¿½ï¿½es para serem recuperados.
+   * @param mo Objeto com as confiï¿½ï¿½es da Clausula WHERE a ser utilizada.
    * @param orderBy Objeto que define a ordem da lista.
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @param useFullJoin Caso TRUE, o SELECTED será montado com FULL JOIN ao invés do LEFT JOIN
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @param useFullJoin Caso TRUE, o SELECTED serï¿½ montado com FULL JOIN ao invï¿½s do LEFT JOIN
    * @param dialect
    * @return PreparedStatemetn pronto para realizar a consulta e obter o ResultSet.
-   * @throws RFWException Lançado em caso de Erro.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static PreparedStatement createSelectStatement(Connection conn, DAOMap map, RFWField[] fields, RFWMO mo, RFWOrderBy orderBy, RFWField[] groupBy, Integer offSet, Integer limit, Boolean useFullJoin, SQLDialect dialect) throws RFWException {
     return createSelectStatement(conn, map, fields, null, false, mo, orderBy, groupBy, offSet, limit, useFullJoin, dialect);
@@ -413,25 +412,25 @@ class DAOMap {
   /**
    * Cria o Statement SQL para consulta baseado em no Map recebido.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param fields Campos com funções para serem recuperados. Note que ao informar esse parâmetro serão ignorados os parâmetros: selectFields e expandTable
-   * @param selectFields Campos que devem ser obtidos das tabelas. Se passo nulo, será obtido todos os campos que estão no objeto de mapeamento.
-   * @param expandTable Este atributo só é utilizando quando o selectFields não é nulo. Caso TRUE obtem todos os campos de uma tabela mesmo que só uma coluna esteja definida no selectFields. Caso FALSE recupera estritamente os campos passados em selectFields.
-   * @param mo Objeto com as confições da Clausula WHERE a ser utilizada.
+   * @param fields Campos com funï¿½ï¿½es para serem recuperados. Note que ao informar esse parï¿½metro serï¿½o ignorados os parï¿½metros: selectFields e expandTable
+   * @param selectFields Campos que devem ser obtidos das tabelas. Se passo nulo, serï¿½ obtido todos os campos que estï¿½o no objeto de mapeamento.
+   * @param expandTable Este atributo sï¿½ ï¿½ utilizando quando o selectFields nï¿½o ï¿½ nulo. Caso TRUE obtem todos os campos de uma tabela mesmo que sï¿½ uma coluna esteja definida no selectFields. Caso FALSE recupera estritamente os campos passados em selectFields.
+   * @param mo Objeto com as confiï¿½ï¿½es da Clausula WHERE a ser utilizada.
    * @param orderBy Objeto que define a ordem da lista.
-   * @param groupBy Campos com funções ou fields/colunas a serem utilizadas no groupBy da consulta.
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @param useFullJoin Caso TRUE, o SELECTED será montado com FULL JOIN ao invés do LEFT JOIN
+   * @param groupBy Campos com funï¿½ï¿½es ou fields/colunas a serem utilizadas no groupBy da consulta.
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @param useFullJoin Caso TRUE, o SELECTED serï¿½ montado com FULL JOIN ao invï¿½s do LEFT JOIN
    * @return PreparedStatemetn pronto para realizar a consulta e obter o ResultSet.
-   * @throws RFWException Lançado em caso de Erro.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   private static PreparedStatement createSelectStatement(Connection conn, DAOMap map, RFWField[] fields, String[] selectFields, boolean expandTable, RFWMO mo, RFWOrderBy orderBy, RFWField[] groupBy, Integer offSet, Integer limit, Boolean useFullJoin, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
 
     try {
-      // Se tiver a definição dos RFWFields vamos utilizar ela para realizar a montagem do SELECT, e o selectFields é ignorado. Caso contrário a consulta é feita em cima do selectFields
+      // Se tiver a definiï¿½ï¿½o dos RFWFields vamos utilizar ela para realizar a montagem do SELECT, e o selectFields ï¿½ ignorado. Caso contrï¿½rio a consulta ï¿½ feita em cima do selectFields
       if (fields != null) {
         for (RFWField field : fields) {
           if (sql.length() > 0) {
@@ -444,38 +443,38 @@ class DAOMap {
       } else {
         // ==> SELECT
         {
-          // Se recebemos os campos específicos para buscar, recuperamos apenas eles, caso contrário vamos recuperar todas as tabelas mapeadas.
+          // Se recebemos os campos especï¿½ficos para buscar, recuperamos apenas eles, caso contrï¿½rio vamos recuperar todas as tabelas mapeadas.
           if (selectFields == null) {
-            // Se não temos nenhum field, não adicionamos nada além da tabela raiz completa
+            // Se nï¿½o temos nenhum field, nï¿½o adicionamos nada alï¿½m da tabela raiz completa
             sql.append("SELECT ").append(dialect.getQM()).append("t0").append(dialect.getQM()).append(".*");
           } else {
-            // CACHE para armazena as tabelas que já adicionamos para evitar de repeti-las no select. Chave é o Alias da tabela.
-            // ATENÇÃO: Quando o expandTable é false, no cache é colocado o fieldPath Completo da tabela, evitando assim que as colunas sejam solicitadas repetidas
+            // CACHE para armazena as tabelas que jï¿½ adicionamos para evitar de repeti-las no select. Chave ï¿½ o Alias da tabela.
+            // ATENï¿½ï¿½O: Quando o expandTable ï¿½ false, no cache ï¿½ colocado o fieldPath Completo da tabela, evitando assim que as colunas sejam solicitadas repetidas
             HashMap<String, DAOMapTable> cache = new HashMap<>();
 
-            // A tabela raiz sempre é utilizada, seja para pegar o ID do objeto, seja para pegar a tabela toda no caso de expandTable = true
+            // A tabela raiz sempre ï¿½ utilizada, seja para pegar o ID do objeto, seja para pegar a tabela toda no caso de expandTable = true
             if (expandTable) {
-              // Se vamos expandir a tabela, já colocamos ela no select e adicionamos no cache para que não se repita
+              // Se vamos expandir a tabela, jï¿½ colocamos ela no select e adicionamos no cache para que nï¿½o se repita
               sql.append("SELECT ").append(dialect.getQM()).append("t0").append(dialect.getQM()).append(".*");
               cache.put("t0", map.getMapTableByPath(""));
             } else {
-              // Se NÃO vamos expandir a tabela, só colocamos o campo id inicialmente
+              // Se Nï¿½O vamos expandir a tabela, sï¿½ colocamos o campo id inicialmente
               sql.append("SELECT ").append(dialect.getQM()).append("t0").append(dialect.getQM()).append(".").append(dialect.getQM()).append("id").append(dialect.getQM());
               cache.put("t0.id", map.getMapTableByPath(""));
             }
 
             for (String field : selectFields) {
-              // Se o field solicitado for "id", ignoramos pois já incluimos ele seja com expandTable = true ou false.
+              // Se o field solicitado for "id", ignoramos pois jï¿½ incluimos ele seja com expandTable = true ou false.
               if ("id".equals(field)) continue;
 
-              // Se o atributo sendo requisitado começa com "@" é um atributo anotado com RFWMetaCollection, precisa ser tratado diferente
+              // Se o atributo sendo requisitado comeï¿½a com "@" ï¿½ um atributo anotado com RFWMetaCollection, precisa ser tratado diferente
               boolean collection = false;
               if (field.endsWith("@")) {
                 // Se for uma RFWMetaCollection, deixamos a flag para indicar
                 collection = true;
               }
 
-              // Como temos de pegar todos os objetos entre o objeto raiz e os campos selecionados, vamos quebrar cada campo solicitado para garantir que vamos pedir no SELECT os campos intermediários
+              // Como temos de pegar todos os objetos entre o objeto raiz e os campos selecionados, vamos quebrar cada campo solicitado para garantir que vamos pedir no SELECT os campos intermediï¿½rios
               String[] parts = field.split("\\.");
               StringBuilder pathBuilder = new StringBuilder();
               for (int i = 0; i < parts.length; i++) {
@@ -484,7 +483,7 @@ class DAOMap {
                   pathBuilder.append(parts[i]);
                 }
 
-                // Cria o nome completo do atributo. Mas se ainda não estiver no último parametro (último parts) colocamos o final .id ou não a tabela não será encontrada
+                // Cria o nome completo do atributo. Mas se ainda nï¿½o estiver no ï¿½ltimo parametro (ï¿½ltimo parts) colocamos o final .id ou nï¿½o a tabela nï¿½o serï¿½ encontrada
                 String fieldName = pathBuilder.toString();
                 if (fieldName.length() > 0) fieldName += ".";
                 if (collection || i >= parts.length - 1) {
@@ -496,27 +495,27 @@ class DAOMap {
                 // Se for collection, a partir do caminho
                 DAOMapField mField = map.mapFieldByPath.get(fieldName);
                 if (mField == null) {
-                  // Se não encontramos procuramos se o atributo não é um collection, mas solicitado pelo usuário (Path criado pelo MetaVO_)
+                  // Se nï¿½o encontramos procuramos se o atributo nï¿½o ï¿½ um collection, mas solicitado pelo usuï¿½rio (Path criado pelo MetaVO_)
                   mField = map.mapFieldByPath.get(fieldName + "@");
                   if (mField == null) {
-                    // Um dos casos do mField ser nulo é pq o atributo solicitado no find não é um atributo "final" de um objeto, mas sim um atributo que aponta para outro objeto de relacionamento.
-                    // No Find devemos sempre buscar os atributos diretos dos objetos, caso contrário eles não serão mapeados.
-                    throw new RFWCriticalException("O atributo '${0}' não foi maepado no DAO! Ao realizar consultas, sempre utilize o caminho desejado até um atributo do objeto e não somente para um atributo que aponte o relacionamento (VO). Em outras palavras, não termine o caminho desejado do MO com \".path()\", solicite um atributo do objeto como \".id()\".", new String[] { fieldName });
+                    // Um dos casos do mField ser nulo ï¿½ pq o atributo solicitado no find nï¿½o ï¿½ um atributo "final" de um objeto, mas sim um atributo que aponta para outro objeto de relacionamento.
+                    // No Find devemos sempre buscar os atributos diretos dos objetos, caso contrï¿½rio eles nï¿½o serï¿½o mapeados.
+                    throw new RFWCriticalException("O atributo '${0}' nï¿½o foi maepado no DAO! Ao realizar consultas, sempre utilize o caminho desejado atï¿½ um atributo do objeto e nï¿½o somente para um atributo que aponte o relacionamento (VO). Em outras palavras, nï¿½o termine o caminho desejado do MO com \".path()\", solicite um atributo do objeto como \".id()\".", new String[] { fieldName });
                   }
                 }
                 final DAOMapTable mTable = mField.table;
                 if (mTable.path != null) {
                   if (expandTable) {
-                    // Se vams expandir a tabela, adicionamos a tabela toda e colocamos o Alias no cache para que não se repita para outros campos
+                    // Se vams expandir a tabela, adicionamos a tabela toda e colocamos o Alias no cache para que nï¿½o se repita para outros campos
                     if (!cache.containsKey(mTable.alias)) {
                       sql.append(",").append(dialect.getQM()).append(mTable.alias).append(dialect.getQM()).append(".*");
-                      cache.put(mTable.alias, mTable); // Coloca na cache para não repetir
+                      cache.put(mTable.alias, mTable); // Coloca na cache para nï¿½o repetir
                     }
                   } else {
-                    // Se não expande toda a tabela, vamos adicionar apenas o field, e não colocamos no cache, já que a mesma tabela pode se repetir para outro campo.
+                    // Se nï¿½o expande toda a tabela, vamos adicionar apenas o field, e nï¿½o colocamos no cache, jï¿½ que a mesma tabela pode se repetir para outro campo.
                     if (!cache.containsKey(mTable.alias)) {
                       sql.append(",").append(dialect.getQM()).append(mTable.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mField.column).append(dialect.getQM());
-                      cache.put(mTable.alias + '.' + mField.column, mTable); // Coloca na cache para não repetir
+                      cache.put(mTable.alias + '.' + mField.column, mTable); // Coloca na cache para nï¿½o repetir
                     }
                   }
                 }
@@ -528,7 +527,7 @@ class DAOMap {
 
       // ==> FROM
       {
-        // Começa incluindo o mapeamento raiz
+        // Comeï¿½a incluindo o mapeamento raiz
         final DAOMapTable mTableRoot = map.mapTableByPath.get("");
         sql.append(" FROM ").append(dialect.getQM());
         if (mTableRoot.schema != null) {
@@ -537,7 +536,7 @@ class DAOMap {
         sql.append(mTableRoot.table).append(dialect.getQM()).append(" AS ").append(dialect.getQM()).append(mTableRoot.alias).append(dialect.getQM());
         // Itera as demais tabelas para o Join
         for (DAOMapTable mTable : map.mapTableByPath.values()) {
-          // Evita a tabela raiz, já que ela já foi adicionada
+          // Evita a tabela raiz, jï¿½ que ela jï¿½ foi adicionada
           if (!"".equals(mTable.path)) {
             if (useFullJoin == null || !useFullJoin) {
               sql.append(" LEFT JOIN ").append(dialect.getQM());
@@ -553,12 +552,12 @@ class DAOMap {
       final LinkedList<Object> statementParameters = new LinkedList<>();
       if (mo != null) {
         final StringBuilder where = writeWhere(map, mo, statementParameters, dialect);
-        // As vezes temos MO, mas ele não gera nenhuma consulta (um MO em branco), neste caso não escrevemos o "WHERE" ou teremos um SQL inválido
+        // As vezes temos MO, mas ele nï¿½o gera nenhuma consulta (um MO em branco), neste caso nï¿½o escrevemos o "WHERE" ou teremos um SQL invï¿½lido
         if (where.length() > 0) sql.append(" WHERE").append(where);
       }
 
       // ==> GroupBy
-      if (fields != null && groupBy != null) { // Só é utilizado no caso de consulta especial com fields preparados
+      if (fields != null && groupBy != null) { // Sï¿½ ï¿½ utilizado no caso de consulta especial com fields preparados
         final StringBuilder gbBuff = new StringBuilder();
         for (RFWField field : groupBy) {
           if (gbBuff.length() > 0) {
@@ -585,8 +584,8 @@ class DAOMap {
           // sql.append(dialect.getQM()).append(mField.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mField.column).append(dialect.getQM());
           if (!orderItem.isAsc()) sql.append(" DESC");
         }
-        // Adicionamos no fim, como critério final de desempate a organização pelo ID da tabela principal. Esse atributo garante que chamadas diferentes no método (com MOs diferentes) retornem sempre a mesma ordem mesmo que com objetos ocultos. Sem essa organização, requisições por "chunks of data" retornam cada hora uma ordem dependendo do MO, repetindo dados e errando a distribuição.
-        // Note que essa solução só é colocada em caso de utilização do OrderBy, se não ouver Order By, não precisamos do desempate já que a ordem não é importante.
+        // Adicionamos no fim, como critï¿½rio final de desempate a organizaï¿½ï¿½o pelo ID da tabela principal. Esse atributo garante que chamadas diferentes no mï¿½todo (com MOs diferentes) retornem sempre a mesma ordem mesmo que com objetos ocultos. Sem essa organizaï¿½ï¿½o, requisiï¿½ï¿½es por "chunks of data" retornam cada hora uma ordem dependendo do MO, repetindo dados e errando a distribuiï¿½ï¿½o.
+        // Note que essa soluï¿½ï¿½o sï¿½ ï¿½ colocada em caso de utilizaï¿½ï¿½o do OrderBy, se nï¿½o ouver Order By, nï¿½o precisamos do desempate jï¿½ que a ordem nï¿½o ï¿½ importante.
         sql.append(", ").append(dialect.getQM()).append("t0").append(dialect.getQM()).append(".").append(dialect.getQM()).append("id").append(dialect.getQM());
       }
 
@@ -597,18 +596,18 @@ class DAOMap {
         if (limit != null) {
           sql.append(limit);
         } else {
-          // Se entrou nesse IF é pq temos um offSet, mas para usar o offset o MySQL exige o limit também. Por isso utilizmaos um numero gigantesco para garantir que tudo seja retornado. https://dev.mysql.com/doc/refman/8.0/en/select.html
+          // Se entrou nesse IF ï¿½ pq temos um offSet, mas para usar o offset o MySQL exige o limit tambï¿½m. Por isso utilizmaos um numero gigantesco para garantir que tudo seja retornado. https://dev.mysql.com/doc/refman/8.0/en/select.html
           sql.append("18446744073709551615");
         }
       }
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (map.getMapTable().size() > 15) {
-        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha é pior em questões de performance.
-        RFW.pDev("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
+        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para nï¿½o termos problema de memï¿½ria. Nï¿½o deixamos direto pq o linha a linha ï¿½ pior em questï¿½es de performance.
+        RFW.pDev("Limite de Fetch do MySQL (Linha ï¿½ Linha) habilitado!");
         stmt.setFetchSize(Integer.MIN_VALUE);
       }
       writeStatementParameters(stmt, statementParameters);
@@ -621,18 +620,18 @@ class DAOMap {
   /**
    * Cria o Statement SQL para completar objetos de CompositionTree.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param startTable tabela de início de busca dos objetos
+   * @param startTable tabela de inï¿½cio de busca dos objetos
    * @param id ID do objeto a ser procurado na tabela
    * @param orderBy Objeto que define a ordem da lista.
-   * @param groupBy Campos com funções ou fields/colunas a serem utilizadas no groupBy da consulta.
-   * @param offSet Define quantos registros a partir do começo devemos pular (não retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
-   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e não o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 até o idnex 15, ou seja da 6ª linha até a 15ª.
-   * @param useFullJoin Caso TRUE, o SELECTED será montado com FULL JOIN ao invés do LEFT JOIN
+   * @param groupBy Campos com funï¿½ï¿½es ou fields/colunas a serem utilizadas no groupBy da consulta.
+   * @param offSet Define quantos registros a partir do comeï¿½o devemos pular (nï¿½o retornar), por exemplo, um offSet de 0, retorna desde o primeiro (index 0).
+   * @param limit Define quantos registros devemos retornar da lista. Define a quantidade e nï¿½o o index como o "offSet". Se ambos forem combinados, ex: offset = 5 e limit = 10, retorna os registros desde o index 5 atï¿½ o idnex 15, ou seja da 6ï¿½ linha atï¿½ a 15ï¿½.
+   * @param useFullJoin Caso TRUE, o SELECTED serï¿½ montado com FULL JOIN ao invï¿½s do LEFT JOIN
    * @param dialect
    * @return PreparedStatemetn pronto para realizar a consulta e obter o ResultSet.
-   * @throws RFWException Lançado em caso de Erro.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static PreparedStatement createSelectCompositionTreeStatement(Connection conn, DAOMap map, DAOMapTable startTable, Long id, RFWOrderBy orderBy, RFWField[] groupBy, Integer offSet, Integer limit, Boolean useFullJoin, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
@@ -643,9 +642,9 @@ class DAOMap {
 
       // ==> FROM
       {
-        // Começa incluindo o mapeamento raiz
+        // Comeï¿½a incluindo o mapeamento raiz
         sqlFrom.append(" FROM ").append(dialect.getQM()).append(startTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(startTable.table).append(dialect.getQM()).append(" AS ").append(dialect.getQM()).append(startTable.alias).append(dialect.getQM());
-        // Adiciona todas as tabelas que fazem join com a nossa tabela recursivamente. (para evitar um método recusivo fiz esse loop que fica reiterando até que as alterações parem
+        // Adiciona todas as tabelas que fazem join com a nossa tabela recursivamente. (para evitar um mï¿½todo recusivo fiz esse loop que fica reiterando atï¿½ que as alteraï¿½ï¿½es parem
         HashSet<String> cacheAlias = new HashSet<String>();
         cacheAlias.add(startTable.alias);
         int size = -1;
@@ -654,7 +653,7 @@ class DAOMap {
 
           // Itera as demais tabelas para o Join
           for (DAOMapTable mTable : map.mapTableByPath.values()) {
-            // Evita a tabela raiz, já que ela já foi adicionada, ou qualquer tabela que já esteja no cache
+            // Evita a tabela raiz, jï¿½ que ela jï¿½ foi adicionada, ou qualquer tabela que jï¿½ esteja no cache
             if (!cacheAlias.contains(mTable.alias) && cacheAlias.contains(mTable.joinAlias)) {
               sql.append(",").append(dialect.getQM()).append(mTable.alias).append(dialect.getQM()).append(".*");
 
@@ -678,7 +677,7 @@ class DAOMap {
       statementParameters.add(id);
 
       // // ==> GroupBy
-      // if (fields != null && groupBy != null) { // Só é utilizado no caso de consulta especial com fields preparados
+      // if (fields != null && groupBy != null) { // Sï¿½ ï¿½ utilizado no caso de consulta especial com fields preparados
       // final StringBuilder gbBuff = new StringBuilder();
       // for (RFWField field : groupBy) {
       // if (gbBuff.length() > 0) {
@@ -705,8 +704,8 @@ class DAOMap {
       // // sql.append(dialect.getQM()).append(mField.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mField.column).append(dialect.getQM());
       // if (!orderItem.isAsc()) sql.append(" DESC");
       // }
-      // // Adicionamos no fim, como critério final de desempate a organização pelo ID da tabela principal. Esse atributo garante que chamadas diferentes no método (com MOs diferentes) retornem sempre a mesma ordem mesmo que com objetos ocultos. Sem essa organização, requisições por "chunks of data" retornam cada hora uma ordem dependendo do MO, repetindo dados e errando a distribuição.
-      // // Note que essa solução só é colocada em caso de utilização do OrderBy, se não ouver Order By, não precisamos do desempate já que a ordem não é importante.
+      // // Adicionamos no fim, como critï¿½rio final de desempate a organizaï¿½ï¿½o pelo ID da tabela principal. Esse atributo garante que chamadas diferentes no mï¿½todo (com MOs diferentes) retornem sempre a mesma ordem mesmo que com objetos ocultos. Sem essa organizaï¿½ï¿½o, requisiï¿½ï¿½es por "chunks of data" retornam cada hora uma ordem dependendo do MO, repetindo dados e errando a distribuiï¿½ï¿½o.
+      // // Note que essa soluï¿½ï¿½o sï¿½ ï¿½ colocada em caso de utilizaï¿½ï¿½o do OrderBy, se nï¿½o ouver Order By, nï¿½o precisamos do desempate jï¿½ que a ordem nï¿½o ï¿½ importante.
       // sql.append(", ").append(dialect.getQM()).append("t0").append(dialect.getQM()).append(".").append(dialect.getQM()).append("id").append(dialect.getQM());
       // }
       //
@@ -717,18 +716,18 @@ class DAOMap {
       // if (limit != null) {
       // sql.append(limit);
       // } else {
-      // // Se entrou nesse IF é pq temos um offSet, mas para usar o offset o MySQL exige o limit também. POr isso utilizmaos um numero gigantesco para garantir que tudo seja retornado. https://dev.mysql.com/doc/refman/8.0/en/select.html
+      // // Se entrou nesse IF ï¿½ pq temos um offSet, mas para usar o offset o MySQL exige o limit tambï¿½m. POr isso utilizmaos um numero gigantesco para garantir que tudo seja retornado. https://dev.mysql.com/doc/refman/8.0/en/select.html
       // sql.append("18446744073709551615");
       // }
       // }
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
       if (map.getMapTable().size() > 15) {
-        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para não termos problema de memória. Não deixamos direto pq o linha a linha é pior em questões de performance.
-        RFWLogger.logDebug("Limite de Fetch do MySQL (Linha à Linha) habilitado!");
+        // Se tivermos mais de 15 tabelas conectadas, ativamos o fetch de linha a linha para nï¿½o termos problema de memï¿½ria. Nï¿½o deixamos direto pq o linha a linha ï¿½ pior em questï¿½es de performance.
+        RFWLogger.logDebug("Limite de Fetch do MySQL (Linha ï¿½ Linha) habilitado!");
         stmt.setFetchSize(Integer.MIN_VALUE);
       }
       writeStatementParameters(stmt, statementParameters);
@@ -739,9 +738,9 @@ class DAOMap {
   }
 
   /**
-   * Método utilizado para trocar a definição do {@link RFWField} na string necessária para anexar no SQL de consulta.
+   * Mï¿½todo utilizado para trocar a definiï¿½ï¿½o do {@link RFWField} na string necessï¿½ria para anexar no SQL de consulta.
    *
-   * @param map {@link DAOMap} com as informações de mapeamento
+   * @param map {@link DAOMap} com as informaï¿½ï¿½es de mapeamento
    * @param field {@link RFWField} para evaluation.
    * @param dialect
    * @return String pronta para ser concatenada na string SQL.
@@ -828,10 +827,10 @@ class DAOMap {
       case DIVIDE:
         buff.append(evalRFWField(map, field.getFunctionParam().get(0), dialect)).append("/").append(evalRFWField(map, field.getFunctionParam().get(1), dialect));
         break;
-      case WEEKDAY: // Deve retornar valores de 0 a 6, começando na segunda-feira.
+      case WEEKDAY: // Deve retornar valores de 0 a 6, comeï¿½ando na segunda-feira.
         switch (dialect) {
           case DerbyDB:
-            // Função dayofweek do Derby difere da weekday definida no RFWDAO (leia definição da função em RFWField), por isso o ajuste do valor retornado
+            // Funï¿½ï¿½o dayofweek do Derby difere da weekday definida no RFWDAO (leia definiï¿½ï¿½o da funï¿½ï¿½o em RFWField), por isso o ajuste do valor retornado
             if (field.getField() != null) {
               buff.append("((dayofweek(").append(evalFieldToColumn(map, field.getField(), dialect)).append(") + 5) % 7)");
             } else {
@@ -867,12 +866,12 @@ class DAOMap {
   }
 
   /**
-   * Este método recebe o objeto de mapeamento {@link DAOMap}, com as informações do mapeamento entre tabelas e objetos. E recebendo um field do VO (na estrutura do Math Object), é capaz de retornar a string como deve ser utilizada no SQL.<br>
+   * Este mï¿½todo recebe o objeto de mapeamento {@link DAOMap}, com as informaï¿½ï¿½es do mapeamento entre tabelas e objetos. E recebendo um field do VO (na estrutura do Math Object), ï¿½ capaz de retornar a string como deve ser utilizada no SQL.<br>
    *
-   * @param map Objeto com a definição do mapeamento entre tabelas/colunas e VO/atributos
+   * @param map Objeto com a definiï¿½ï¿½o do mapeamento entre tabelas/colunas e VO/atributos
    * @param field path do atributo do VO a ser convertido para o formato de tabela.coluna para o SQL.
    * @param dialect
-   * @return Retorna uma string no formato ").append(dialect.getQM()).append("aliasTabela").append(dialect.getQM()).append(".").append(dialect.getQM()).append("coluna").append(dialect.getQM()).append(" que associada ao attributo do VO passado como parâmetro.
+   * @return Retorna uma string no formato ").append(dialect.getQM()).append("aliasTabela").append(dialect.getQM()).append(".").append(dialect.getQM()).append("coluna").append(dialect.getQM()).append(" que associada ao attributo do VO passado como parï¿½metro.
    */
   private static String evalFieldToColumn(DAOMap map, String field, SQLDialect dialect) {
     final DAOMapField fMap = map.mapFieldByPath.get(field);
@@ -884,33 +883,33 @@ class DAOMap {
   /**
    * Cria o Statement SQL para inserir o objeto no banco de dados.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path caminho até o VO que está sendo inserido no banco.
+   * @param path caminho atï¿½ o VO que estï¿½ sendo inserido no banco.
    * @param vo Objeto a ser inserido no banco de dados.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createInsertStatement(Connection conn, DAOMap map, String path, VO vo, SQLDialect dialect) throws RFWException {
     return createInsertStatement(conn, map, path, vo, null, 0, dialect);
   }
 
   /**
-   * Cria o Statement SQL para inserir o objeto no banco de dados, COM a criação da coluna de SortColumn. A sortcolumn é a coluna utilizada para salvar o índice de um objeto em uma lista e dessa forma garantir que a lista terá a mesma ordem ao ser recuperada do banco de dados.<br>
-   * É necessário um método de criação especial pois a coluna de sort não deve fazer parte do objeto e é gerenciada pela classe do RFWDAO. Diferentemente da coluna da Hash que normalmente é algum atributo do próprio objeto.
+   * Cria o Statement SQL para inserir o objeto no banco de dados, COM a criaï¿½ï¿½o da coluna de SortColumn. A sortcolumn ï¿½ a coluna utilizada para salvar o ï¿½ndice de um objeto em uma lista e dessa forma garantir que a lista terï¿½ a mesma ordem ao ser recuperada do banco de dados.<br>
+   * ï¿½ necessï¿½rio um mï¿½todo de criaï¿½ï¿½o especial pois a coluna de sort nï¿½o deve fazer parte do objeto e ï¿½ gerenciada pela classe do RFWDAO. Diferentemente da coluna da Hash que normalmente ï¿½ algum atributo do prï¿½prio objeto.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path caminho até o VO que está sendo inserido no banco.
+   * @param path caminho atï¿½ o VO que estï¿½ sendo inserido no banco.
    * @param vo Objeto a ser inserido no banco de dados.
-   * @param sortColumn Nome da coluna onde é salvo o índice de ordem da Lista (se houver), ou Null caso não seja usado o recurso
-   * @param sortIndex Índice de indexação do item na lista.
+   * @param sortColumn Nome da coluna onde ï¿½ salvo o ï¿½ndice de ordem da Lista (se houver), ou Null caso nï¿½o seja usado o recurso
+   * @param sortIndex ï¿½ndice de indexaï¿½ï¿½o do item na lista.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createInsertStatement(Connection conn, DAOMap map, String path, VO vo, String sortColumn, int sortIndex, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
@@ -924,7 +923,7 @@ class DAOMap {
       int c = 0;
       for (DAOMapField mField : map.getMapField()) {
         if (mField.table == mTable) {
-          // Dependendo do dialeto não inclui as colunas de identifier, pois elas devem ser geradas sozinhas
+          // Dependendo do dialeto nï¿½o inclui as colunas de identifier, pois elas devem ser geradas sozinhas
           if ("ID".equals(mField.column.toUpperCase()) && dialect.getSkipInsertIDColumn()) continue;
           if (c > 0) sql.append(",");
           sql.append(dialect.getQM()).append(mField.column).append(dialect.getQM());
@@ -933,15 +932,15 @@ class DAOMap {
           // Salvamos o valor do objeto na lista de atributos.
           Object value = RUReflex.getPropertyValue(vo, mField.field);
 
-          // Verificamos se o atributo tem um converter, se tiver ele será usado para preparar os valores para o banco de dados
-          if (!"id".equals(mField.field)) { // Não aceita as annotations no campo ID
+          // Verificamos se o atributo tem um converter, se tiver ele serï¿½ usado para preparar os valores para o banco de dados
+          if (!"id".equals(mField.field)) { // Nï¿½o aceita as annotations no campo ID
             final RFWDAOConverter convAnn = vo.getClass().getDeclaredField(mField.field).getAnnotation(RFWDAOConverter.class);
             if (convAnn != null) {
               final Object ni = convAnn.converterClass().newInstance();
-              if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+              if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
               value = ((RFWDAOConverterInterface) ni).toDB(value);
             } else {
-              // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteúdo
+              // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteï¿½do
               if (value != null && (value instanceof String)) {
                 final RFWMetaEncrypt encAnn = vo.getClass().getDeclaredField(mField.field).getAnnotation(RFWMetaEncrypt.class);
                 if (encAnn != null) {
@@ -954,7 +953,7 @@ class DAOMap {
         }
       }
 
-      // Se tiver uma coluna de Sort, incluímos ela agora no final dos campos
+      // Se tiver uma coluna de Sort, incluï¿½mos ela agora no final dos campos
       if (sortColumn != null) {
         sql.append(",").append(dialect.getQM()).append(sortColumn).append(dialect.getQM());
         statementParameters.add(new Integer(sortIndex));
@@ -967,7 +966,7 @@ class DAOMap {
       sql.append(")");
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
       writeStatementParameters(stmt, statementParameters);
@@ -980,15 +979,15 @@ class DAOMap {
   /**
    * Cria o Statement SQL para inserir o dado de de um atributo anotado com {@link RFWMetaCollectionField} no banco de dados.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path caminho até o VO que está sendo inserido no banco.
-   * @param items Lista de Item da Collection. Podendo ser um objeto qualquer em caso de List, ou uma List de Entry (que contém a chave e valor) no caso de Map.
+   * @param path caminho atï¿½ o VO que estï¿½ sendo inserido no banco.
+   * @param items Lista de Item da Collection. Podendo ser um objeto qualquer em caso de List, ou uma List de Entry (que contï¿½m a chave e valor) no caso de Map.
    * @param parentID ID do objeto pai para popular a coluna de FK.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createInsertCollectionStatement(Connection conn, DAOMap map, String path, List<?> items, Long parentID, SQLDialect dialect, RFWMetaCollectionField ann) throws RFWException {
     final StringBuffer sql = new StringBuffer();
@@ -1016,31 +1015,31 @@ class DAOMap {
         sql.append("(");
 
         c = 0;
-        for (DAOMapField mField : map.getMapField()) { // Reinitera as colunas para que fique na mesma ordem que a iteração acima que escreveu o nome das colunas
+        for (DAOMapField mField : map.getMapField()) { // Reinitera as colunas para que fique na mesma ordem que a iteraï¿½ï¿½o acima que escreveu o nome das colunas
           if (mField.table == mTable) {
             if (c > 0) sql.append(",");
             sql.append("?");
 
             Object value = null;
             // Verificamos o sufixo do path da coluna mapeada...
-            if (mField.field.endsWith("@fk")) { // ...Indica que é a coluna onde salvamos o ID do objeto pai
+            if (mField.field.endsWith("@fk")) { // ...Indica que ï¿½ a coluna onde salvamos o ID do objeto pai
               value = parentID;
-            } else if (mField.field.endsWith("@keyColumn")) { // ...Indica que é a coluna onde salvamos a chave da Hash
+            } else if (mField.field.endsWith("@keyColumn")) { // ...Indica que ï¿½ a coluna onde salvamos a chave da Hash
               if (!(item instanceof Entry<?, ?>)) {
-                throw new RFWCriticalException("Encontrado um atributo com keyColumn definido, mas o objeto recebido para persistir não é um Entry<?, ?>.", new String[] { path, item.getClass().getCanonicalName() });
+                throw new RFWCriticalException("Encontrado um atributo com keyColumn definido, mas o objeto recebido para persistir nï¿½o ï¿½ um Entry<?, ?>.", new String[] { path, item.getClass().getCanonicalName() });
               }
               value = ((Entry<?, ?>) item).getKey();
 
               if (RFWDAOConverterInterface.class.isAssignableFrom(ann.keyConverterClass())) {
                 Object ni = ann.keyConverterClass().newInstance();
-                if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, mField.table.type.getCanonicalName() });
+                if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { ann.keyConverterClass().getCanonicalName(), mField.field, mField.table.type.getCanonicalName() });
                 value = ((RFWDAOConverterInterface) ni).toDB(value);
               }
 
-            } else if (mField.field.endsWith("@sortColumn")) { // ...Indica que é a coluna onde salvamos o índice de ordem do objeto
+            } else if (mField.field.endsWith("@sortColumn")) { // ...Indica que ï¿½ a coluna onde salvamos o ï¿½ndice de ordem do objeto
               value = items.indexOf(item);
-            } else { // ..Se não é nenhuma das anteriores, é a coluna onde salvamos o conteúdo do objeto
-              value = item; // Em caso de lista o valor a ser salvo já é o item...
+            } else { // ..Se nï¿½o ï¿½ nenhuma das anteriores, ï¿½ a coluna onde salvamos o conteï¿½do do objeto
+              value = item; // Em caso de lista o valor a ser salvo jï¿½ ï¿½ o item...
               if (item instanceof Entry<?, ?>) { // ...Mas caso seja um Entry de um Map, temos de trocar pelo valor da hash
                 value = ((Entry<?, ?>) item).getValue();
               }
@@ -1057,7 +1056,7 @@ class DAOMap {
       }
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s, Statement.RETURN_GENERATED_KEYS);
       writeStatementParameters(stmt, statementParameters);
@@ -1070,33 +1069,33 @@ class DAOMap {
   /**
    * Cria o Statement SQL para atualizar o objeto no banco de dados.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path caminho até o VO que está sendo inserido no banco.
+   * @param path caminho atï¿½ o VO que estï¿½ sendo inserido no banco.
    * @param vo Objeto a ser inserido no banco de dados.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createUpdateStatement(Connection conn, DAOMap map, String path, VO vo, SQLDialect dialect) throws RFWException {
     return createUpdateStatement(conn, map, path, vo, null, 0, dialect);
   }
 
   /**
-   * Cria o Statement SQL para atualizar o objeto no banco de dados, COM a atualização da coluna de SortColumn. A sortcolumn é a coluna utilizada para salvar o índice de um objeto em uma lista e dessa forma garantir que a lista terá a mesma ordem ao ser recuperada do banco de dados.<br>
-   * É necessário um método de criação especial pois a coluna de sort não deve fazer parte do objeto e é gerenciada pela classe do RFWDAO. Diferentemente da coluna da Hash que normalmente é algum atributo do próprio objeto.
+   * Cria o Statement SQL para atualizar o objeto no banco de dados, COM a atualizaï¿½ï¿½o da coluna de SortColumn. A sortcolumn ï¿½ a coluna utilizada para salvar o ï¿½ndice de um objeto em uma lista e dessa forma garantir que a lista terï¿½ a mesma ordem ao ser recuperada do banco de dados.<br>
+   * ï¿½ necessï¿½rio um mï¿½todo de criaï¿½ï¿½o especial pois a coluna de sort nï¿½o deve fazer parte do objeto e ï¿½ gerenciada pela classe do RFWDAO. Diferentemente da coluna da Hash que normalmente ï¿½ algum atributo do prï¿½prio objeto.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path caminho até o VO que está sendo inserido no banco.
+   * @param path caminho atï¿½ o VO que estï¿½ sendo inserido no banco.
    * @param vo Objeto a ser inserido no banco de dados.
-   * @param sortColumn Nome da coluna onde é salvo o índice de ordem da Lista (se houver), ou Null caso não seja usado o recurso
-   * @param sortIndex Índice de indexação do item na lista.
+   * @param sortColumn Nome da coluna onde ï¿½ salvo o ï¿½ndice de ordem da Lista (se houver), ou Null caso nï¿½o seja usado o recurso
+   * @param sortIndex ï¿½ndice de indexaï¿½ï¿½o do item na lista.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createUpdateStatement(Connection conn, DAOMap map, String path, VO vo, String sortColumn, int sortIndex, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
@@ -1111,22 +1110,22 @@ class DAOMap {
       for (DAOMapField mField : map.getMapField()) {
         if (mField.table == mTable) {
           if (c > 0) sql.append(",");
-          if (!"id".equals(mField.column)) { // Pula a coluna ID para que ela não entre no corpo do UPDATE, só no WHERE abaixo.
+          if (!"id".equals(mField.column)) { // Pula a coluna ID para que ela nï¿½o entre no corpo do UPDATE, sï¿½ no WHERE abaixo.
             sql.append(dialect.getQM()).append(mField.column).append(dialect.getQM()).append("=?");
             c++;
 
             // Salvamos o valor do objeto na lista de atributos.
             Object value = RUReflex.getPropertyValue(vo, mField.field);
 
-            // Verificamos se o atributo tem um converter, se tiver ele será usado para preparar os valores para o banco de dados
-            if (!"id".equals(mField.field)) { // Não acieta as annotations no campo ID
+            // Verificamos se o atributo tem um converter, se tiver ele serï¿½ usado para preparar os valores para o banco de dados
+            if (!"id".equals(mField.field)) { // Nï¿½o acieta as annotations no campo ID
               final RFWDAOConverter convAnn = vo.getClass().getDeclaredField(mField.field).getAnnotation(RFWDAOConverter.class);
               if (convAnn != null) {
                 final Object ni = convAnn.converterClass().newInstance();
-                if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
+                if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, vo.getClass().getCanonicalName() });
                 value = ((RFWDAOConverterInterface) ni).toDB(value);
               } else {
-                // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteúdo
+                // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteï¿½do
                 if (value != null && (value instanceof String)) {
                   final RFWMetaEncrypt encAnn = vo.getClass().getDeclaredField(mField.field).getAnnotation(RFWMetaEncrypt.class);
                   if (encAnn != null) {
@@ -1140,7 +1139,7 @@ class DAOMap {
         }
       }
 
-      // Se tiver uma coluna de Sort, incluímos ela agora no final dos campos
+      // Se tiver uma coluna de Sort, incluï¿½mos ela agora no final dos campos
       if (sortColumn != null) {
         sql.append(",").append(dialect.getQM()).append(sortColumn).append(dialect.getQM()).append("=?");
         statementParameters.add(new Integer(sortIndex));
@@ -1150,7 +1149,7 @@ class DAOMap {
       statementParameters.add(vo.getId());
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       writeStatementParameters(stmt, statementParameters);
@@ -1161,17 +1160,17 @@ class DAOMap {
   }
 
   /**
-   * Cria o Statement para atualiza vários objetos de uma única vez no banco de dados.
+   * Cria o Statement para atualiza vï¿½rios objetos de uma ï¿½nica vez no banco de dados.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param setValues Conjunto de valores a serem atualizados. Onde a chave do SET é o campo do VO. Geralmente gerado a partir dos Meta Objetos, e o conteúdo o valor a ser atribuido no campo.
-   * @param mo MatchObject para filtrar os objetos que serão atualizados.
+   * @param setValues Conjunto de valores a serem atualizados. Onde a chave do SET ï¿½ o campo do VO. Geralmente gerado a partir dos Meta Objetos, e o conteï¿½do o valor a ser atribuido no campo.
+   * @param mo MatchObject para filtrar os objetos que serï¿½o atualizados.
    * @param voClass Classe do objeto principal.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createMassUpdateStatement(Connection conn, DAOMap map, Map<String, Object> setValues, RFWMO mo, Class<? extends RFWVO> voClass, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
@@ -1186,23 +1185,23 @@ class DAOMap {
 
       // ==> UPDATE
       {
-        // Começa incluindo o mapeamento raiz
+        // Comeï¿½a incluindo o mapeamento raiz
         final DAOMapTable mTableRoot = map.mapTableByPath.get("");
         sql.append("UPDATE ").append(dialect.getQM()).append(mTableRoot.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTableRoot.table).append(dialect.getQM()).append(" AS ").append(dialect.getQM()).append(mTableRoot.alias).append(dialect.getQM());
         // Itera as demais tabelas como Left Join
         for (DAOMapTable mTable : map.mapTableByPath.values()) {
-          // Evita a tabela raiz, já que ela já foi adicionada
+          // Evita a tabela raiz, jï¿½ que ela jï¿½ foi adicionada
           if (!"".equals(mTable.path)) {
             sql.append(" LEFT JOIN ").append(dialect.getQM()).append(mTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.table).append(dialect.getQM()).append(" AS ").append(dialect.getQM()).append(mTable.alias).append(dialect.getQM()).append(" ON ").append(dialect.getQM()).append(mTable.joinAlias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.joinColumn).append(dialect.getQM()).append(" = ").append(dialect.getQM()).append(mTable.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.column).append(dialect.getQM());
           }
         }
       }
 
-      // Itera todos os campos que serão atualizados
+      // Itera todos os campos que serï¿½o atualizados
       sql.append(" SET ");
       int c = 0;
       for (String column : setValues.keySet()) {
-        if ("id".equals(column)) throw new RFWCriticalException("Não é permitido atualizar a coluna ID no MassUpdate do RFWDAO!");
+        if ("id".equals(column)) throw new RFWCriticalException("Nï¿½o ï¿½ permitido atualizar a coluna ID no MassUpdate do RFWDAO!");
         DAOMapField mField = map.getMapFieldByPath(column);
 
         if (c > 0) sql.append(",");
@@ -1211,14 +1210,14 @@ class DAOMap {
         // Salvamos o valor da coluna na lista de atributos.
         Object value = setValues.get(column);
 
-        // Verificamos se o atributo tem um converter, se tiver ele será usado para preparar os valores para o banco de dados
+        // Verificamos se o atributo tem um converter, se tiver ele serï¿½ usado para preparar os valores para o banco de dados
         final RFWDAOConverter convAnn = voClass.getDeclaredField(mField.field).getAnnotation(RFWDAOConverter.class);
         if (convAnn != null) {
           final Object ni = convAnn.converterClass().newInstance();
-          if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' não é um RFWDAOConverterInterface válido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, voClass.getCanonicalName() });
+          if (!(ni instanceof RFWDAOConverterInterface)) throw new RFWCriticalException("A classe '${0}' definida no atributo '${1}' da classe '${2}' nï¿½o ï¿½ um RFWDAOConverterInterface vï¿½lido!", new String[] { convAnn.converterClass().getCanonicalName(), mField.field, voClass.getCanonicalName() });
           value = ((RFWDAOConverterInterface) ni).toDB(value);
         } else {
-          // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteúdo
+          // Verificamos se o atributo for do tipo String e tem a annotation RFWMetaEncrypt, para encriptarmos o conteï¿½do
           if (value != null && (value instanceof String)) {
             final RFWMetaEncrypt encAnn = voClass.getDeclaredField(mField.field).getAnnotation(RFWMetaEncrypt.class);
             if (encAnn != null) {
@@ -1233,14 +1232,14 @@ class DAOMap {
       // ===> WHERE
       if (mo != null && mo.size() > 0) {
         final StringBuilder where = writeWhere(map, mo, parameters, dialect);
-        // As vezes temos MO, mas ele não gera nenhuma consulta (um MO em branco), neste caso não escrevemos o "WHERE" ou teremos um SQL inválido
+        // As vezes temos MO, mas ele nï¿½o gera nenhuma consulta (um MO em branco), neste caso nï¿½o escrevemos o "WHERE" ou teremos um SQL invï¿½lido
         if (where.length() > 0) sql.append(" WHERE").append(where);
       } else {
-        throw new RFWCriticalException("O RFWDAO MassUpdate não aceita uma atualização com MO nulo ou sem parametro nenhum por segurança contra cagadas. Se sua intenção for mesmo atualizar todo o banco, crie uma condição como \"id > -1\" para passar por esta validação!");
+        throw new RFWCriticalException("O RFWDAO MassUpdate nï¿½o aceita uma atualizaï¿½ï¿½o com MO nulo ou sem parametro nenhum por seguranï¿½a contra cagadas. Se sua intenï¿½ï¿½o for mesmo atualizar todo o banco, crie uma condiï¿½ï¿½o como \"id > -1\" para passar por esta validaï¿½ï¿½o!");
       }
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       writeStatementParameters(stmt, parameters);
@@ -1253,21 +1252,21 @@ class DAOMap {
   /**
    * Cria o Statement SQL para inserir o mapeamento entre dois objetos em uma tabela de joinAlias.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path Caminho até o VO do objeto que está sendo associado no relacionamento N:N no banco.
+   * @param path Caminho atï¿½ o VO do objeto que estï¿½ sendo associado no relacionamento N:N no banco.
    * @param vo1 VO que estamos persistindo presente no mapeamento.
-   * @param vo2 VO do relacionamento ManyToMany que será associado.
+   * @param vo2 VO do relacionamento ManyToMany que serï¿½ associado.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createManyToManyInsertStatement(Connection conn, DAOMap map, String path, VO vo1, VO vo2, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
     final LinkedList<Object> statementParameters = new LinkedList<>();
     try {
-      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que é colocada na Hash com mesmo caminho do path com o prefixo de "."
+      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que ï¿½ colocada na Hash com mesmo caminho do path com o prefixo de "."
       final DAOMapTable mTable = map.getMapTableByPath(path);
 
       sql.append("INSERT INTO ").append(dialect.getQM()).append(jTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(jTable.table);
@@ -1280,7 +1279,7 @@ class DAOMap {
       statementParameters.add(vo2.getId());
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       writeStatementParameters(stmt, statementParameters);
@@ -1293,21 +1292,21 @@ class DAOMap {
   /**
    * Cria o Statement SQL para consutlar um mapeamento entre dois objetos em uma tabela de joinAlias.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path Caminho até o VO do objeto que está sendo associado no relacionamento N:N no banco.
+   * @param path Caminho atï¿½ o VO do objeto que estï¿½ sendo associado no relacionamento N:N no banco.
    * @param vo1 VO que estamos persistindo presente no mapeamento.
-   * @param vo2 VO do relacionamento ManyToMany que será associado.
+   * @param vo2 VO do relacionamento ManyToMany que serï¿½ associado.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createManyToManySelectStatement(Connection conn, DAOMap map, String path, VO vo1, VO vo2, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
     final LinkedList<Object> statementParameters = new LinkedList<>();
     try {
-      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que é colocada na Hash com mesmo caminho do path com o prefixo de "."
+      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que ï¿½ colocada na Hash com mesmo caminho do path com o prefixo de "."
       final DAOMapTable mTable = map.getMapTableByPath(path);
 
       sql.append("SELECT * FROM ").append(dialect.getQM()).append(jTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(jTable.table).append(dialect.getQM()).append(" WHERE ").append(dialect.getQM()).append(jTable.column).append(dialect.getQM()).append("=? AND ").append(dialect.getQM()).append(mTable.joinColumn).append(dialect.getQM()).append("=?");
@@ -1316,7 +1315,7 @@ class DAOMap {
       statementParameters.add(vo2.getId());
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       writeStatementParameters(stmt, statementParameters);
@@ -1329,21 +1328,21 @@ class DAOMap {
   /**
    * Cria o Statement SQL para excluir um mapeamento entre dois objetos em uma tabela de joinAlias.
    *
-   * @param conn Conexão com o banco para criação do PreparedStatement.
+   * @param conn Conexï¿½o com o banco para criaï¿½ï¿½o do PreparedStatement.
    * @param map Mapeamento do VO com as tabelas do banco.
-   * @param path Caminho até o VO do objeto que está sendo associado no relacionamento N:N no banco.
+   * @param path Caminho atï¿½ o VO do objeto que estï¿½ sendo associado no relacionamento N:N no banco.
    * @param vo1 VO que estamos persistindo presente no mapeamento.
-   * @param vo2 VO do relacionamento ManyToMany que será associado.
+   * @param vo2 VO do relacionamento ManyToMany que serï¿½ associado.
    * @param dialect
    *
-   * @return PreparedStatemet pronto para realizar a operação no banco.
-   * @throws RFWException Lançado em caso de Erro.
+   * @return PreparedStatemet pronto para realizar a operaï¿½ï¿½o no banco.
+   * @throws RFWException Lanï¿½ado em caso de Erro.
    */
   public static <VO extends RFWVO> PreparedStatement createManyToManyDeleteStatement(Connection conn, DAOMap map, String path, VO vo1, VO vo2, SQLDialect dialect) throws RFWException {
     final StringBuffer sql = new StringBuffer();
     final LinkedList<Object> statementParameters = new LinkedList<>();
     try {
-      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que é colocada na Hash com mesmo caminho do path com o prefixo de "."
+      final DAOMapTable jTable = map.getMapTableByPath("." + path); // Obtem o mapeamento da tabela de joinAlias, que ï¿½ colocada na Hash com mesmo caminho do path com o prefixo de "."
       final DAOMapTable mTable = map.getMapTableByPath(path);
 
       sql.append("DELETE FROM ").append(dialect.getQM()).append(jTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(jTable.table).append(dialect.getQM()).append(" WHERE ").append(dialect.getQM()).append(jTable.column).append(dialect.getQM()).append("=? AND ").append(dialect.getQM()).append(mTable.joinColumn).append(dialect.getQM()).append("=?");
@@ -1352,7 +1351,7 @@ class DAOMap {
       statementParameters.add(vo2.getId());
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       writeStatementParameters(stmt, statementParameters);
@@ -1375,7 +1374,7 @@ class DAOMap {
       sql.append(")");
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       for (int i = 0; i < ids.length; i++) {
@@ -1390,9 +1389,9 @@ class DAOMap {
   /**
    * Exclui todos os elementos de uma {@link RFWMetaCollectionField} associado a um objeto.
    *
-   * @param conn Conexão com o banco de dados.
+   * @param conn Conexï¿½o com o banco de dados.
    * @param map Mapeamento do Banco de dados.
-   * @param path Caminho da tabela onde estão os elementos. No Mapeamento o caminho é criado com o caminho do atributo prexecido de um ".".
+   * @param path Caminho da tabela onde estï¿½o os elementos. No Mapeamento o caminho ï¿½ criado com o caminho do atributo prexecido de um ".".
    * @param id
    * @param dialect
    * @return Statement preparado para ser executado no Banco de dados.
@@ -1406,7 +1405,7 @@ class DAOMap {
       sql.append("DELETE FROM ").append(dialect.getQM()).append(mTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.table).append(dialect.getQM()).append(" WHERE ").append(dialect.getQM()).append(mTable.column).append(dialect.getQM()).append("=?");
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       stmt.setLong(1, id);
@@ -1417,11 +1416,11 @@ class DAOMap {
   }
 
   /**
-   * Este método adiciona um RFWMO para as condições da clausula Where do SQL.
+   * Este mï¿½todo adiciona um RFWMO para as condiï¿½ï¿½es da clausula Where do SQL.
    *
    * @param map Descritor dos mapeamentos entre Objeto de Tabelas do Banco da dados.
-   * @param mo MO com as condições a serem usadas no Where
-   * @param statementParameters Lista onde serão armazenados os objetos para a posteriro troca dos '?' pelos valores
+   * @param mo MO com as condiï¿½ï¿½es a serem usadas no Where
+   * @param statementParameters Lista onde serï¿½o armazenados os objetos para a posteriro troca dos '?' pelos valores
    * @param dialect
    * @throws RFWException
    */
@@ -1432,7 +1431,7 @@ class DAOMap {
     // ==> Equals
     for (RFWMOData data : mo.getEqual()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1456,7 +1455,7 @@ class DAOMap {
     // ==> Not Equals
     for (RFWMOData data : mo.getNotEqual()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1480,7 +1479,7 @@ class DAOMap {
     // ==> Like
     for (RFWMOData data : mo.getLike()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1496,7 +1495,7 @@ class DAOMap {
       buff.append(" ").append(dialect.getQM()).append(fMap.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(fMap.column).append(dialect.getQM()).append(" like ?");
       if (encAnn != null) {
         // statementParameters.add(RUEncrypter.encryptDES((String) data.getValue(), encAnn.key()));
-        throw new RFWCriticalException("Não é possível utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
+        throw new RFWCriticalException("Nï¿½o ï¿½ possï¿½vel utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
       } else {
         statementParameters.add(data.getValue());
       }
@@ -1505,7 +1504,7 @@ class DAOMap {
     // ==> GreaterThenOrEqualTo
     for (RFWMOData data : mo.getGreaterThanOrEqualTo()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1520,7 +1519,7 @@ class DAOMap {
       }
       buff.append(" ").append(dialect.getQM()).append(fMap.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(fMap.column).append(dialect.getQM()).append(" >= ?");
       if (encAnn != null) {
-        throw new RFWCriticalException("Não é possível utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
+        throw new RFWCriticalException("Nï¿½o ï¿½ possï¿½vel utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
       } else {
         statementParameters.add(data.getValue());
       }
@@ -1529,7 +1528,7 @@ class DAOMap {
     // ==> GreaterThen
     for (RFWMOData data : mo.getGreaterThan()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1544,7 +1543,7 @@ class DAOMap {
       }
       buff.append(" ").append(dialect.getQM()).append(fMap.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(fMap.column).append(dialect.getQM()).append(" > ?");
       if (encAnn != null) {
-        throw new RFWCriticalException("Não é possível utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
+        throw new RFWCriticalException("Nï¿½o ï¿½ possï¿½vel utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
       } else {
         statementParameters.add(data.getValue());
       }
@@ -1553,7 +1552,7 @@ class DAOMap {
     // ==> LessThenOrEqualTo
     for (RFWMOData data : mo.getLessThanOrEqualTo()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1568,7 +1567,7 @@ class DAOMap {
       }
       buff.append(" ").append(dialect.getQM()).append(fMap.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(fMap.column).append(dialect.getQM()).append(" <= ?");
       if (encAnn != null) {
-        throw new RFWCriticalException("Não é possível utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
+        throw new RFWCriticalException("Nï¿½o ï¿½ possï¿½vel utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
       } else {
         statementParameters.add(data.getValue());
       }
@@ -1577,7 +1576,7 @@ class DAOMap {
     // ==> LessThen
     for (RFWMOData data : mo.getLessThan()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1592,7 +1591,7 @@ class DAOMap {
       }
       buff.append(" ").append(dialect.getQM()).append(fMap.table.alias).append(dialect.getQM()).append(".").append(dialect.getQM()).append(fMap.column).append(dialect.getQM()).append(" < ?");
       if (encAnn != null) {
-        throw new RFWCriticalException("Não é possível utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
+        throw new RFWCriticalException("Nï¿½o ï¿½ possï¿½vel utilizar o operador 'like' em atributos que utilizam o valor criptografado no banco de dados. (${0}.${1}.${2})", new String[] { fMap.table.schema, fMap.table.table, fMap.column });
       } else {
         statementParameters.add(data.getValue());
       }
@@ -1601,7 +1600,7 @@ class DAOMap {
     // ==> IsNull
     for (RFWMOData data : mo.getIsNull()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
 
       if (buff.length() > 0) {
         switch (mo.getAppendmethod()) {
@@ -1619,7 +1618,7 @@ class DAOMap {
     // ==> IsNotNull
     for (RFWMOData data : mo.getIsNotNull()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
 
       if (buff.length() > 0) {
         switch (mo.getAppendmethod()) {
@@ -1637,7 +1636,7 @@ class DAOMap {
     // ==> In
     for (RFWMOData data : mo.getIn()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1671,7 +1670,7 @@ class DAOMap {
     // ==> NotIn
     for (RFWMOData data : mo.getNotIn()) {
       DAOMapField fMap = map.mapFieldByPath.get(data.getFieldname());
-      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se não encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
+      if (fMap == null) fMap = map.mapFieldByPath.get(data.getFieldname() + "@"); // se nï¿½o encontrou, pode ser que o atributo seja uma Collection, tentamos encontrar com o '@' no final
       RFWMetaEncrypt encAnn = null;
       if (fMap != null) encAnn = RUReflex.getRFWDAOEncryptAnnotation(fMap.table.type, fMap.field.replaceAll("\\@", ""));
       if (buff.length() > 0) {
@@ -1705,7 +1704,7 @@ class DAOMap {
     // Fazemos agora o SubMO recursivamente
     for (RFWMO subMO : mo.getSubmo()) {
       final StringBuilder subWhere = writeWhere(map, subMO, statementParameters, dialect);
-      // O IF nos protege de termos um SUBMO vazio, assim não terminamos com uma SQL inválida.
+      // O IF nos protege de termos um SUBMO vazio, assim nï¿½o terminamos com uma SQL invï¿½lida.
       if (subWhere.length() > 0) {
         if (buff.length() > 0) {
           switch (mo.getAppendmethod()) {
@@ -1743,10 +1742,6 @@ class DAOMap {
         } else if (o instanceof String) {
           stmt.setString(i, (String) o);
         } else if (o instanceof Date) {
-          if (RFW.isDevelopmentEnvironment() && !RFW.isDevPropertyTrue("rfw.orm.dao.disableLocalDateTimeRecomendation")) {
-            // Se estiver no desenvolvimento imprime a exception com a mensagem de recomendação para que tenha o Stack da chamada completa, mas deixa o código seguir normalmente
-            new RFWWarningException("O RFW não recomenda utilizar o 'java.util.Date'. Verifique a implementação e substitua adequadamente por LocalDate, LocalTime ou LocalDateTime.").printStackTrace();
-          }
           stmt.setTimestamp(i, new Timestamp(((Date) o).getTime()));
         } else if (o instanceof LocalDate) {
           // stmt.setObject(i, o, Types.DATE);
@@ -1781,7 +1776,7 @@ class DAOMap {
             stmt.setBlob(i, is);
           }
         } else if (RFWVO.class.isAssignableFrom(o.getClass())) {
-          // Sempre que é um RFWVO na verdade temos de definir seu ID, pois é o que associa o objeto à coluna
+          // Sempre que ï¿½ um RFWVO na verdade temos de definir seu ID, pois ï¿½ o que associa o objeto ï¿½ coluna
           stmt.setLong(i, ((RFWVO) o).getId());
         } else {
           throw new RFWCriticalException("RFW_ERR_000012", new String[] { o.getClass().getCanonicalName() });
@@ -1794,13 +1789,13 @@ class DAOMap {
   }
 
   /**
-   * Cria um statement para atualizar a coluna de FK quando a coluna com a FK está no cadastro da contraparte.
+   * Cria um statement para atualizar a coluna de FK quando a coluna com a FK estï¿½ no cadastro da contraparte.
    *
-   * @param conn Conexão
+   * @param conn Conexï¿½o
    * @param map Mapeamento Objeto x Tabelas.
-   * @param path Caminho para o objeto que terá a associação substituida.
-   * @param id ID do objeto que terá sua FK atualizada.
-   * @param newId Valor com o novo ID da coluna de FK. Pode ser NULL caso a associação esteja sendo desfeita.
+   * @param path Caminho para o objeto que terï¿½ a associaï¿½ï¿½o substituida.
+   * @param id ID do objeto que terï¿½ sua FK atualizada.
+   * @param newId Valor com o novo ID da coluna de FK. Pode ser NULL caso a associaï¿½ï¿½o esteja sendo desfeita.
    * @param dialect
    * @return Statement preparado para ser executado no Banco de dados.
    * @throws RFWCriticalException
@@ -1813,7 +1808,7 @@ class DAOMap {
       sql.append("UPDATE ").append(dialect.getQM()).append(mTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.table).append(dialect.getQM()).append(" SET ").append(dialect.getQM()).append(mTable.column).append(dialect.getQM()).append("=? WHERE ").append(dialect.getQM()).append("id").append(dialect.getQM()).append("=?");
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       if (newId != null) {
@@ -1830,14 +1825,14 @@ class DAOMap {
   }
 
   /**
-   * Cria um statement para atualizar a coluna de FK do próprio objeto (sem alterar mais nada). Utilizado quando deixamos o objeto para atualizar a FK posteriemente (casos do INNER_ASSOCIATION).
+   * Cria um statement para atualizar a coluna de FK do prï¿½prio objeto (sem alterar mais nada). Utilizado quando deixamos o objeto para atualizar a FK posteriemente (casos do INNER_ASSOCIATION).
    *
-   * @param conn Conexão
+   * @param conn Conexï¿½o
    * @param map Mapeamento Objeto x Tabelas.
-   * @param path Caminho completo até o objeto que será atualizado.
-   * @param property Propriedade do objeto que tem a associação com a FK na própria tabela.
-   * @param id ID do objeto que terá sua FK atualizada.
-   * @param newId Valor com o novo ID da coluna de FK. Pode ser NULL caso a associação esteja sendo desfeita.
+   * @param path Caminho completo atï¿½ o objeto que serï¿½ atualizado.
+   * @param property Propriedade do objeto que tem a associaï¿½ï¿½o com a FK na prï¿½pria tabela.
+   * @param id ID do objeto que terï¿½ sua FK atualizada.
+   * @param newId Valor com o novo ID da coluna de FK. Pode ser NULL caso a associaï¿½ï¿½o esteja sendo desfeita.
    * @param dialect
    * @return Statement preparado para ser executado no Banco de dados.
    * @throws RFWCriticalException
@@ -1851,7 +1846,7 @@ class DAOMap {
       sql.append("UPDATE ").append(dialect.getQM()).append(mTable.schema).append(dialect.getQM()).append(".").append(dialect.getQM()).append(mTable.table).append(dialect.getQM()).append(" SET ").append(dialect.getQM()).append(mField.column).append(dialect.getQM()).append("=? WHERE ").append(dialect.getQM()).append("id").append(dialect.getQM()).append("=?");
 
       final String s = sql.toString();
-      // ATENÇÃO: NÃO USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log não dá certo!!!!
+      // ATENï¿½ï¿½O: Nï¿½O USAR O RFWLOGGER, OU TERMINAR EM LOOP INFINITO. Gerar Log ao gravar os Log nï¿½o dï¿½ certo!!!!
       if (RFW.isDevelopmentEnvironment()) System.out.println(s);
       PreparedStatement stmt = conn.prepareStatement(s);
       if (newId != null) {
@@ -1868,13 +1863,13 @@ class DAOMap {
   }
 
   /**
-   * Este método cria um DAOMap a partir de um map completo. Utilizado para obter apenas parte da estrutura sem ter que reler toda a cadeia de RFWVO.<Br>
-   * O funcionamento deste método segue as seguintes regras:<br>
+   * Este mï¿½todo cria um DAOMap a partir de um map completo. Utilizado para obter apenas parte da estrutura sem ter que reler toda a cadeia de RFWVO.<Br>
+   * O funcionamento deste mï¿½todo segue as seguintes regras:<br>
    * <li>Recebe uma {@link DAOMapTable} para indicar a partir de que ponto queremos a estrutura.
-   * <li>Todas as tabelas de joins feitos a essa tabela, ou tabelas subsequêntes serão mantidos, todos os demais removidos.
-   * <li>Os Alias das tabelas continuaram sendo os mesmos (não voltará a contagem sequêncial). Assim, deixaremos de ter qualquer mapeamento com alias t0, uma vez que alias t0 é a raiz e qualquer subMap não o incluirá.
-   * <li>A tabela passada como startTable automaticamente passará a ser a tabela raiz, e por tanto não terá mais a infomação de "joinTable".
-   * <li>Todos os "Paths" serão corrigidos. A nova tabela raiz passará a ter o path "", e as demais terão o caminho cortado, conforme o caminho inicial da tabela raiz. Deixando todos os caminhos relativos a nova tabela raiz.
+   * <li>Todas as tabelas de joins feitos a essa tabela, ou tabelas subsequï¿½ntes serï¿½o mantidos, todos os demais removidos.
+   * <li>Os Alias das tabelas continuaram sendo os mesmos (nï¿½o voltarï¿½ a contagem sequï¿½ncial). Assim, deixaremos de ter qualquer mapeamento com alias t0, uma vez que alias t0 ï¿½ a raiz e qualquer subMap nï¿½o o incluirï¿½.
+   * <li>A tabela passada como startTable automaticamente passarï¿½ a ser a tabela raiz, e por tanto nï¿½o terï¿½ mais a infomaï¿½ï¿½o de "joinTable".
+   * <li>Todos os "Paths" serï¿½o corrigidos. A nova tabela raiz passarï¿½ a ter o path "", e as demais terï¿½o o caminho cortado, conforme o caminho inicial da tabela raiz. Deixando todos os caminhos relativos a nova tabela raiz.
    *
    * @param startTable Tabela Inicial da Nova Estrutura de Mapeamento.
    * @return Nova estrutura de mapeamento a partir de determinado ponto da estrutura.
@@ -1883,7 +1878,7 @@ class DAOMap {
   public DAOMap createSubMap(DAOMapTable startTable) throws RFWException {
     final DAOMap newMap = new DAOMap();
 
-    if ("".equals(startTable.path)) throw new RFWCriticalException("Não é permitido criar uma substrutura da própria tabela raiz!");
+    if ("".equals(startTable.path)) throw new RFWCriticalException("Nï¿½o ï¿½ permitido criar uma substrutura da prï¿½pria tabela raiz!");
 
     final int cutPath = startTable.path.length() + 1;
 
