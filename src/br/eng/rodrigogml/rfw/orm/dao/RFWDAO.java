@@ -54,7 +54,7 @@ import br.eng.rodrigogml.rfw.orm.dao.interfaces.RFWDAOConverterInterface;
 /**
  * Description: Classe de DAO principal do Framework.<br>
  *
- * @author Rodrigo Leit�o
+ * @author Rodrigo Leitão
  * @since 10.0.0 (11 de jul de 2018)
  */
 public final class RFWDAO<VO extends RFWVO> {
@@ -82,7 +82,7 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     /**
-     * # quotationMark: caracter utilizado como 'aspas' em volta dos nomes de tabelas e colunas. MySQL: ', Derby: nenhum.
+     * # quotationMark: caractere utilizado como 'aspas' em volta dos nomes de tabelas e colunas. MySQL: ', Derby: nenhum.
      *
      * @return the quotationMark: caracter utilizado como 'aspas' em volta dos nomes de tabelas e colunas
      */
@@ -91,10 +91,10 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     /**
-     * # indica se ao criar o statement de insert n�o escrever ID atribuindo valor igual a null.<br>
+     * # indica se ao criar o statement de insert não escrever ID atribuindo valor igual a null.<br>
      * No Derby, quando temos uma coluna de IDs gerada automaticamente ela n�o pode aparecer no statement.
      *
-     * @return the indica se ao criar o statement de insert n�o escrever ID atribuindo valor igual a null
+     * @return the indica se ao criar o statement de insert não escrever ID atribuindo valor igual a null
      */
     public boolean getSkipInsertIDColumn() {
       return skipInsertIDColumn;
@@ -103,15 +103,15 @@ public final class RFWDAO<VO extends RFWVO> {
   }
 
   /**
-   * Objeto utilizado para registrar pend�ncias de inser��o de objetos cruzados.<br>
-   * Por exemplo, o Framework precisa inserir um objeto que tem uma associa��o com outro que ainda n�o foi inserido (ainda n�o tem um ID).<br>
-   * Nestes caso a l�gica de persist�ncia cria um objeto desses registrando que o objeto foi persistido, mas que � necess�rio atualizar a associa��o quando o outro objeto estiver persistido tamb�m.<br>
+   * Objeto utilizado para registrar pendências de inserção de objetos cruzados.<br>
+   * Por exemplo, o Framework precisa inserir um objeto que tem uma associação com outro que ainda não foi inserido (ainda não tem um ID).<br>
+   * Nestes caso a lógica de persistência cria um objeto desses registrando que o objeto foi persistido, mas que é necessário atualizar a associação quando o outro objeto estiver persistido também.<br>
    * Esta estrutura � utilizada principalmente em casos do {@link RelationshipTypes#INNER_ASSOCIATION}.
    */
   private static class RFWVOUpdatePending<RFWVOO> {
 
     /**
-     * Caminho desde o VO base at� a o {@link #entityVO}.
+     * Caminho desde o VO base até a o {@link #entityVO}.
      */
     private final String path;
     /**
@@ -119,11 +119,11 @@ public final class RFWDAO<VO extends RFWVO> {
      */
     private final RFWVO entityVO;
     /**
-     * Propriedade da refer�ncia que foi definida como NULL para que o objeto pudesse ser persistido.
+     * Propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido.
      */
     private final String property;
     /**
-     * VO que deve ganhar o ID at� o final da persist�ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persist�ncia.
+     * VO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência.
      */
     private final RFWVO fieldValueVO;
 
@@ -144,18 +144,18 @@ public final class RFWDAO<VO extends RFWVO> {
     }
 
     /**
-     * # propriedade da refer�ncia que foi definida como NULL para que o objeto pudesse ser persistido.
+     * # propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido.
      *
-     * @return the propriedade da refer�ncia que foi definida como NULL para que o objeto pudesse ser persistido
+     * @return the propriedade da referência que foi definida como NULL para que o objeto pudesse ser persistido
      */
     public String getProperty() {
       return property;
     }
 
     /**
-     * # vO que deve ganhar o ID at� o final da persist�ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persist�ncia.
+     * # vO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência.
      *
-     * @return the vO que deve ganhar o ID at� o final da persist�ncia, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persist�ncia
+     * @return the vO que deve ganhar o ID até o final da persistência, e ser redefinido em {@link #property} do {@link #entityVO} para terminar a persistência
      */
     public RFWVO getFieldValueVO() {
       return fieldValueVO;
